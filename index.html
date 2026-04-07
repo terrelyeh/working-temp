@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU Product Model 多語系差異比較報告</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#2B579A',
+        accent: '#3B82F6',
+        'primary-light': '#3a6bc5',
+        'primary-dark': '#1e3f6f',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+    },
+  },
+}
+</script>
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    .print-break { page-break-before: always; }
+    body { font-size: 10px; }
+    .sticky { position: relative !important; }
+    table { font-size: 9px; }
+    .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+    @page { margin: 1cm; }
+  }
+
+  .matrix-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .matrix-table tbody tr:hover {
+    background-color: #f0f4ff !important;
+  }
+
+  .sort-indicator::after {
+    content: ' \25B2\25BC';
+    font-size: 0.6em;
+    opacity: 0.4;
+    margin-left: 4px;
+  }
+  .sort-indicator.asc::after {
+    content: ' \25B2';
+    opacity: 1;
+  }
+  .sort-indicator.desc::after {
+    content: ' \25BC';
+    opacity: 1;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Product line badge styles */
+  .badge-indoor-wireless { background-color: #dbeafe; color: #1e40af; }
+  .badge-outdoor-wireless { background-color: #dcfce7; color: #166534; }
+  .badge-managed-switches { background-color: #f3e8ff; color: #6b21a8; }
+  .badge-accessories { background-color: #ffedd5; color: #9a3412; }
+  .badge-vpn-sdwan { background-color: #ccfbf1; color: #115e59; }
+  .badge-network-mgmt { background-color: #e0e7ff; color: #3730a3; }
+  .badge-home-wifi { background-color: #cffafe; color: #155e75; }
+  .badge-uncategorized { background-color: #f3f4f6; color: #6b7280; }
+</style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 bg-primary text-white shadow-lg no-print">
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg sm:text-xl font-bold tracking-tight">EU 站 Product Model 多語系差異比較報告</h1>
+      <p class="text-blue-200 text-xs sm:text-sm mt-0.5">EnGenius Europe — EN / FR / DE / IT / ES</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <nav class="hidden lg:flex items-center gap-4 text-sm text-blue-200">
+        <a href="#overview" class="hover:text-white transition-colors">總覽</a>
+        <a href="#matrix" class="hover:text-white transition-colors">對照表</a>
+        <a href="#analysis" class="hover:text-white transition-colors">差異分析</a>
+        <a href="#actions" class="hover:text-white transition-colors">建議行動</a>
+      </nav>
+      <button onclick="window.print()" class="hidden sm:flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-sm px-3 py-1.5 rounded-md transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        列印
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-8 space-y-10">
+
+  <!-- ==================== Section 1: Overview ==================== -->
+  <section id="overview">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+      <h2 class="text-2xl font-bold text-primary">總覽</h2>
+      <span class="text-sm text-gray-400 font-medium">Overview Summary</span>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th class="text-left px-5 py-3 font-semibold">語系</th>
+              <th class="text-center px-5 py-3 font-semibold">不重複 Model 數</th>
+              <th class="text-center px-5 py-3 font-semibold">比 EN 多</th>
+              <th class="text-center px-5 py-3 font-semibold">比 EN 少</th>
+              <th class="text-left px-5 py-3 font-semibold min-w-[240px]">翻譯覆蓋率</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-blue-50/50">
+              <td class="px-5 py-3.5 font-semibold text-primary">EN (基準)</td>
+              <td class="px-5 py-3.5 text-center font-mono font-semibold">167</td>
+              <td class="px-5 py-3.5 text-center text-gray-400">--</td>
+              <td class="px-5 py-3.5 text-center text-gray-400">--</td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary rounded-full" style="width:100%"></div>
+                  </div>
+                  <span class="text-xs font-mono font-semibold text-gray-500 w-14 text-right">--</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3.5 font-semibold">DE 德文</td>
+              <td class="px-5 py-3.5 text-center font-mono font-semibold">171</td>
+              <td class="px-5 py-3.5 text-center"><span class="text-green-600 font-semibold">+4</span></td>
+              <td class="px-5 py-3.5 text-center"><span class="text-gray-400">0</span></td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full" style="width:100%"></div>
+                  </div>
+                  <span class="text-xs font-mono font-semibold text-green-600 w-14 text-right">102.4%</span>
+                </div>
+              </td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-3.5 font-semibold">IT 義大利文</td>
+              <td class="px-5 py-3.5 text-center font-mono font-semibold">172</td>
+              <td class="px-5 py-3.5 text-center"><span class="text-green-600 font-semibold">+5</span></td>
+              <td class="px-5 py-3.5 text-center"><span class="text-gray-400">0</span></td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full" style="width:100%"></div>
+                  </div>
+                  <span class="text-xs font-mono font-semibold text-green-600 w-14 text-right">103.0%</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3.5 font-semibold">ES 西班牙文</td>
+              <td class="px-5 py-3.5 text-center font-mono font-semibold">167</td>
+              <td class="px-5 py-3.5 text-center"><span class="text-green-600 font-semibold">+4</span></td>
+              <td class="px-5 py-3.5 text-center"><span class="text-red-500 font-semibold">-4</span></td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-accent rounded-full" style="width:100%"></div>
+                  </div>
+                  <span class="text-xs font-mono font-semibold text-accent w-14 text-right">100%</span>
+                </div>
+              </td>
+            </tr>
+            <tr class="bg-red-50/40">
+              <td class="px-5 py-3.5 font-semibold">FR 法文</td>
+              <td class="px-5 py-3.5 text-center font-mono font-semibold">150</td>
+              <td class="px-5 py-3.5 text-center"><span class="text-gray-400">0</span></td>
+              <td class="px-5 py-3.5 text-center"><span class="text-red-500 font-semibold">-17</span></td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-amber-500 rounded-full" style="width:89.8%"></div>
+                  </div>
+                  <span class="text-xs font-mono font-semibold text-amber-600 w-14 text-right">89.8%</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Callout -->
+    <div class="mt-5 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg px-5 py-4 flex items-start gap-3">
+      <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      <div>
+        <p class="font-semibold text-amber-800">FR 法文缺口最大，少了 17 個 model 需優先補齊</p>
+        <p class="text-amber-700 text-sm mt-1">法文版本的翻譯覆蓋率僅 89.8%，遠低於其他語系。建議優先安排法文翻譯資源。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Section 2: Full Matrix ==================== -->
+  <section id="matrix" class="print-break">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+      <h2 class="text-2xl font-bold text-primary">完整 Model 對照表</h2>
+      <span class="text-sm text-gray-400 font-medium">Full Comparison Matrix</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-md p-4 mb-4 no-print">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Search -->
+        <div class="relative flex-1 min-w-[220px]">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="searchInput" placeholder="搜尋 Model 名稱..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors">
+        </div>
+
+        <!-- Filter buttons -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="setFilter('all')" id="btn-all" class="filter-btn active px-3 py-2 text-xs font-medium rounded-lg border transition-colors">全部顯示</button>
+          <button onclick="setFilter('missing')" id="btn-missing" class="filter-btn px-3 py-2 text-xs font-medium rounded-lg border transition-colors">僅缺少項目</button>
+          <button onclick="setFilter('complete')" id="btn-complete" class="filter-btn px-3 py-2 text-xs font-medium rounded-lg border transition-colors">僅完整項目</button>
+        </div>
+
+        <!-- Language filter -->
+        <select id="langFilter" onchange="applyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent bg-white">
+          <option value="all">所有語系</option>
+          <option value="en">EN 缺少</option>
+          <option value="de">DE 缺少</option>
+          <option value="fr">FR 缺少</option>
+          <option value="it">IT 缺少</option>
+          <option value="es">ES 缺少</option>
+        </select>
+
+        <!-- Product Line filter -->
+        <select id="productLineFilter" onchange="applyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent bg-white">
+          <option value="all">所有產品線</option>
+          <option value="Indoor Wireless">Indoor Wireless</option>
+          <option value="Outdoor Wireless">Outdoor Wireless</option>
+          <option value="Managed Switches">Managed Switches</option>
+          <option value="Accessories">Accessories</option>
+          <option value="VPN / SD-WAN">VPN / SD-WAN</option>
+          <option value="Network Management">Network Management</option>
+          <option value="Home Wi-Fi">Home Wi-Fi</option>
+          <option value="未分類">未分類</option>
+        </select>
+
+        <!-- Count -->
+        <span id="rowCount" class="text-xs text-gray-400 font-mono"></span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm matrix-table" id="matrixTable">
+          <thead>
+            <tr class="bg-primary text-white">
+              <th class="text-left px-4 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(0)" data-sort="none">Model 名稱</th>
+              <th class="text-left px-4 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(1)" data-sort="none">產品線</th>
+              <th class="text-left px-4 py-3 font-semibold min-w-[140px]">EN URL</th>
+              <th class="text-center px-3 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(3)" data-sort="none" style="min-width:52px">EN</th>
+              <th class="text-center px-3 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(4)" data-sort="none" style="min-width:52px">DE</th>
+              <th class="text-center px-3 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(5)" data-sort="none" style="min-width:52px">FR</th>
+              <th class="text-center px-3 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(6)" data-sort="none" style="min-width:52px">IT</th>
+              <th class="text-center px-3 py-3 font-semibold cursor-pointer select-none sort-indicator" onclick="sortTable(7)" data-sort="none" style="min-width:52px">ES</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody" class="divide-y divide-gray-100">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Section 3: Detailed Analysis ==================== -->
+  <section id="analysis" class="print-break">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+      <h2 class="text-2xl font-bold text-primary">差異詳細分析</h2>
+      <span class="text-sm text-gray-400 font-medium">Detailed Analysis</span>
+    </div>
+
+    <!-- 3-1: FR Missing -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+      <div class="bg-red-50 px-5 py-3 border-b border-red-100">
+        <h3 class="font-bold text-red-800 text-base">3-1. FR 法文缺少的 17 個 Model</h3>
+        <p class="text-red-600 text-xs mt-0.5">以下 Model 在 EN/DE/IT/ES 都存在，唯獨缺少法文版本</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">#</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">Model 名稱</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">產品線</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">EN URL</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">產品類別</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">其他語系</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">1</td>
+              <td class="px-5 py-2.5 font-semibold">DC12V1A-SK</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-accessories">Accessories</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/dc12v1a-sk" target="_blank" class="text-accent hover:underline font-mono text-xs">dc12v1a-sk</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">配件</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">2</td>
+              <td class="px-5 py-2.5 font-semibold">DC12V2A-A</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-accessories">Accessories</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/dc12v2a-a" target="_blank" class="text-accent hover:underline font-mono text-xs">dc12v2a-a</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">配件</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">3</td>
+              <td class="px-5 py-2.5 font-semibold">EAP2200</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-indoor-wireless">Indoor Wireless</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/new-product-5" target="_blank" class="text-accent hover:underline font-mono text-xs">new-product-5</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">室內 AP</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">4</td>
+              <td class="px-5 py-2.5 font-semibold">EMR3500</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-home-wifi">Home Wi-Fi</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/emr5000-2" target="_blank" class="text-accent hover:underline font-mono text-xs">emr5000-2</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700">Mesh Router</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">5</td>
+              <td class="px-5 py-2.5 font-semibold">ENS500-AC</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-outdoor-wireless">Outdoor Wireless</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ens500-ac" target="_blank" class="text-accent hover:underline font-mono text-xs">ens500-ac</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700">戶外 AP</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">6</td>
+              <td class="px-5 py-2.5 font-semibold">ENS500EXT-AC</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-outdoor-wireless">Outdoor Wireless</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ens500ext-ac-outdoor-access-point" target="_blank" class="text-accent hover:underline font-mono text-xs">ens500ext-ac-outdoor-access-point</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700">戶外 AP</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">7</td>
+              <td class="px-5 py-2.5 font-semibold">ENS620EXT</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-outdoor-wireless">Outdoor Wireless</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ens620ext-outdoor-access-point" target="_blank" class="text-accent hover:underline font-mono text-xs">ens620ext-outdoor-access-point</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700">戶外 AP</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">8</td>
+              <td class="px-5 py-2.5 font-semibold">EnStation5-AC</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-outdoor-wireless">Outdoor Wireless</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/enstation5-ac" target="_blank" class="text-accent hover:underline font-mono text-xs">enstation5-ac</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700">戶外 AP</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">9</td>
+              <td class="px-5 py-2.5 font-semibold">EWS7926EFP</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ews7926efp" target="_blank" class="text-accent hover:underline font-mono text-xs">ews7926efp</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">交換器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">10</td>
+              <td class="px-5 py-2.5 font-semibold">EWS7928P</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ews7928p" target="_blank" class="text-accent hover:underline font-mono text-xs">ews7928p</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">交換器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">11</td>
+              <td class="px-5 py-2.5 font-semibold">EWS7952P</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ews7952p" target="_blank" class="text-accent hover:underline font-mono text-xs">ews7952p</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">交換器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">12</td>
+              <td class="px-5 py-2.5 font-semibold">ezMaster</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-network-mgmt">Network Management</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/ezmaster-2" target="_blank" class="text-accent hover:underline font-mono text-xs">ezmaster-2</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700">管理工具</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">13</td>
+              <td class="px-5 py-2.5 font-semibold">Gateway3 4G 1SFP</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/gateway3-4g" target="_blank" class="text-accent hover:underline font-mono text-xs">gateway3-4g</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-cyan-50 text-cyan-700">閘道器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">14</td>
+              <td class="px-5 py-2.5 font-semibold">Locator for EnGenius access points</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-network-mgmt">Network Management</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/locator" target="_blank" class="text-accent hover:underline font-mono text-xs">locator</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-700">工具</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">15</td>
+              <td class="px-5 py-2.5 font-semibold">SkyKey I</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-network-mgmt">Network Management</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/skykey-i" target="_blank" class="text-accent hover:underline font-mono text-xs">skykey-i</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700">管理工具</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT, ES</td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">16</td>
+              <td class="px-5 py-2.5 font-semibold">Switch 5</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/es105" target="_blank" class="text-accent hover:underline font-mono text-xs">es105</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">交換器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">17</td>
+              <td class="px-5 py-2.5 font-semibold">Switch 8</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/es108" target="_blank" class="text-accent hover:underline font-mono text-xs">es108</a></td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">交換器</span></td>
+              <td class="px-5 py-2.5 text-xs text-gray-500">DE, IT</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3-2: ES Anomalies -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+      <div class="bg-amber-50 px-5 py-3 border-b border-amber-100">
+        <h3 class="font-bold text-amber-800 text-base">3-2. ES 西班牙文缺少/異常的 4 個 Model</h3>
+        <p class="text-amber-600 text-xs mt-0.5">含 1 個名稱翻譯導致 WPML 對應斷裂的案例</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">#</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">Model 名稱</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">產品線</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">EN URL</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">狀態說明</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">1</td>
+              <td class="px-5 py-2.5 font-semibold">CloudSwitch Aggregate 12</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/products-network-switches-ecs5512f" target="_blank" class="text-accent hover:underline font-mono text-xs">products-network-switches-ecs5512f</a></td>
+              <td class="px-5 py-2.5 text-xs">
+                <span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-800">名稱翻譯問題</span>
+                <span class="text-gray-500 ml-1">ES 以「CloudSwitch 12 con Agregacion de Enlaces」獨立存在，WPML 對應斷裂。DE/FR/IT 正常。</span>
+              </td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">2</td>
+              <td class="px-5 py-2.5 font-semibold">Gateway3 4G 1SFP</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/gateway3-4g" target="_blank" class="text-accent hover:underline font-mono text-xs">gateway3-4g</a></td>
+              <td class="px-5 py-2.5 text-xs">
+                <span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">缺少翻譯</span>
+                <span class="text-gray-500 ml-1">DE/IT 有，FR/ES 皆缺。</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">3</td>
+              <td class="px-5 py-2.5 font-semibold">Switch 5</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/es105" target="_blank" class="text-accent hover:underline font-mono text-xs">es105</a></td>
+              <td class="px-5 py-2.5 text-xs">
+                <span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">缺少翻譯</span>
+                <span class="text-gray-500 ml-1">DE/IT 有，FR/ES 皆缺。</span>
+              </td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">4</td>
+              <td class="px-5 py-2.5 font-semibold">Switch 8</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-uncategorized">未分類</span></td>
+              <td class="px-5 py-2.5"><a href="https://www.engeniustech.com/eu/product_model/es108" target="_blank" class="text-accent hover:underline font-mono text-xs">es108</a></td>
+              <td class="px-5 py-2.5 text-xs">
+                <span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">缺少翻譯</span>
+                <span class="text-gray-500 ml-1">DE/IT 有，FR/ES 皆缺。</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3-3: EN Missing -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+      <div class="bg-rose-50 px-5 py-3 border-b border-rose-100">
+        <h3 class="font-bold text-rose-800 text-base">3-3. EN 主語言缺少但其他語系有的 Model</h3>
+        <p class="text-rose-600 text-xs mt-0.5">基準語言不應缺少任何產品 -- 以下需立即修復</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">#</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">Model 名稱</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">產品線</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">存在語系</th>
+              <th class="text-left px-5 py-2.5 font-semibold text-gray-600">類型/備註</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-red-50/30">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">1</td>
+              <td class="px-5 py-2.5 font-semibold">ECS1152P</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">DE, IT, ES</span><span class="text-gray-400 ml-1">+ RU</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">P0 — 應補建 EN 頁面</span></td>
+            </tr>
+            <tr class="bg-red-50/30">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">2</td>
+              <td class="px-5 py-2.5 font-semibold">ECW110</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-indoor-wireless">Indoor Wireless</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">DE, IT, ES</span><span class="text-gray-400 ml-1">+ RU</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">P0 — 應補建 EN 頁面</span></td>
+            </tr>
+            <tr class="bg-red-50/30">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">3</td>
+              <td class="px-5 py-2.5 font-semibold">EWS650AP</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-indoor-wireless">Indoor Wireless</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">DE, IT, ES</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-red-100 text-red-800">P0 — 應補建 EN 頁面</span></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">4</td>
+              <td class="px-5 py-2.5 font-semibold">EWS510AP</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-indoor-wireless">Indoor Wireless</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">IT</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-gray-100 text-gray-700">僅 IT 獨有 — 需確認是否為現行產品</span></td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">5</td>
+              <td class="px-5 py-2.5 font-semibold font-mono text-xs">ezMaster Benutzerhandbuch</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-network-mgmt">Network Management</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">DE</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-yellow-100 text-yellow-800">分類錯誤 — 使用手冊非產品</span></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">6</td>
+              <td class="px-5 py-2.5 font-semibold font-mono text-xs">ezMaster Manuale Utente</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-network-mgmt">Network Management</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">IT</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-yellow-100 text-yellow-800">分類錯誤 — 使用手冊非產品</span></td>
+            </tr>
+            <tr class="bg-gray-50/50">
+              <td class="px-5 py-2.5 font-mono text-gray-400 text-xs">7</td>
+              <td class="px-5 py-2.5 font-semibold font-mono text-xs">CloudSwitch 12 con Agregacion de Enlaces</td>
+              <td class="px-5 py-2.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium badge-managed-switches">Managed Switches</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="font-medium">ES</span></td>
+              <td class="px-5 py-2.5 text-xs"><span class="inline-flex items-center px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-800">名稱翻譯 — 為 CloudSwitch Aggregate 12 的西文版</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Section 4: Recommended Actions ==================== -->
+  <section id="actions" class="print-break">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+      <h2 class="text-2xl font-bold text-primary">建議行動</h2>
+      <span class="text-sm text-gray-400 font-medium">Recommended Actions</span>
+    </div>
+
+    <div class="space-y-4">
+      <!-- P0 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-red-500">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-red-500 text-white">P0</span>
+            <span class="text-xs font-semibold text-red-500 uppercase tracking-wider">Critical</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">修復 EN 缺少的 3 個產品頁面</h4>
+          <p class="text-sm text-gray-600">ECS1152P、ECW110、EWS650AP 在其他語系存在但 EN 主語言沒有，這違反 WPML 多語系架構原則。基準語言必須包含所有產品。</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">ECS1152P</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">ECW110</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">EWS650AP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-amber-500">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-white">P1</span>
+            <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">High</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">補齊 FR 法文缺少的 17 個 Model 翻譯</h4>
+          <p class="text-sm text-gray-600">法文是最大缺口語系，翻譯覆蓋率僅 89.8%。涵蓋交換器 (5)、戶外 AP (4)、配件 (2)、管理工具 (2)、閘道器 (1)、Mesh Router (1)、室內 AP (1)、工具 (1) 等多種類別。</p>
+        </div>
+      </div>
+
+      <!-- P2-a -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-blue-400">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-400 text-white">P2</span>
+            <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Medium</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">修復 ES「CloudSwitch Aggregate 12」WPML 對應</h4>
+          <p class="text-sm text-gray-600">西班牙文版本將 post_title 翻譯為「CloudSwitch 12 con Agregacion de Enlaces」，導致 WPML 翻譯連結斷裂，成為獨立 post 而非 EN 原文的翻譯版本。需重新建立 WPML translation mapping。</p>
+        </div>
+      </div>
+
+      <!-- P2-b -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-blue-400">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-400 text-white">P2</span>
+            <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Medium</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">補齊 ES 西班牙文缺少的 3 個 Model 翻譯</h4>
+          <p class="text-sm text-gray-600">Gateway3 4G 1SFP、Switch 5、Switch 8 在 ES 缺少。其中 Gateway3 與 Switch 5/8 同時也在 FR 缺少，可與 P1 一起處理。</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">Gateway3 4G 1SFP</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">Switch 5</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 font-mono">Switch 8</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- P3-a -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-gray-300">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-400 text-white">P3</span>
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Low</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">清理被誤分類為產品的手冊頁面</h4>
+          <p class="text-sm text-gray-600">DE 的「ezMaster Benutzerhandbuch」和 IT 的「ezMaster Manuale Utente」是使用手冊，被錯誤地歸類在 product_model CPT 下。應將其移出或改為正確的 post type。</p>
+        </div>
+      </div>
+
+      <!-- P3-b -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-gray-300">
+        <div class="px-5 py-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-400 text-white">P3</span>
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Low</span>
+          </div>
+          <h4 class="font-bold text-gray-900 mb-1">確認 EWS510AP (IT) 是否為現行產品</h4>
+          <p class="text-sm text-gray-600">EWS510AP 僅存在於 IT 義大利文，其他語系皆無。需確認是否為已停產產品，若是則考慮移除或歸檔。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-100 border-t border-gray-200 mt-12">
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 text-center">
+    <p class="text-sm text-gray-500">報告產生日期：2026-04-07</p>
+    <p class="text-xs text-gray-400 mt-1">資料來源：EnGenius EU WordPress (WP-CLI + WPML database)</p>
+  </div>
+</footer>
+
+<script>
+// ========== DATA ==========
+const BASE_URL = 'https://www.engeniustech.com/eu/product_model/';
+
+// Product line mapping: model name -> product line display name
+const productLineMap = {
+  '1U Data Center Server': '未分類',
+  '2U Data Center Server': '未分類',
+  'AI NVS 4Bay Tower': '未分類',
+  'Broadband Outdoor Access Point': '未分類',
+  'Broadband Outdoor CPE': '未分類',
+  'Cam5MP Bullet IP66': '未分類',
+  'Cam5MP Dome IP67': '未分類',
+  'Cam8MP Dome IP67': '未分類',
+  'Cam8MP Dome IP67 NS': '未分類',
+  'Cloud 7 2x2 Wallplate': '未分類',
+  'Cloud5 2x2': 'Indoor Wireless',
+  'Cloud5 2x2 Outdoor': 'Outdoor Wireless',
+  'Cloud5 2x2 Wallplate': 'Indoor Wireless',
+  'Cloud5 4x4': 'Indoor Wireless',
+  'Cloud6 2x2': 'Indoor Wireless',
+  'Cloud6 2x2 Lite': '未分類',
+  'Cloud6 2x2 Outdoor': 'Outdoor Wireless',
+  'Cloud6 2x2 S': 'Indoor Wireless',
+  'Cloud6 2x2 Wallplate': 'Indoor Wireless',
+  'Cloud6 4x4': 'Indoor Wireless',
+  'Cloud6 4x4 Lite': '未分類',
+  'Cloud6 4x4 Outdoor': 'Outdoor Wireless',
+  'Cloud6 4x4 S': 'Indoor Wireless',
+  'Cloud6E 4x4x4': 'Indoor Wireless',
+  'Cloud7 2x2': '未分類',
+  'Cloud7 2x2x2': 'Indoor Wireless',
+  'Cloud7 2x3x3 Lite': '未分類',
+  'Cloud7 4x4x4': 'Indoor Wireless',
+  'Cloud7 4x4x4 S': '未分類',
+  'CloudSwitch Aggregate 12': 'Managed Switches',
+  'CloudSwitch Aggregate 8XG': 'Managed Switches',
+  'CloudSwitch Aggregate 8XG Full PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 24': 'Managed Switches',
+  'CloudSwitch L2Plus 24 Full PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 24 PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 48': 'Managed Switches',
+  'CloudSwitch L2Plus 48 Full PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 48 PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 8 Full PoE': 'Managed Switches',
+  'CloudSwitch L2Plus 8 PoE': 'Managed Switches',
+  'CloudSwitch MGLite 5': '未分類',
+  'CloudSwitch MGLite 8': '未分類',
+  'CloudSwitch MGPlus 24 Full PoE': 'Managed Switches',
+  'CloudSwitch MGPlus 24 Full PoE 6 SFP+': '未分類',
+  'CloudSwitch MGPlus 48 Full PoE': 'Managed Switches',
+  'CloudSwitch MGPlus 8': 'Managed Switches',
+  'CloudSwitch MGPlus 8 Full PoE': 'Managed Switches',
+  'DC12V1A-SK': 'Accessories',
+  'DC12V2A-A': 'Accessories',
+  'EAP1200H': 'Indoor Wireless',
+  'EAP1250': 'Indoor Wireless',
+  'EAP1300': 'Indoor Wireless',
+  'EAP1300EXT': 'Indoor Wireless',
+  'EAP1750H': 'Indoor Wireless',
+  'EAP2200': 'Indoor Wireless',
+  'EAP350': 'Indoor Wireless',
+  'ECB1200': 'Indoor Wireless',
+  'ECB1750': 'Indoor Wireless',
+  'ECS1528': 'Managed Switches',
+  'EMD1': 'Home Wi-Fi',
+  'EMR3000': 'Home Wi-Fi',
+  'EMR3500': 'Home Wi-Fi',
+  'EMR5000': 'Home Wi-Fi',
+  'ENH1350EXT': 'Outdoor Wireless',
+  'ENH1750EXT': 'Outdoor Wireless',
+  'ENH202': 'Outdoor Wireless',
+  'ENH220EXT': 'Outdoor Wireless',
+  'ENH500': 'Outdoor Wireless',
+  'ENH710EXT': 'Outdoor Wireless',
+  'ENS1750': 'Outdoor Wireless',
+  'ENS202': 'Outdoor Wireless',
+  'ENS202EXT': 'Outdoor Wireless',
+  'ENS500': 'Outdoor Wireless',
+  'ENS500-AC': 'Outdoor Wireless',
+  'ENS500EXT': 'Outdoor Wireless',
+  'ENS500EXT-AC': 'Outdoor Wireless',
+  'ENS620EXT': 'Outdoor Wireless',
+  'EnStation2': 'Outdoor Wireless',
+  'EnStation5': 'Outdoor Wireless',
+  'EnStation5-AC': 'Outdoor Wireless',
+  'EnStationAC': 'Outdoor Wireless',
+  'EPA2406FP': 'Accessories',
+  'EPA2406GP': 'Accessories',
+  'EPA2406GR': 'Accessories',
+  'EPA2410GP': 'Accessories',
+  'EPA5006GAT': 'Accessories',
+  'EPA5006GP': 'Accessories',
+  'EPA5006GR': 'Accessories',
+  'EPA5006HAT': 'Accessories',
+  'EPA5012GP': 'Accessories',
+  'EPA5060GBT': 'Accessories',
+  'EPA5060HBT': 'Accessories',
+  'EPA5060XBT': 'Accessories',
+  'EPA5090GBT': 'Accessories',
+  'EPA5090HBT': 'Accessories',
+  'EPA5090XBT': 'Accessories',
+  'EPD-4824': 'Accessories',
+  'ESA-7500': 'Accessories',
+  'ESA-7600G': 'Accessories',
+  'EUB1200AC': 'Accessories',
+  'EWS1025CAM': 'Indoor Wireless',
+  'EWS1200-28T': 'Managed Switches',
+  'EWS1200-28TFP': 'Managed Switches',
+  'EWS1200-52T': 'Managed Switches',
+  'EWS1200D-10T': 'Managed Switches',
+  'EWS2908P': 'Managed Switches',
+  'EWS2910P': 'Managed Switches',
+  'EWS300AP': 'Indoor Wireless',
+  'EWS310AP': 'Indoor Wireless',
+  'EWS330AP': 'Indoor Wireless',
+  'EWS350AP': 'Indoor Wireless',
+  'EWS355AP': 'Indoor Wireless',
+  'EWS357AP': 'Indoor Wireless',
+  'EWS360AP': 'Indoor Wireless',
+  'EWS370AP': 'Indoor Wireless',
+  'EWS371AP': 'Indoor Wireless',
+  'EWS377AP': 'Indoor Wireless',
+  'EWS385AP': 'Indoor Wireless',
+  'EWS500AP': 'Indoor Wireless',
+  'EWS550AP': 'Indoor Wireless',
+  'EWS5912FP': 'Managed Switches',
+  'EWS660AP': 'Outdoor Wireless',
+  'EWS7926EFP': 'Managed Switches',
+  'EWS7928FP': 'Managed Switches',
+  'EWS7928P': 'Managed Switches',
+  'EWS7952FP': 'Managed Switches',
+  'EWS7952P': 'Managed Switches',
+  'EWS850AP': 'Outdoor Wireless',
+  'EWS860AP': 'Outdoor Wireless',
+  'EWS870AP': 'Outdoor Wireless',
+  'EWS871AP': 'Outdoor Wireless',
+  'ezMaster': 'Network Management',
+  'Fit6 2x2': 'Indoor Wireless',
+  'Fit6 2x2 Lite': 'Indoor Wireless',
+  'Fit6 2x2 Outdoor': 'Outdoor Wireless',
+  'Fit6 4x4': 'Indoor Wireless',
+  'Fit6 4x4 Lite': '未分類',
+  'FitController100': 'Network Management',
+  'FitGateway6 4G 1SFP': 'VPN / SD-WAN',
+  'FitSwitch 24 Full PoE': 'Managed Switches',
+  'FitSwitch 24 PoE': 'Managed Switches',
+  'FitSwitch 48 Full PoE': 'Managed Switches',
+  'FitSwitch 48 PoE': 'Managed Switches',
+  'FitSwitch 8 Full PoE': 'Managed Switches',
+  'FitSwitch 8 PoE': 'Managed Switches',
+  'Gateway3 4G 1SFP': '未分類',
+  'Gateway5 4mG': '未分類',
+  'Gateway6 4mG': 'VPN / SD-WAN',
+  'Gateway6 8mG 2SFP+': 'VPN / SD-WAN',
+  'Locator for EnGenius access points': 'Network Management',
+  'PDU 12P 10A 200-240V': '未分類',
+  'PDU 6P 10A 200-240V': '未分類',
+  'SA2216': 'Accessories',
+  'SA2312': 'Accessories',
+  'SA5219': 'Accessories',
+  'SA5315': 'Accessories',
+  'SFP Plus Series': 'Accessories',
+  'SFP Series': 'Accessories',
+  'SkyKey I': 'Network Management',
+  'SmartNIC': '未分類',
+  'Station6 2x2 Dish': 'Outdoor Wireless',
+  'Station6 2x2 Patch': 'Outdoor Wireless',
+  'Switch 5': '未分類',
+  'Switch 8': '未分類',
+  'Switch Extender 3GE 4 PoE 1SFP': '未分類',
+  'Switch Extender 4 PoE': '未分類',
+  'Switch Extender 4GE 1SFP': '未分類',
+  // Models not in EN
+  'ECS1152P': 'Managed Switches',
+  'ECW110': 'Indoor Wireless',
+  'EWS510AP': 'Indoor Wireless',
+  'EWS650AP': 'Indoor Wireless',
+  'ezMaster Benutzerhandbuch': 'Network Management',
+  'ezMaster Manuale Utente': 'Network Management',
+  'CloudSwitch 12 con Agregacion de Enlaces': 'Managed Switches',
+};
+
+// Product line badge CSS class mapping
+const productLineBadgeClass = {
+  'Indoor Wireless': 'badge-indoor-wireless',
+  'Outdoor Wireless': 'badge-outdoor-wireless',
+  'Managed Switches': 'badge-managed-switches',
+  'Accessories': 'badge-accessories',
+  'VPN / SD-WAN': 'badge-vpn-sdwan',
+  'Network Management': 'badge-network-mgmt',
+  'Home Wi-Fi': 'badge-home-wifi',
+  '未分類': 'badge-uncategorized',
+};
+
+function getProductLineBadge(modelName) {
+  const pl = productLineMap[modelName] || '未分類';
+  const cls = productLineBadgeClass[pl] || 'badge-uncategorized';
+  return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${cls}">${pl}</span>`;
+}
+
+function getProductLine(modelName) {
+  return productLineMap[modelName] || '未分類';
+}
+
+// All models: [name, slug_or_null, en, de, fr, it, es, note]
+// en/de/fr/it/es: 1=exists, 0=missing
+const allModels = [
+  // Models in ALL 5 languages
+  ['1U Data Center Server', '1u-data-center-server', 1,1,1,1,1, ''],
+  ['2U Data Center Server', '2u-data-center-server', 1,1,1,1,1, ''],
+  ['AI NVS 4Bay Tower', 'ai-nvs-4bay-tower', 1,1,1,1,1, ''],
+  ['Broadband Outdoor Access Point', 'broadband-outdoor-access-point', 1,1,1,1,1, ''],
+  ['Broadband Outdoor CPE', 'broadband-outdoor-cpe', 1,1,1,1,1, ''],
+  ['Cam5MP Bullet IP66', 'cam5mp-bullet-ip66', 1,1,1,1,1, ''],
+  ['Cam5MP Dome IP67', 'cam5mp-dome-ip67', 1,1,1,1,1, ''],
+  ['Cam8MP Dome IP67', 'cam8mp-dome-ip67', 1,1,1,1,1, ''],
+  ['Cam8MP Dome IP67 NS', 'cam8mp-dome-ip67-ns', 1,1,1,1,1, ''],
+  ['Cloud 7 2x2 Wallplate', 'cloud-7-2x2-wallplate', 1,1,1,1,1, ''],
+  ['Cloud5 2x2', 'ecw120', 1,1,1,1,1, ''],
+  ['Cloud5 2x2 Outdoor', 'ecw160', 1,1,1,1,1, ''],
+  ['Cloud5 2x2 Wallplate', 'ecw115', 1,1,1,1,1, ''],
+  ['Cloud5 4x4', 'cloud5-4x4', 1,1,1,1,1, ''],
+  ['Cloud6 2x2', 'ecw220', 1,1,1,1,1, ''],
+  ['Cloud6 2x2 Lite', 'cloud6-22-lite', 1,1,1,1,1, ''],
+  ['Cloud6 2x2 Outdoor', 'ecw260', 1,1,1,1,1, ''],
+  ['Cloud6 2x2 S', 'ecw220s', 1,1,1,1,1, ''],
+  ['Cloud6 2x2 Wallplate', 'ecw215', 1,1,1,1,1, ''],
+  ['Cloud6 4x4', 'ecw230', 1,1,1,1,1, ''],
+  ['Cloud6 4x4 Lite', 'cloud6-44-lite', 1,1,1,1,1, ''],
+  ['Cloud6 4x4 Outdoor', 'ecw270', 1,1,1,1,1, ''],
+  ['Cloud6 4x4 S', 'ecw230s', 1,1,1,1,1, ''],
+  ['Cloud6E 4x4x4', 'ecw336', 1,1,1,1,1, ''],
+  ['Cloud7 2x2', 'cloud7-2x2', 1,1,1,1,1, ''],
+  ['Cloud7 2x2x2', 'cloud7-2x2x2', 1,1,1,1,1, ''],
+  ['Cloud7 2x3x3 Lite', 'cloud7-2x3x3-lite', 1,1,1,1,1, ''],
+  ['Cloud7 4x4x4', 'cloud7-4x4x4', 1,1,1,1,1, ''],
+  ['Cloud7 4x4x4 S', 'cloud7-4x4x4-s', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 24', 'products-network-switches-ecs1528t', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 24 Full PoE', 'ecs1528p', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 24 PoE', 'ecs1528', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 48', 'products-network-switches-ecs1552', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 48 Full PoE', 'ecs1552p', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 48 PoE', 'ecs1552p-2', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 8 Full PoE', 'ecs1112fp', 1,1,1,1,1, ''],
+  ['CloudSwitch L2Plus 8 PoE', 'ecs1008p', 1,1,1,1,1, ''],
+  ['CloudSwitch MGLite 5', 'cloudswitch-mglite-5', 1,1,1,1,1, ''],
+  ['CloudSwitch MGLite 8', 'cloudswitch-mglite-8', 1,1,1,1,1, ''],
+  ['CloudSwitch MGPlus 24 Full PoE', 'products-network-switches-ecs2528fp', 1,1,1,1,1, ''],
+  ['CloudSwitch MGPlus 24 Full PoE 6 SFP+', 'cloudswitch-mgplus-24-full-poe-6-sfp', 1,1,1,1,1, ''],
+  ['CloudSwitch MGPlus 48 Full PoE', 'products-network-switches-ecs2552fp', 1,1,1,1,1, ''],
+  ['CloudSwitch MGPlus 8', 'products-network-switches-ecs2512', 1,1,1,1,1, ''],
+  ['CloudSwitch MGPlus 8 Full PoE', 'ecs2512fp', 1,1,1,1,1, ''],
+  ['CloudSwitch Aggregate 8XG', 'products-network-switches-ecs5512', 1,1,1,1,1, ''],
+  ['CloudSwitch Aggregate 8XG Full PoE', 'products-network-switches-ecs5512fp', 1,1,1,1,1, ''],
+  ['DC12V1A-SK', 'dc12v1a-sk', 1,1,0,1,1, ''],
+  ['DC12V2A-A', 'dc12v2a-a', 1,1,0,1,1, ''],
+  ['EAP1200H', 'eap1200h', 1,1,1,1,1, ''],
+  ['EAP1250', 'eap1250', 1,1,1,1,1, ''],
+  ['EAP1300', 'eap-1300', 1,1,1,1,1, ''],
+  ['EAP1300EXT', 'eap1300ext-2', 1,1,1,1,1, ''],
+  ['EAP1750H', 'eap1750h', 1,1,1,1,1, ''],
+  ['EAP2200', 'new-product-5', 1,1,0,1,1, ''],
+  ['EAP350', 'eap350', 1,1,1,1,1, ''],
+  ['ECB1200', 'ecb1200', 1,1,1,1,1, ''],
+  ['ECB1750', 'ecb1750', 1,1,1,1,1, ''],
+  ['ECS1528', 'products-network-switches-ecs1528', 1,1,1,1,1, ''],
+  ['EMD1', 'new-product', 1,1,1,1,1, ''],
+  ['EMR3000', 'engenius-mesh-router', 1,1,1,1,1, ''],
+  ['EMR3500', 'emr5000-2', 1,1,0,1,1, ''],
+  ['EMR5000', 'emr5000', 1,1,1,1,1, ''],
+  ['ENH1350EXT', 'enh1350ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENH1750EXT', 'enh1750ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENH202', 'enh202-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENH220EXT', 'enh220ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENH500', 'enh500-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENH710EXT', 'enh710ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS1750', 'ens1750-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS202', 'ens202-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS202EXT', 'ens202ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS500', 'ens500-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS500-AC', 'ens500-ac', 1,1,0,1,1, ''],
+  ['ENS500EXT', 'ens500ext-outdoor-access-point', 1,1,1,1,1, ''],
+  ['ENS500EXT-AC', 'ens500ext-ac-outdoor-access-point', 1,1,0,1,1, ''],
+  ['ENS620EXT', 'ens620ext-outdoor-access-point', 1,1,0,1,1, ''],
+  ['EnStation2', 'enstation2-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EnStation5', 'enstation5-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EnStation5-AC', 'enstation5-ac', 1,1,0,1,1, ''],
+  ['EnStationAC', 'enstationac-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EPA2406FP', 'epa2406fp', 1,1,1,1,1, ''],
+  ['EPA2406GP', 'epa2406gp', 1,1,1,1,1, ''],
+  ['EPA2406GR', 'epa2406gr', 1,1,1,1,1, ''],
+  ['EPA2410GP', 'epa2410gp', 1,1,1,1,1, ''],
+  ['EPA5006GAT', 'products-switches-accessories-epa5006gat', 1,1,1,1,1, ''],
+  ['EPA5006GP', 'epa5006gp-2', 1,1,1,1,1, ''],
+  ['EPA5006GR', 'epa5006gr', 1,1,1,1,1, ''],
+  ['EPA5006HAT', 'products-wireless-accessories-epa5006hat', 1,1,1,1,1, ''],
+  ['EPA5012GP', 'epa5012gp', 1,1,1,1,1, ''],
+  ['EPA5060GBT', 'epa5060gbt', 1,1,1,1,1, ''],
+  ['EPA5060HBT', 'epa5060hbt', 1,1,1,1,1, ''],
+  ['EPA5060XBT', 'epa5060xbt', 1,1,1,1,1, ''],
+  ['EPA5090GBT', 'epa5090gbt', 1,1,1,1,1, ''],
+  ['EPA5090HBT', 'epa5090hbt', 1,1,1,1,1, ''],
+  ['EPA5090XBT', 'epa5090xbt', 1,1,1,1,1, ''],
+  ['EPD-4824', 'epd-4824', 1,1,1,1,1, ''],
+  ['ESA-7500', 'esa-7500', 1,1,1,1,1, ''],
+  ['ESA-7600G', 'esa-7600g', 1,1,1,1,1, ''],
+  ['EUB1200AC', 'eub1200ac', 1,1,1,1,1, ''],
+  ['EWS1025CAM', 'ews1025cam', 1,1,1,1,1, ''],
+  ['EWS1200-28T', 'ews1200-28t', 1,1,1,1,1, ''],
+  ['EWS1200-28TFP', 'ews1200-28tfp', 1,1,1,1,1, ''],
+  ['EWS1200-52T', 'ews1200d-52t', 1,1,1,1,1, ''],
+  ['EWS1200D-10T', 'ews1200d-10t', 1,1,1,1,1, ''],
+  ['EWS2908P', 'ews2910p-2', 1,1,1,1,1, ''],
+  ['EWS2910P', 'ews2910p', 1,1,1,1,1, ''],
+  ['EWS300AP', 'ews300ap', 1,1,1,1,1, ''],
+  ['EWS310AP', 'ews310ap', 1,1,1,1,1, ''],
+  ['EWS330AP', 'ews330ap', 1,1,1,1,1, ''],
+  ['EWS350AP', 'ews350ap', 1,1,1,1,1, ''],
+  ['EWS355AP', 'ews355ap', 1,1,1,1,1, ''],
+  ['EWS357AP', 'ews357ap', 1,1,1,1,1, ''],
+  ['EWS360AP', '__trashed', 1,1,1,1,1, ''],
+  ['EWS370AP', 'ews370ap', 1,1,1,1,1, ''],
+  ['EWS371AP', 'ews371ap', 1,1,1,1,1, ''],
+  ['EWS377AP', 'ews377ap', 1,1,1,1,1, ''],
+  ['EWS385AP', 'ews385ap', 1,1,1,1,1, ''],
+  ['EWS500AP', 'ews500ap', 1,1,1,1,1, ''],
+  ['EWS550AP', 'ews550ap-indoor-access-point', 1,1,1,1,1, ''],
+  ['EWS5912FP', 'ews5912fp', 1,1,1,1,1, ''],
+  ['EWS660AP', 'ews660ap-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EWS7926EFP', 'ews7926efp', 1,1,0,1,1, ''],
+  ['EWS7928FP', 'ews7928fp', 1,1,1,1,1, ''],
+  ['EWS7928P', 'ews7928p', 1,1,0,1,1, ''],
+  ['EWS7952FP', 'ews7952fp', 1,1,1,1,1, ''],
+  ['EWS7952P', 'ews7952p', 1,1,0,1,1, ''],
+  ['EWS850AP', 'ews850ap', 1,1,1,1,1, ''],
+  ['EWS860AP', 'ews860ap-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EWS870AP', 'ews870ap-outdoor-access-point', 1,1,1,1,1, ''],
+  ['EWS871AP', 'ews871ap-outdoor-access-point', 1,1,1,1,1, ''],
+  ['Fit6 2x2', 'fit6-2x2', 1,1,1,1,1, ''],
+  ['Fit6 2x2 Lite', 'fit6-2x2-lite', 1,1,1,1,1, ''],
+  ['Fit6 2x2 Outdoor', 'products-wireless-outdoor-access-points-ews850-fit', 1,1,1,1,1, ''],
+  ['Fit6 4x4', 'fit6-4x4', 1,1,1,1,1, ''],
+  ['Fit6 4x4 Lite', 'ews276-fit', 1,1,1,1,1, ''],
+  ['FitController100', 'fitcontroller100', 1,1,1,1,1, ''],
+  ['FitGateway6 4G 1SFP', 'fitgateway6-4g-1sfp', 1,1,1,1,1, ''],
+  ['FitSwitch 24 Full PoE', 'products-network-switches-ews7928fp-fit', 1,1,1,1,1, ''],
+  ['FitSwitch 24 PoE', 'products-network-switches-ews7928p-fit', 1,1,1,1,1, ''],
+  ['FitSwitch 48 Full PoE', 'products-network-switches-ews7952fp-fit', 1,1,1,1,1, ''],
+  ['FitSwitch 48 PoE', 'products-network-switches-ews7952p-fit', 1,1,1,1,1, ''],
+  ['FitSwitch 8 Full PoE', 'fitswitch-8-full-poe', 1,1,1,1,1, ''],
+  ['FitSwitch 8 PoE', 'products-network-switches-ews2910fp-fit', 1,1,1,1,1, ''],
+  ['Gateway5 4mG', 'products-security-gateways-esg510', 1,1,1,1,1, ''],
+  ['Gateway6 4mG', 'gateway6-4mg', 1,1,1,1,1, ''],
+  ['Gateway6 8mG 2SFP+', 'gateway6-8mg-2sfp', 1,1,1,1,1, ''],
+  ['PDU 12P 10A 200-240V', 'pdu-12p-10a-200-240v', 1,1,1,1,1, ''],
+  ['PDU 6P 10A 200-240V', 'pdu-6p-10a-200-240v', 1,1,1,1,1, ''],
+  ['SA2216', 'sa2216', 1,1,1,1,1, ''],
+  ['SA2312', 'sa2312', 1,1,1,1,1, ''],
+  ['SA5219', 'sa5219', 1,1,1,1,1, ''],
+  ['SA5315', 'sa5315', 1,1,1,1,1, ''],
+  ['SFP Plus Series', 'sfpplus-series', 1,1,1,1,1, ''],
+  ['SFP Series', 'sfp-series', 1,1,1,1,1, ''],
+  ['SmartNIC', 'smartnic', 1,1,1,1,1, ''],
+  ['Station6 2x2 Dish', 'enstation6', 1,1,1,1,1, ''],
+  ['Station6 2x2 Patch', 'enh500-ax', 1,1,1,1,1, ''],
+  ['Switch Extender 3GE 4 PoE 1SFP', 'switch-extender-3ge-4-poe-1sfp', 1,1,1,1,1, ''],
+  ['Switch Extender 4 PoE', 'switch-extender-ext1105p', 1,1,1,1,1, ''],
+  ['Switch Extender 4GE 1SFP', 'ext1106', 1,1,1,1,1, ''],
+
+  // CloudSwitch Aggregate 12 — in EN, DE, FR, IT but NOT ES (ES has it under different name)
+  ['CloudSwitch Aggregate 12', 'products-network-switches-ecs5512f', 1,1,1,1,0, ''],
+
+  // EN + DE + IT + ES, missing FR only
+  ['ezMaster', 'ezmaster-2', 1,1,0,1,1, ''],
+  ['Locator for EnGenius access points', 'locator', 1,1,0,1,1, ''],
+  ['SkyKey I', 'skykey-i', 1,1,0,1,1, ''],
+
+  // EN + DE + IT, missing FR and ES
+  ['Gateway3 4G 1SFP', 'gateway3-4g', 1,1,0,1,0, ''],
+  ['Switch 5', 'es105', 1,1,0,1,0, ''],
+  ['Switch 8', 'es108', 1,1,0,1,0, ''],
+
+  // NOT in EN — gray background models
+  ['ECS1152P', null, 0,1,0,1,1, '無 EN 頁面 (DE/IT/ES/RU)'],
+  ['ECW110', null, 0,1,0,1,1, '無 EN 頁面 (DE/IT/ES/RU)'],
+  ['EWS650AP', null, 0,1,0,1,1, '無 EN 頁面 (DE/IT/ES)'],
+  ['EWS510AP', null, 0,0,0,1,0, '僅 IT 獨有'],
+  ['ezMaster Benutzerhandbuch', null, 0,1,0,0,0, '分類錯誤 — DE 使用手冊，非產品'],
+  ['ezMaster Manuale Utente', null, 0,0,0,1,0, '分類錯誤 — IT 使用手冊，非產品'],
+  ['CloudSwitch 12 con Agregacion de Enlaces', null, 0,0,0,0,1, 'ES 翻譯名稱 — 為 CloudSwitch Aggregate 12 的西文版'],
+];
+
+// Use allModels directly (no duplicates)
+const uniqueModels = allModels;
+
+// ========== RENDER ==========
+const checkIcon = '<svg class="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>';
+const xIcon = '<svg class="w-5 h-5 text-red-400 mx-auto" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
+
+let currentFilter = 'all';
+let currentLang = 'all';
+let currentProductLine = 'all';
+let sortCol = -1;
+let sortDir = 'asc';
+
+function renderTable() {
+  const tbody = document.getElementById('matrixBody');
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  let filtered = uniqueModels.filter(m => {
+    // search filter
+    if (search && !m[0].toLowerCase().includes(search)) return false;
+
+    // status filter
+    const hasMissing = (m[2]+m[3]+m[4]+m[5]+m[6]) < 5;
+    if (currentFilter === 'missing' && !hasMissing) return false;
+    if (currentFilter === 'complete' && hasMissing) return false;
+
+    // language filter
+    if (currentLang === 'en' && m[2] !== 0) return false;
+    if (currentLang === 'de' && m[3] !== 0) return false;
+    if (currentLang === 'fr' && m[4] !== 0) return false;
+    if (currentLang === 'it' && m[5] !== 0) return false;
+    if (currentLang === 'es' && m[6] !== 0) return false;
+
+    // product line filter
+    if (currentProductLine !== 'all') {
+      const pl = getProductLine(m[0]);
+      if (pl !== currentProductLine) return false;
+    }
+
+    return true;
+  });
+
+  // Sort
+  if (sortCol >= 0) {
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (sortCol === 0) {
+        va = a[0].toLowerCase();
+        vb = b[0].toLowerCase();
+        return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      } else if (sortCol === 1) {
+        // Sort by product line name
+        va = getProductLine(a[0]).toLowerCase();
+        vb = getProductLine(b[0]).toLowerCase();
+        return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      } else {
+        // columns 2-6 map to data indices 2-6
+        va = a[sortCol];
+        vb = b[sortCol];
+        return sortDir === 'asc' ? va - vb : vb - va;
+      }
+    });
+  }
+
+  let html = '';
+  filtered.forEach(m => {
+    const [name, slug, en, de, fr, it, es, note] = m;
+    const hasMissing = (en+de+fr+it+es) < 5;
+    const noEN = en === 0;
+
+    let rowClass = '';
+    if (noEN) {
+      rowClass = 'bg-gray-100/80';
+    } else if (hasMissing) {
+      rowClass = 'bg-amber-50/60';
+    }
+
+    const urlCell = slug
+      ? `<a href="${BASE_URL}${slug}" target="_blank" class="text-accent hover:underline font-mono text-xs break-all">${slug}</a>`
+      : '<span class="text-gray-400 text-xs">N/A</span>';
+
+    const noteHtml = note ? `<div class="text-[10px] text-gray-400 mt-0.5">${note}</div>` : '';
+
+    const plBadge = getProductLineBadge(name);
+
+    html += `<tr class="${rowClass} hover:bg-blue-50/40 transition-colors" data-name="${name.toLowerCase()}" data-en="${en}" data-de="${de}" data-fr="${fr}" data-it="${it}" data-es="${es}" data-pl="${getProductLine(name)}">
+      <td class="px-4 py-2.5 font-medium text-gray-900 text-sm">${name}${noteHtml}</td>
+      <td class="px-4 py-2.5">${plBadge}</td>
+      <td class="px-4 py-2.5">${urlCell}</td>
+      <td class="px-3 py-2.5 text-center">${en ? checkIcon : xIcon}</td>
+      <td class="px-3 py-2.5 text-center">${de ? checkIcon : xIcon}</td>
+      <td class="px-3 py-2.5 text-center">${fr ? checkIcon : xIcon}</td>
+      <td class="px-3 py-2.5 text-center">${it ? checkIcon : xIcon}</td>
+      <td class="px-3 py-2.5 text-center">${es ? checkIcon : xIcon}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+  document.getElementById('rowCount').textContent = `${filtered.length} / ${uniqueModels.length} 筆`;
+}
+
+function setFilter(type) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
+    btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200', 'hover:bg-gray-50');
+  });
+  const activeBtn = document.getElementById('btn-' + type);
+  activeBtn.classList.add('active', 'bg-primary', 'text-white', 'border-primary');
+  activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200', 'hover:bg-gray-50');
+  renderTable();
+}
+
+function applyFilters() {
+  currentLang = document.getElementById('langFilter').value;
+  currentProductLine = document.getElementById('productLineFilter').value;
+  renderTable();
+}
+
+function sortTable(col) {
+  const headers = document.querySelectorAll('.sort-indicator');
+  // Map visual column index to data column index
+  // Visual: 0=name, 1=product line, 3=EN, 4=DE, 5=FR, 6=IT, 7=ES
+  // Data:   0=name, 1=product line, 2=EN, 3=DE, 4=FR, 5=IT, 6=ES
+  const colMap = [0, 1, null, 2, 3, 4, 5, 6];
+  const dataCol = colMap[col];
+
+  if (dataCol === null) return;
+
+  if (sortCol === dataCol) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortCol = dataCol;
+    sortDir = 'asc';
+  }
+
+  headers.forEach((h) => {
+    h.classList.remove('asc', 'desc');
+  });
+
+  // Find the clicked header among sort-indicators
+  // sort-indicators are on columns 0, 1, 3, 4, 5, 6, 7
+  const sortIndicatorCols = [0, 1, 3, 4, 5, 6, 7];
+  const headerIdx = sortIndicatorCols.indexOf(col);
+  if (headerIdx >= 0) {
+    headers[headerIdx].classList.add(sortDir);
+  }
+
+  renderTable();
+}
+
+// Init
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('productLineFilter').addEventListener('change', applyFilters);
+setFilter('all');
+renderTable();
+</script>
+
+</body>
+</html>
