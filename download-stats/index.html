@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnGenius 檔案下載追蹤統計報告</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2B579A',
+            accent: '#3B82F6',
+            apac: '#3B82F6',
+            eu: '#10B981',
+            jp: '#EF4444',
+            tw: '#F59E0B',
+            ind: '#8B5CF6',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-feature-settings: "cv01", "cv02"; }
+    .tabnum { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+
+    html { scroll-behavior: smooth; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .print-break { page-break-before: always; }
+      body { font-size: 11px; }
+      .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+      header { position: static !important; }
+      nav { display: none !important; }
+    }
+
+    /* Zebra striping */
+    .zebra tbody tr:nth-child(even) { background-color: #F8FAFC; }
+    .zebra tbody tr:hover { background-color: #EFF6FF; }
+
+    /* Sticky table header */
+    .sticky-thead thead th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    /* Bar chart hover */
+    .bar-segment:hover .bar-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .bar-tooltip {
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.15s ease;
+    }
+
+    /* Horizontal bar animation */
+    .h-bar {
+      transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Section fade in */
+    section {
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Nav active state */
+    .nav-link {
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-link:hover {
+      color: #2B579A;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 no-print:shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <span class="font-semibold text-primary text-sm sm:text-base">EnGenius Download Stats</span>
+        </div>
+        <!-- Section Navigation -->
+        <nav class="hidden md:flex items-center gap-1 text-sm no-print">
+          <a href="#overview" class="nav-link px-3 py-1.5 rounded-md text-gray-500 hover:bg-gray-100">總覽</a>
+          <a href="#top-downloads" class="nav-link px-3 py-1.5 rounded-md text-gray-500 hover:bg-gray-100">熱門檔案</a>
+          <a href="#referrers" class="nav-link px-3 py-1.5 rounded-md text-gray-500 hover:bg-gray-100">來源頁面</a>
+          <a href="#insights" class="nav-link px-3 py-1.5 rounded-md text-gray-500 hover:bg-gray-100">觀察建議</a>
+        </nav>
+        <!-- Print Button -->
+        <button onclick="window.print()" class="no-print inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          列印
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- Title Section -->
+    <div class="text-center py-6">
+      <h1 class="text-3xl sm:text-4xl font-bold text-primary tracking-tight">檔案下載追蹤統計報告</h1>
+      <p class="mt-2 text-lg text-gray-500">EnGenius 全球五站 &mdash; Simple Download Monitor</p>
+      <p class="mt-1 text-sm text-gray-400 tabnum">資料截止：2026-04-08</p>
+    </div>
+
+    <!-- ==================== Section 1: Overview ==================== -->
+    <section id="overview">
+      <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+        <span class="w-1 h-7 bg-primary rounded-full inline-block"></span>
+        總覽 Dashboard
+      </h2>
+
+      <!-- 1-1: Key Metrics Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <!-- Total Downloads -->
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <p class="text-sm font-medium text-gray-500 mb-1">總下載次數</p>
+          <p class="text-3xl font-bold text-primary tabnum">387</p>
+          <p class="text-xs text-gray-400 mt-1">所有站點合計</p>
+        </div>
+        <!-- PDF Documents -->
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <p class="text-sm font-medium text-gray-500 mb-1">PDF 文件</p>
+          <p class="text-3xl font-bold text-accent tabnum">369</p>
+          <p class="text-xs text-gray-400 mt-1 tabnum">佔比 95.3%</p>
+        </div>
+        <!-- EPC Tool -->
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <p class="text-sm font-medium text-gray-500 mb-1">EPC 工具</p>
+          <p class="text-3xl font-bold text-gray-700 tabnum">18</p>
+          <p class="text-xs text-gray-400 mt-1 tabnum">佔比 4.7%</p>
+        </div>
+        <!-- Tracking Period -->
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <p class="text-sm font-medium text-gray-500 mb-1">追蹤期間</p>
+          <p class="text-lg font-bold text-gray-700 tabnum leading-tight">2026/3/30<br>- 4/8</p>
+          <p class="text-xs text-gray-400 mt-1 tabnum">共 10 天</p>
+        </div>
+      </div>
+
+      <!-- 1-2: Downloads by Region -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-10">
+        <h3 class="text-lg font-semibold text-gray-800 mb-5">各站下載分布</h3>
+
+        <!-- Horizontal Bar Chart -->
+        <div class="space-y-4 mb-8">
+          <!-- APAC -->
+          <div class="flex items-center gap-3">
+            <span class="w-12 text-sm font-semibold text-apac text-right shrink-0">APAC</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-8 relative overflow-hidden">
+              <div class="h-bar bg-apac h-full rounded-full flex items-center justify-end pr-3" style="width: 100%">
+                <span class="text-white text-xs font-semibold tabnum">190</span>
+              </div>
+            </div>
+          </div>
+          <!-- EU -->
+          <div class="flex items-center gap-3">
+            <span class="w-12 text-sm font-semibold text-eu text-right shrink-0">EU</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-8 relative overflow-hidden">
+              <div class="h-bar bg-eu h-full rounded-full flex items-center justify-end pr-3" style="width: 43.7%">
+                <span class="text-white text-xs font-semibold tabnum">83</span>
+              </div>
+            </div>
+          </div>
+          <!-- JP -->
+          <div class="flex items-center gap-3">
+            <span class="w-12 text-sm font-semibold text-jp text-right shrink-0">JP</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-8 relative overflow-hidden">
+              <div class="h-bar bg-jp h-full rounded-full flex items-center justify-end pr-3" style="width: 30.5%">
+                <span class="text-white text-xs font-semibold tabnum">58</span>
+              </div>
+            </div>
+          </div>
+          <!-- TW -->
+          <div class="flex items-center gap-3">
+            <span class="w-12 text-sm font-semibold text-tw text-right shrink-0">TW</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-8 relative overflow-hidden">
+              <div class="h-bar bg-tw h-full rounded-full flex items-center justify-end pr-3" style="width: 23.7%">
+                <span class="text-white text-xs font-semibold tabnum">45</span>
+              </div>
+            </div>
+          </div>
+          <!-- IN -->
+          <div class="flex items-center gap-3">
+            <span class="w-12 text-sm font-semibold text-ind text-right shrink-0">IN</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-8 relative overflow-hidden">
+              <div class="h-bar bg-ind h-full rounded-full flex items-center justify-end pr-3" style="width: 5.8%">
+                <span class="text-white text-xs font-semibold tabnum">11</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Region Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra sticky-thead">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="text-left px-4 py-3 font-semibold text-gray-600">站點</th>
+                <th class="text-right px-4 py-3 font-semibold text-gray-600">總下載</th>
+                <th class="text-right px-4 py-3 font-semibold text-gray-600">PDF 文件</th>
+                <th class="text-right px-4 py-3 font-semibold text-gray-600">EPC 工具</th>
+                <th class="text-center px-4 py-3 font-semibold text-gray-600">追蹤起始</th>
+                <th class="text-right px-4 py-3 font-semibold text-gray-600">日均下載</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100">
+                <td class="px-4 py-3 font-semibold text-apac">APAC</td>
+                <td class="px-4 py-3 text-right tabnum font-semibold">190</td>
+                <td class="px-4 py-3 text-right tabnum">185</td>
+                <td class="px-4 py-3 text-right tabnum">5</td>
+                <td class="px-4 py-3 text-center tabnum">3/31</td>
+                <td class="px-4 py-3 text-right tabnum">~23.8</td>
+              </tr>
+              <tr class="border-b border-gray-100">
+                <td class="px-4 py-3 font-semibold text-eu">EU</td>
+                <td class="px-4 py-3 text-right tabnum font-semibold">83</td>
+                <td class="px-4 py-3 text-right tabnum">78</td>
+                <td class="px-4 py-3 text-right tabnum">5</td>
+                <td class="px-4 py-3 text-center tabnum">4/2</td>
+                <td class="px-4 py-3 text-right tabnum">~11.9</td>
+              </tr>
+              <tr class="border-b border-gray-100">
+                <td class="px-4 py-3 font-semibold text-jp">JP</td>
+                <td class="px-4 py-3 text-right tabnum font-semibold">58</td>
+                <td class="px-4 py-3 text-right tabnum">55</td>
+                <td class="px-4 py-3 text-right tabnum">3</td>
+                <td class="px-4 py-3 text-center tabnum">4/2</td>
+                <td class="px-4 py-3 text-right tabnum">~8.3</td>
+              </tr>
+              <tr class="border-b border-gray-100">
+                <td class="px-4 py-3 font-semibold text-tw">TW</td>
+                <td class="px-4 py-3 text-right tabnum font-semibold">45</td>
+                <td class="px-4 py-3 text-right tabnum">42</td>
+                <td class="px-4 py-3 text-right tabnum">3</td>
+                <td class="px-4 py-3 text-center tabnum">3/30</td>
+                <td class="px-4 py-3 text-right tabnum">~5.0</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-ind">IN</td>
+                <td class="px-4 py-3 text-right tabnum font-semibold">11</td>
+                <td class="px-4 py-3 text-right tabnum">9</td>
+                <td class="px-4 py-3 text-right tabnum">2</td>
+                <td class="px-4 py-3 text-center tabnum">4/2</td>
+                <td class="px-4 py-3 text-right tabnum">~1.6</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-gray-50 border-t-2 border-gray-200 font-semibold">
+                <td class="px-4 py-3">合計</td>
+                <td class="px-4 py-3 text-right tabnum">387</td>
+                <td class="px-4 py-3 text-right tabnum">369</td>
+                <td class="px-4 py-3 text-right tabnum">18</td>
+                <td class="px-4 py-3 text-center tabnum">3/30</td>
+                <td class="px-4 py-3 text-right tabnum">~38.7</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- 1-3: Daily Trend -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-5">每日下載趨勢（全站合計）</h3>
+
+        <!-- Vertical Bar Chart -->
+        <div class="flex items-end justify-between gap-2 sm:gap-3 h-64 px-2">
+          <!-- 3/30 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">5 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 6.02%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">3/30</span>
+          </div>
+          <!-- 3/31 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">21 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 25.3%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">3/31</span>
+          </div>
+          <!-- 4/1 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">39 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 46.99%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/1</span>
+          </div>
+          <!-- 4/2 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">44 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 53.01%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/2</span>
+          </div>
+          <!-- 4/3 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">63 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 75.9%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/3</span>
+          </div>
+          <!-- 4/4 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">18 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 21.69%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/4</span>
+          </div>
+          <!-- 4/5 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">23 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 27.71%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/5</span>
+          </div>
+          <!-- 4/6 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">51 次</div>
+            <div class="w-full bg-accent/80 rounded-t-md transition-all hover:bg-accent" style="height: 61.45%"></div>
+            <span class="mt-2 text-xs text-gray-500 tabnum">4/6</span>
+          </div>
+          <!-- 4/7 (PEAK) -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-primary text-white text-xs rounded px-2 py-1 tabnum font-semibold whitespace-nowrap z-10">83 次 (peak)</div>
+            <div class="w-full bg-primary rounded-t-md ring-2 ring-primary/30 transition-all hover:bg-primary/90" style="height: 100%"></div>
+            <span class="mt-2 text-xs font-semibold text-primary tabnum">4/7</span>
+          </div>
+          <!-- 4/8 -->
+          <div class="flex-1 flex flex-col items-center justify-end h-full bar-segment relative group">
+            <div class="bar-tooltip absolute -top-8 bg-gray-800 text-white text-xs rounded px-2 py-1 tabnum whitespace-nowrap z-10">36 次 (partial)</div>
+            <div class="w-full bg-accent/50 rounded-t-md border-2 border-dashed border-accent/60 transition-all hover:bg-accent/60" style="height: 43.37%"></div>
+            <span class="mt-2 text-xs text-gray-400 tabnum">4/8*</span>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-3 text-right">* 4/8 為當日部分資料</p>
+      </div>
+    </section>
+
+    <!-- ==================== Section 2: Top Downloads by Region ==================== -->
+    <section id="top-downloads" class="print-break">
+      <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+        <span class="w-1 h-7 bg-primary rounded-full inline-block"></span>
+        各站熱門下載檔案
+      </h2>
+
+      <!-- APAC -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-apac"></span>
+          <h3 class="text-lg font-semibold text-gray-800">APAC</h3>
+          <span class="text-sm text-gray-400 tabnum">185 PDF downloads</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-blue-50/60 border-b border-blue-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">檔案名稱</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">文件類型</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-APs_v5.8.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">12</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Fit-Management_v16.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">11</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-Management_v1.6.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">9</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud-Series-Switch_v3.2.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">8</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ECS1528FP_v1.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5 font-mono text-xs">EnGenius-Data-Center-Servers_v1.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">7</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ECS1528T_v1.4.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">8</td><td class="px-3 py-2.5 font-mono text-xs">QSG_EWS3XX_11AX_PoE.pdf</td><td class="px-3 py-2.5 text-gray-600">Quick Start Guide</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">9</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ECC100_v1.1.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">10</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_AI-Surveillance-Solution_v1.1.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EU -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-eu"></span>
+          <h3 class="text-lg font-semibold text-gray-800">EU</h3>
+          <span class="text-sm text-gray-400 tabnum">78 PDF downloads</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-emerald-50/60 border-b border-emerald-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">檔案名稱</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">文件類型</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-APs_v6.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">7</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_EnGenius-Cloud-Solution_v4.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud-Series-Switch_v3.2.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5 font-mono text-xs">EPA_PoE_Adapter_Datasheet.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5 font-mono text-xs">DS_PoE-Adapter-Series_v1.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-Management_v1.6.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">7</td><td class="px-3 py-2.5 font-mono text-xs">ENH202-ENH500-QIG.pdf</td><td class="px-3 py-2.5 text-gray-600">Quick Start Guide</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">8</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-VPN-Firewall_v2.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- JP -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-jp"></span>
+          <h3 class="text-lg font-semibold text-gray-800">JP</h3>
+          <span class="text-sm text-gray-400 tabnum">55 PDF downloads</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-red-50/60 border-b border-red-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">檔案名稱</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">文件類型</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-APs_JP_v1.8.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (JP)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">14</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_EnGenius-Cloud-Solution_JP_v2.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure (JP)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">13</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ECW515_v1.0_JP.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (JP)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ECS5512FP_JP_v1.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (JP)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_AI-Surveillance-Solution_v1.1.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_EnGenius-Cloud-Solution_JP_v1.7.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure (JP)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TW -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 print-break">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-tw"></span>
+          <h3 class="text-lg font-semibold text-gray-800">TW</h3>
+          <span class="text-sm text-gray-400 tabnum">42 PDF downloads</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-amber-50/60 border-b border-amber-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">檔案名稱</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">文件類型</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_EnGenius-Cloud-Solution_v4.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure</td><td class="px-3 py-2.5 text-right tabnum font-semibold">9</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-Switch_ZH_v3.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (ZH)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">8</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5 font-mono text-xs">QIG_Cloud-outdoor_QIG.pdf</td><td class="px-3 py-2.5 text-gray-600">Quick Start Guide</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5 font-mono text-xs">Datasheet_Fit-Management_ZH_v1.1.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (ZH)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-AP_ZH_v6.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (ZH)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud-EnGenius-AI-Camera-Series_ZH_v1.4.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet (ZH)</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- IN -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-ind"></span>
+          <h3 class="text-lg font-semibold text-gray-800">IN</h3>
+          <span class="text-sm text-gray-400 tabnum">9 PDF downloads</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-purple-50/60 border-b border-purple-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">檔案名稱</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">文件類型</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Cloud-APs_v6.0.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">2</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5 font-mono text-xs">Brochure_EnGenius-Cloud-Solution_v4.3.pdf</td><td class="px-3 py-2.5 text-gray-600">Brochure</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-FIT-Series-APs_v1.9.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud_ESG620_v1.6.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5 font-mono text-xs">DS_Cloud-Series-Switch_v3.2.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5 font-mono text-xs">DS_EnGenius-Fit-Management_v16.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">7</td><td class="px-3 py-2.5 font-mono text-xs">In-RMA-Policy.pdf</td><td class="px-3 py-2.5 text-gray-600">Policy</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">8</td><td class="px-3 py-2.5 font-mono text-xs">DS_Broadband-EOC-Series_v1.6.pdf</td><td class="px-3 py-2.5 text-gray-600">Datasheet</td><td class="px-3 py-2.5 text-right tabnum font-semibold">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== Section 3: Top Referrer Pages ==================== -->
+    <section id="referrers" class="print-break">
+      <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+        <span class="w-1 h-7 bg-primary rounded-full inline-block"></span>
+        熱門下載來源頁面
+      </h2>
+
+      <!-- APAC Referrers -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-apac"></span>
+          <h3 class="text-lg font-semibold text-gray-800">APAC Top 10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-blue-50/60 border-b border-blue-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">來源頁面</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">產品</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/wireless/indoor-access-points/ews357ap/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/wireless/indoor-access-points/ews357ap/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">EWS357AP</td><td class="px-3 py-2.5 text-right tabnum font-semibold">9</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/wireless/indoor-access-points/ecw220/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/wireless/indoor-access-points/ecw220/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW220</td><td class="px-3 py-2.5 text-right tabnum font-semibold">7</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/network-switches/ecs1528fp/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/network-switches/ecs1528fp/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS1528FP</td><td class="px-3 py-2.5 text-right tabnum font-semibold">6</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/network-switches/ecs5512f/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/network-switches/ecs5512f/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS5512F</td><td class="px-3 py-2.5 text-right tabnum font-semibold">6</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/wireless/indoor-access-points/ecw510/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/wireless/indoor-access-points/ecw510/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW510</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/wireless/indoor-access-points/ews356-fit/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/wireless/indoor-access-points/ews356-fit/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">EWS356-FIT</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">7</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/network-switches/ecs1112fp/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/network-switches/ecs1112fp/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS1112FP</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">8</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/wireless/indoor-access-points/ecw210l/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/wireless/indoor-access-points/ecw210l/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW210L</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">9</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/dc-servers/eas2210/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/dc-servers/eas2210/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">EAS2210</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">10</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/apac/products/ai-camera/ecc100/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/apac/products/ai-camera/ecc100/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECC100</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- JP Referrers -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-jp"></span>
+          <h3 class="text-lg font-semibold text-gray-800">JP Top 10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-red-50/60 border-b border-red-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">來源頁面</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">產品</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw515/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw515/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW515</td><td class="px-3 py-2.5 text-right tabnum font-semibold">11</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw520/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw520/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW520</td><td class="px-3 py-2.5 text-right tabnum font-semibold">6</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw536/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw536/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW536</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/network-switches/ecs5512fp/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/network-switches/ecs5512fp/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS5512FP</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw510/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw510/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW510</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw201l-poe/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw201l-poe/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW201L-PoE</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">7</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/wireless/indoor-access-points/ecw526/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/wireless/indoor-access-points/ecw526/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW526</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">8</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/jp/products/ai-camera/ecc500/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/jp/products/ai-camera/ecc500/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECC500</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TW Referrers -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-tw"></span>
+          <h3 class="text-lg font-semibold text-gray-800">TW Top 10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-amber-50/60 border-b border-amber-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">來源頁面</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">產品</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/products/wireless/indoor-access-points/ecw515/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/products/wireless/indoor-access-points/ecw515/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW515</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/download-result?post_id=301436" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/download-result?post_id=301436</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/download-result?post_id=357280" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/download-result?post_id=357280</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/products/wireless/outdoor-access-points/ecw260/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/products/wireless/outdoor-access-points/ecw260/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECW260</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/products/network-switches/ecs5512fp/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/products/network-switches/ecs5512fp/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS5512FP</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">6</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/tw/products/network-switches/ecs5512f/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/tw/products/network-switches/ecs5512f/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ECS5512F</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EU Referrers -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-3 h-3 rounded-full bg-eu"></span>
+          <h3 class="text-lg font-semibold text-gray-800">EU Top 10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm zebra">
+            <thead>
+              <tr class="bg-emerald-50/60 border-b border-emerald-100">
+                <th class="text-center px-3 py-2.5 font-semibold text-gray-600 w-10">#</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">來源頁面</th>
+                <th class="text-left px-3 py-2.5 font-semibold text-gray-600">產品</th>
+                <th class="text-right px-3 py-2.5 font-semibold text-gray-600">下載次數</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">1</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/eu/download-result?post_id=5804" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/eu/download-result?post_id=5804</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">5</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">2</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/eu/products/sdwan-gateways/esg510/" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/eu/products/sdwan-gateways/esg510/</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">ESG510</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">3</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/eu/download-result?post_id=380331" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/eu/download-result?post_id=380331</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr class="border-b border-gray-100"><td class="px-3 py-2.5 text-center tabnum text-gray-400">4</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/eu/download-result?post_id=63598" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/eu/download-result?post_id=63598</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">4</td></tr>
+              <tr><td class="px-3 py-2.5 text-center tabnum text-gray-400">5</td><td class="px-3 py-2.5"><a href="https://www.engeniustech.com/eu/download-result?post_id=69106" target="_blank" class="text-accent hover:underline text-xs font-mono truncate block max-w-md">/eu/download-result?post_id=69106</a></td><td class="px-3 py-2.5 font-semibold text-gray-700">Download Page</td><td class="px-3 py-2.5 text-right tabnum font-semibold">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== Section 4: Insights ==================== -->
+    <section id="insights" class="print-break">
+      <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+        <span class="w-1 h-7 bg-primary rounded-full inline-block"></span>
+        觀察與建議
+      </h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+
+        <!-- Insight 1: APAC (blue) -->
+        <div class="rounded-xl border-l-4 border-blue-500 bg-blue-50/50 p-5">
+          <h4 class="font-semibold text-blue-800 mb-2">APAC 流量最大</h4>
+          <p class="text-sm text-blue-900/80 leading-relaxed">佔總下載量 49%，主要來自 Indoor AP 和 Switch 產品頁。建議優先確保 APAC 站的文件齊全與更新。</p>
+        </div>
+
+        <!-- Insight 2: JP (red) -->
+        <div class="rounded-xl border-l-4 border-red-500 bg-red-50/50 p-5">
+          <h4 class="font-semibold text-red-800 mb-2">JP 站集中在新款 AP</h4>
+          <p class="text-sm text-red-900/80 leading-relaxed">ECW515 單一產品佔 JP 站 20% 下載量，Cloud AP 日文版 datasheet 最受歡迎。JP 市場對新產品文件需求明確。</p>
+        </div>
+
+        <!-- Insight 3: Cloud AP (green) -->
+        <div class="rounded-xl border-l-4 border-emerald-500 bg-emerald-50/50 p-5">
+          <h4 class="font-semibold text-emerald-800 mb-2">Cloud AP Datasheet 是跨站最熱門文件</h4>
+          <p class="text-sm text-emerald-900/80 leading-relaxed">五站中有四站的 #1 下載都是 Cloud AP 系列的 datasheet，顯示這是最重要的銷售支援文件。</p>
+        </div>
+
+        <!-- Insight 4: IN (amber) -->
+        <div class="rounded-xl border-l-4 border-amber-500 bg-amber-50/50 p-5">
+          <h4 class="font-semibold text-amber-800 mb-2">IN 站流量偏低</h4>
+          <p class="text-sm text-amber-900/80 leading-relaxed">僅 11 次下載。可能原因：追蹤系統剛啟用、市場規模較小、或下載連結尚未全面替換。</p>
+        </div>
+
+        <!-- Insight 5: EPC (purple) -->
+        <div class="rounded-xl border-l-4 border-purple-500 bg-purple-50/50 p-5">
+          <h4 class="font-semibold text-purple-800 mb-2">EPC 工具下載偏少</h4>
+          <p class="text-sm text-purple-900/80 leading-relaxed">各站僅 2-5 次。建議確認所有站的 EPC 下載連結是否已替換為追蹤連結。</p>
+        </div>
+
+        <!-- Insight 6: S3 CDN (gray) -->
+        <div class="rounded-xl border-l-4 border-gray-400 bg-gray-100/60 p-5">
+          <h4 class="font-semibold text-gray-700 mb-2">PDF 下載缺少國家資料</h4>
+          <p class="text-sm text-gray-600 leading-relaxed">S3 CDN 來源的下載無法追蹤 visitor_country。僅 EPC 直接下載有國家資訊。如需國家維度分析，可考慮搭配 Google Analytics。</p>
+        </div>
+
+        <!-- Insight 7: EU Download Page (green) -->
+        <div class="rounded-xl border-l-4 border-emerald-500 bg-emerald-50/50 p-5 md:col-span-2">
+          <h4 class="font-semibold text-emerald-800 mb-2">EU 站多數來自 Download Page</h4>
+          <p class="text-sm text-emerald-900/80 leading-relaxed">EU 站的下載來源多為 /download-result?post_id=xxx 頁面，而非直接從產品頁下載，表示 EU 使用者習慣先到下載中心找文件。</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 bg-white mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="text-center text-sm text-gray-400 space-y-1">
+        <p class="tabnum">報告產生日期：2026-04-08</p>
+        <p>資料來源：EnGenius WordPress 五站（Simple Download Monitor）</p>
+        <p class="tabnum">追蹤期間：2026/03/30 - 2026/04/08</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
