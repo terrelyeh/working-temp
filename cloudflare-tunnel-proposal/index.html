@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI + WP-CLI Remote Management - Cloudflare Tunnel Proposal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2B579A',
+            accent: '#3B82F6',
+            'primary-dark': '#1E3F73',
+            'accent-light': '#EFF6FF',
+            'accent-border': '#BFDBFE',
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    /* Language toggle logic */
+    body.zh .lang-en { display: none !important; }
+    body.zh .lang-zh { display: inline; }
+    body.en .lang-zh { display: none !important; }
+    body.en .lang-en { display: inline; }
+
+    /* Block-level language elements */
+    body.zh .lang-en-block { display: none !important; }
+    body.zh .lang-zh-block { display: block; }
+    body.en .lang-zh-block { display: none !important; }
+    body.en .lang-en-block { display: block; }
+
+    /* Table row language elements */
+    body.zh .lang-en-row { display: none !important; }
+    body.zh .lang-zh-row { display: table-row; }
+    body.en .lang-zh-row { display: none !important; }
+    body.en .lang-en-row { display: table-row; }
+
+    /* Flex language elements */
+    body.zh .lang-en-flex { display: none !important; }
+    body.zh .lang-zh-flex { display: flex; }
+    body.en .lang-zh-flex { display: none !important; }
+    body.en .lang-en-flex { display: flex; }
+
+    /* Grid language elements */
+    body.zh .lang-en-grid { display: none !important; }
+    body.zh .lang-zh-grid { display: grid; }
+    body.en .lang-zh-grid { display: none !important; }
+    body.en .lang-en-grid { display: grid; }
+
+    /* Print styles */
+    @media print {
+      .no-print { display: none !important; }
+      body { font-size: 11pt; }
+      .page-break { page-break-before: always; }
+      section { page-break-inside: avoid; }
+    }
+
+    /* Subtle gradient for header */
+    .header-gradient {
+      background: linear-gradient(135deg, #2B579A 0%, #1E3F73 50%, #2B579A 100%);
+    }
+
+    /* Card hover effect */
+    .benefit-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .benefit-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(43, 87, 154, 0.15);
+    }
+
+    .step-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(43, 87, 154, 0.15);
+    }
+  </style>
+</head>
+<body class="zh bg-gray-50 text-gray-800 antialiased">
+
+  <!-- Language Toggle Button -->
+  <div class="no-print fixed top-6 right-6 z-50">
+    <button id="langToggle" onclick="toggleLang()" class="flex items-center bg-white rounded-full shadow-lg border border-gray-200 overflow-hidden text-sm font-semibold" aria-label="Toggle language">
+      <span id="langZH" class="px-4 py-2.5 bg-primary text-white transition-colors duration-200">ZH</span>
+      <span id="langEN" class="px-4 py-2.5 text-gray-500 transition-colors duration-200">EN</span>
+    </button>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6 py-12">
+
+    <!-- Header -->
+    <header class="header-gradient rounded-2xl px-10 py-12 text-white mb-12 shadow-xl">
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
+        <span class="lang-zh">AI + WP-CLI</span><span class="lang-en">AI + WP-CLI</span>
+        <br>
+        <span class="lang-zh">遠端管理方案</span><span class="lang-en">Remote Site Management with AI</span>
+      </h1>
+      <p class="text-lg md:text-xl text-blue-200 font-medium mb-6">
+        <span class="lang-zh">為什麼需要啟用 Cloudflare Tunnel</span>
+        <span class="lang-en">A Secure Foundation for AI-Powered Operations via Cloudflare Tunnel</span>
+      </p>
+      <div class="flex items-center gap-3 text-sm text-blue-300">
+        <span>2026-04-08</span>
+        <span class="opacity-50">|</span>
+        <span>EnGenius Web Operations</span>
+      </div>
+    </header>
+
+    <!-- Section 1: What We're Doing -->
+    <section class="mb-12">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+        <h2 class="text-2xl font-bold text-primary">
+          <span class="lang-zh">我們正在做什麼</span>
+          <span class="lang-en">Current Initiative</span>
+        </h2>
+      </div>
+      <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+        <p class="text-base leading-relaxed text-gray-700">
+          <span class="lang-zh">我們已經開始使用 AI 編程工具（Claude Code、Gemini CLI 等）透過 SSH 連線到伺服器，以 WP-CLI 指令遠端管理五個 WordPress 站（TW / APAC / EU / JP / IN）。</span>
+          <span class="lang-en">We are now leveraging AI-powered tools (Claude Code, Gemini CLI) to remotely operate all five regional WordPress sites (TW / APAC / EU / JP / IN) through SSH and WP-CLI. This eliminates the need to manually log into each admin panel, enabling centralized, efficient management from a single terminal.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 2: What AI + WP-CLI Can Do -->
+    <section class="mb-12">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+        <h2 class="text-2xl font-bold text-primary">
+          <span class="lang-zh">AI + WP-CLI 能做到什麼</span>
+          <span class="lang-en">Operational Impact</span>
+        </h2>
+      </div>
+
+      <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-8">
+        <p class="text-base leading-relaxed text-gray-700 mb-6">
+          <span class="lang-zh">過去需要登入五個後台、逐站手動操作的工作，現在用一句話就能完成：</span>
+          <span class="lang-en">Tasks that previously required logging into five separate admin panels and hours of manual effort are now completed in seconds with a single natural-language command:</span>
+        </p>
+
+        <!-- Comparison Table -->
+        <div class="overflow-x-auto">
+          <!-- ZH Table -->
+          <table class="lang-zh-block w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th class="text-left py-3 px-4 bg-gray-100 text-gray-500 font-semibold rounded-tl-lg w-1/2">過去的做法</th>
+                <th class="text-left py-3 px-4 bg-accent-light text-primary font-semibold rounded-tr-lg w-1/2">現在的做法</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">登入 5 個後台逐一檢查外掛更新</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;幫我檢查五個站有哪些外掛需要更新&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">手動一頁一頁查 SEO 設定</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;查 TW 站 solutions 頁面的 SEO 狀態&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">請工程師跑資料庫查各語系翻譯缺漏</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;比較 EU 站五種語系的 product model 差異&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">每月人工整理下載數據</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;產生 3 月的下載追蹤統計報告&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400 rounded-bl-lg">五站核心檔案安全檢查需排 IT 時間</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium rounded-br-lg">&ldquo;幫我跑五個站的核心完整性檢查&rdquo;</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- EN Table -->
+          <table class="lang-en-block w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th class="text-left py-3 px-4 bg-gray-100 text-gray-500 font-semibold rounded-tl-lg w-1/2">Legacy Workflow</th>
+                <th class="text-left py-3 px-4 bg-accent-light text-primary font-semibold rounded-tr-lg w-1/2">With AI + WP-CLI</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">Log into 5 admin panels individually to check plugin updates</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;Check all 5 sites for outdated plugins&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">Manually check SEO settings page by page</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;Check SEO status for TW site solution pages&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">File engineering ticket for DB queries to find translation gaps</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;Compare product model coverage across EU site&rsquo;s 5 languages&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400">Manually compile download data across 5 regions each month</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium">&ldquo;Generate the March download analytics report&rdquo;</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 text-gray-400 rounded-bl-lg">Schedule IT resources for core file integrity audits across all sites</td>
+                <td class="py-3.5 px-4 bg-blue-50/50 text-primary font-medium rounded-br-lg">&ldquo;Run WordPress core integrity checks on all 5 sites&rdquo;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Key Benefits -->
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1 h-6 bg-accent rounded-full"></div>
+        <h3 class="text-xl font-bold text-gray-800">
+          <span class="lang-zh">實際效益</span>
+          <span class="lang-en">Measurable Impact</span>
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Card 1 -->
+        <div class="benefit-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl font-extrabold text-accent mb-3 tracking-tight">2hr <span class="text-gray-300 font-normal mx-1">&rarr;</span> 2min</div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            <span class="lang-zh">五站健康檢查從 2 小時縮短到 2 分鐘</span>
+            <span class="lang-en">Site health audits across 5 regions: 2 hours reduced to 2 minutes</span>
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="benefit-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl font-extrabold text-accent mb-3 tracking-tight">4hr <span class="text-gray-300 font-normal mx-1">&rarr;</span> Auto</div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            <span class="lang-zh">多語系內容比對從工程師半天工時變成 AI 自動產出報告</span>
+            <span class="lang-en">Multi-language content audits: half-day of engineering time replaced by automated reports</span>
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="benefit-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl font-extrabold text-accent mb-3 tracking-tight">Manual <span class="text-gray-300 font-normal mx-1">&rarr;</span> 1-click</div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            <span class="lang-zh">下載統計報告從手動彙整變成一鍵產生並發布到 GitHub Pages</span>
+            <span class="lang-en">Analytics reports generated and published on demand -- no manual data wrangling</span>
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="benefit-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl font-extrabold text-accent mb-3 tracking-tight">Ticket <span class="text-gray-300 font-normal mx-1">&rarr;</span> Direct</div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            <span class="lang-zh">行銷、PM 可以直接請 AI 查詢網站資料，不需要排工程師工單</span>
+            <span class="lang-en">Marketing and PMs gain self-serve access to site data -- zero engineering tickets required</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Why Cloudflare Tunnel -->
+    <section class="mb-12">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+        <h2 class="text-2xl font-bold text-primary">
+          <span class="lang-zh">為什麼需要 Cloudflare Tunnel</span>
+          <span class="lang-en">The Security Gap -- Why Cloudflare Tunnel Is Required</span>
+        </h2>
+      </div>
+
+      <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
+        <p class="text-base leading-relaxed text-gray-700 mb-6">
+          <span class="lang-zh">這套 AI 遠端管理會是長期且頻繁的操作。但目前的 SSH 連線方式有安全隱患：</span>
+          <span class="lang-en">This AI-driven workflow is already delivering measurable ROI and will scale further. However, the current SSH configuration bypasses Cloudflare&rsquo;s protection layer, exposing our origin server. This is the gap Cloudflare Tunnel closes:</span>
+        </p>
+
+        <!-- Security Comparison Table -->
+        <div class="overflow-x-auto">
+          <!-- ZH Security Table -->
+          <table class="lang-zh-block w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th class="text-left py-3 px-4 bg-gray-100 text-gray-600 font-semibold rounded-tl-lg w-1/3">項目</th>
+                <th class="text-left py-3 px-4 bg-red-50 text-red-700 font-semibold w-1/3">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                    目前（直連）
+                  </span>
+                </th>
+                <th class="text-left py-3 px-4 bg-green-50 text-green-700 font-semibold rounded-tr-lg w-1/3">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Cloudflare Tunnel
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">主機 IP</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">暴露在公網</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">完全隱藏</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">防火牆 Port</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">需開放 18765</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">不需開任何 Port</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">連線安全</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">僅 SSH 加密</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">SSH + Cloudflare 雙層加密</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">存取控制</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">僅 SSH Key</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">可加 Cloudflare Access 身份驗證</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700 rounded-bl-lg">DDoS 防護</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">無</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium rounded-br-lg">Cloudflare 全球網路防護</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- EN Security Table -->
+          <table class="lang-en-block w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th class="text-left py-3 px-4 bg-gray-100 text-gray-600 font-semibold rounded-tl-lg w-1/3">Item</th>
+                <th class="text-left py-3 px-4 bg-red-50 text-red-700 font-semibold w-1/3">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                    Current (Direct)
+                  </span>
+                </th>
+                <th class="text-left py-3 px-4 bg-green-50 text-green-700 font-semibold rounded-tr-lg w-1/3">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Cloudflare Tunnel
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">Server IP</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">Exposed publicly</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">Completely hidden</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">Firewall Port</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">Must open port 18765</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">No ports needed</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">Connection Security</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">SSH encryption only</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">SSH + Cloudflare dual encryption</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700">Access Control</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">SSH Key only</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium">Can add Cloudflare Access authentication</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-medium text-gray-700 rounded-bl-lg">DDoS Protection</td>
+                <td class="py-3.5 px-4 text-red-600 bg-red-50/30">None</td>
+                <td class="py-3.5 px-4 text-green-700 bg-green-50/30 font-medium rounded-br-lg">Cloudflare global network protection</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Highlight Box -->
+      <div class="bg-accent-light border-l-4 border-accent rounded-r-xl p-6">
+        <p class="text-base font-medium text-primary leading-relaxed">
+          <span class="lang-zh">Cloudflare Tunnel 讓我們安全地持續使用 AI 管理工具，而不用在防火牆上開後門。</span>
+          <span class="lang-en">Cloudflare Tunnel enables us to maintain full AI-powered operational capability with zero-trust security -- no exposed ports, no visible origin IP, no firewall exceptions.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 4: What Needs to Be Done -->
+    <section class="mb-16">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1.5 h-8 bg-primary rounded-full"></div>
+        <h2 class="text-2xl font-bold text-primary">
+          <span class="lang-zh">需要做的事</span>
+          <span class="lang-en">Implementation -- 3 Steps, Under 1 Hour</span>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <!-- Step 1 -->
+        <div class="step-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold">1</div>
+            <span class="text-xs font-semibold text-accent bg-accent-light px-3 py-1 rounded-full">~30 min</span>
+          </div>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            <span class="lang-zh">伺服器安裝 <code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">cloudflared</code> 並建立 Tunnel</span>
+            <span class="lang-en">Install <code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">cloudflared</code> on server and create Tunnel</span>
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold">2</div>
+            <span class="text-xs font-semibold text-accent bg-accent-light px-3 py-1 rounded-full">~5 min</span>
+          </div>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            <span class="lang-zh"><code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">ssh.engeniustech.com</code> DNS 改回橘雲</span>
+            <span class="lang-en">Switch <code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">ssh.engeniustech.com</code> DNS back to orange cloud (Cloudflare proxy)</span>
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold">3</div>
+            <span class="text-xs font-semibold text-accent bg-accent-light px-3 py-1 rounded-full">~5 min</span>
+          </div>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            <span class="lang-zh">使用端 SSH Config 加一行 <code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">ProxyCommand</code></span>
+            <span class="lang-en">Add one <code class="bg-gray-100 text-primary px-1.5 py-0.5 rounded text-xs font-mono">ProxyCommand</code> line to client SSH Config</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Closing statement -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+        <p class="text-base text-gray-700 leading-relaxed">
+          <span class="lang-zh">設定完成後，所有 SSH 操作方式不變，安全性大幅提升。</span>
+          <span class="lang-en">Post-migration, all existing SSH workflows continue to function identically. The only change is that traffic now routes through Cloudflare&rsquo;s secure network instead of hitting the origin server directly.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 pt-6 text-center">
+      <p class="text-sm text-gray-400">2026-04-08 &nbsp;|&nbsp; EnGenius Web Operations</p>
+    </footer>
+
+  </div>
+
+  <script>
+    function toggleLang() {
+      const body = document.body;
+      const zhBtn = document.getElementById('langZH');
+      const enBtn = document.getElementById('langEN');
+
+      if (body.classList.contains('zh')) {
+        body.classList.remove('zh');
+        body.classList.add('en');
+        zhBtn.classList.remove('bg-primary', 'text-white');
+        zhBtn.classList.add('text-gray-500');
+        enBtn.classList.remove('text-gray-500');
+        enBtn.classList.add('bg-primary', 'text-white');
+      } else {
+        body.classList.remove('en');
+        body.classList.add('zh');
+        enBtn.classList.remove('bg-primary', 'text-white');
+        enBtn.classList.add('text-gray-500');
+        zhBtn.classList.remove('text-gray-500');
+        zhBtn.classList.add('bg-primary', 'text-white');
+      }
+    }
+  </script>
+
+</body>
+</html>
