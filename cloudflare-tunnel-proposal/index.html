@@ -90,13 +90,13 @@
     }
   </style>
 </head>
-<body class="zh bg-gray-50 text-gray-800 antialiased">
+<body class="en bg-gray-50 text-gray-800 antialiased">
 
   <!-- Language Toggle Button -->
   <div class="no-print fixed top-6 right-6 z-50">
     <button id="langToggle" onclick="toggleLang()" class="flex items-center bg-white rounded-full shadow-lg border border-gray-200 overflow-hidden text-sm font-semibold" aria-label="Toggle language">
-      <span id="langZH" class="px-4 py-2.5 bg-primary text-white transition-colors duration-200">ZH</span>
-      <span id="langEN" class="px-4 py-2.5 text-gray-500 transition-colors duration-200">EN</span>
+      <span id="langZH" class="px-4 py-2.5 text-gray-500 transition-colors duration-200">ZH</span>
+      <span id="langEN" class="px-4 py-2.5 bg-primary text-white transition-colors duration-200">EN</span>
     </button>
   </div>
 
@@ -497,6 +497,30 @@
         zhBtn.classList.add('bg-primary', 'text-white');
       }
     }
+
+    // Support URL parameter: ?lang=zh or ?lang=en
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const lang = params.get('lang');
+      if (lang === 'zh' || lang === 'en') {
+        const body = document.body;
+        const zhBtn = document.getElementById('langZH');
+        const enBtn = document.getElementById('langEN');
+        body.classList.remove('zh', 'en');
+        body.classList.add(lang);
+        if (lang === 'zh') {
+          zhBtn.classList.add('bg-primary', 'text-white');
+          zhBtn.classList.remove('text-gray-500');
+          enBtn.classList.add('text-gray-500');
+          enBtn.classList.remove('bg-primary', 'text-white');
+        } else {
+          enBtn.classList.add('bg-primary', 'text-white');
+          enBtn.classList.remove('text-gray-500');
+          zhBtn.classList.add('text-gray-500');
+          zhBtn.classList.remove('bg-primary', 'text-white');
+        }
+      }
+    })();
   </script>
 
 </body>
