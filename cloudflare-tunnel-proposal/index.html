@@ -286,20 +286,45 @@
       </div>
     </section>
 
+    <!-- Current Risk Alert -->
+    <section class="mb-8">
+      <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86l-8.6 14.86A1 1 0 002.56 20h18.88a1 1 0 00.87-1.28l-8.6-14.86a1 1 0 00-1.72 0z"/></svg>
+          </div>
+          <div>
+            <p class="font-bold text-red-800 text-lg mb-2">
+              <span class="lang-zh">現狀風險：伺服器 IP 目前已暴露</span>
+              <span class="lang-en">Current Risk: Origin Server IP Is Already Exposed</span>
+            </p>
+            <p class="text-red-900 text-sm leading-relaxed mb-3">
+              <span class="lang-zh">AI + WP-CLI 遠端管理<strong>已經在運作中</strong>。為了讓 SSH 連線能正常通過，我們目前被迫關閉了 <code class="bg-red-100 px-1.5 py-0.5 rounded text-xs font-mono">ssh.engeniustech.com</code> 的 Cloudflare Proxy，導致伺服器的真實 IP 直接暴露在公網上。</span>
+              <span class="lang-en">The AI + WP-CLI remote management workflow is <strong>already in production</strong>. To enable SSH access, we had to disable Cloudflare Proxy on <code class="bg-red-100 px-1.5 py-0.5 rounded text-xs font-mono">ssh.engeniustech.com</code>, which means the origin server&rsquo;s real IP address is currently exposed to the public internet.</span>
+            </p>
+            <p class="text-red-900 text-sm leading-relaxed">
+              <span class="lang-zh">這代表<strong>任何人都可以繞過 Cloudflare 的 WAF、DDoS 防護和速率限制</strong>，直接對伺服器發起攻擊。啟用 Cloudflare Tunnel 不是增加新功能，而是<strong>修復目前已經存在的安全缺口</strong>。每多一天不啟用，風險就多一天。</span>
+              <span class="lang-en">This means <strong>anyone can bypass Cloudflare&rsquo;s WAF, DDoS protection, and rate limiting</strong> by hitting the origin IP directly. Enabling Cloudflare Tunnel is not about adding new capability &mdash; it&rsquo;s about <strong>closing a security gap that exists right now</strong>. Every day without it is another day the server remains exposed.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Section 3: Why Cloudflare Tunnel -->
     <section class="mb-12">
       <div class="flex items-center gap-3 mb-5">
         <div class="w-1.5 h-8 bg-primary rounded-full"></div>
         <h2 class="text-2xl font-bold text-primary">
-          <span class="lang-zh">為什麼需要 Cloudflare Tunnel</span>
-          <span class="lang-en">The Security Gap -- Why Cloudflare Tunnel Is Required</span>
+          <span class="lang-zh">Cloudflare Tunnel 如何解決問題</span>
+          <span class="lang-en">How Cloudflare Tunnel Closes the Gap</span>
         </h2>
       </div>
 
       <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
         <p class="text-base leading-relaxed text-gray-700 mb-6">
-          <span class="lang-zh">這套 AI 遠端管理會是長期且頻繁的操作。但目前的 SSH 連線方式有安全隱患：</span>
-          <span class="lang-en">This AI-driven workflow is already delivering measurable ROI and will scale further. However, the current SSH configuration bypasses Cloudflare&rsquo;s protection layer, exposing our origin server. This is the gap Cloudflare Tunnel closes:</span>
+          <span class="lang-zh">啟用 Cloudflare Tunnel 後，SSH 流量改走 Cloudflare 的安全網路，伺服器不再需要暴露任何 Port 或 IP：</span>
+          <span class="lang-en">With Cloudflare Tunnel, SSH traffic routes through Cloudflare&rsquo;s secure network. The origin server no longer needs to expose any ports or its IP address:</span>
         </p>
 
         <!-- Security Comparison Table -->
