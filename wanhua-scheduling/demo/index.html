@@ -157,13 +157,19 @@
 
   /* Avatar */
   .avatar {
-    display: inline-flex; align-items: center; justify-content: center;
+    position: relative; display: inline-block;
     border-radius: 50%; overflow: hidden; flex-shrink: 0;
-    font-weight: 700; color: white; user-select: none;
+    user-select: none;
   }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .avatar-img-wrap { background: #F3F4F6; }
-  .avatar-lg { width: 56px; height: 56px; font-size: 22px; border: 2px solid rgba(255,255,255,0.15); }
+  .avatar-fallback, .avatar-photo {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+  }
+  .avatar-fallback {
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700;
+  }
+  .avatar-photo { z-index: 1; object-fit: cover; display: block; }
+  .avatar-lg { width: 56px; height: 56px; font-size: 22px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15); }
   .avatar-sm { width: 32px; height: 32px; font-size: 14px; }
   .avatar-xs { width: 22px; height: 22px; font-size: 11px; }
 
@@ -1151,14 +1157,13 @@ function colorFor(name) {
 }
 function avatarHtml(name, size) {
   const emp = EMPLOYEES.find(e => e.name === name);
-  const cls = `avatar avatar-${size}`;
   const initial = (name || '?').slice(0, 1);
   const bg = colorFor(name || '?');
-  const fallback = `<span class="${cls} avatar-initial" style="background:${bg}">${initial}</span>`;
-  if (!emp || !emp.avatar) return fallback;
-  return `<span class="${cls} avatar-img-wrap">
-    <img src="${emp.avatar}" alt="${name}" onerror="this.parentElement.outerHTML='${fallback.replace(/'/g,"\\'")}'">
-  </span>`;
+  const fallback = `<span class="avatar-fallback" style="background:${bg}">${initial}</span>`;
+  if (!emp || !emp.avatar) {
+    return `<span class="avatar avatar-${size}">${fallback}</span>`;
+  }
+  return `<span class="avatar avatar-${size}">${fallback}<img class="avatar-photo" src="${emp.avatar}" alt="${name}" onerror="this.remove()"></span>`;
 }
 
 function findShiftsForEmployee(name) {
