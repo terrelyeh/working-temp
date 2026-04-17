@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>排班系統 Demo · 2026 年 4 月</title>
+<style>
+  :root {
+    --text: #2C3345;
+    --text-soft: #6B7280;
+    --text-mute: #9CA3AF;
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --border-soft: #F3F4F6;
+    --accent: #2563EB;
+    --accent-soft: #EFF6FF;
+    --early-bg: #DBEAFE;
+    --early-fg: #1E40AF;
+    --early-border: #60A5FA;
+    --noon-bg: #D1FAE5;
+    --noon-fg: #065F46;
+    --noon-border: #34D399;
+    --late-bg: #EDE9FE;
+    --late-fg: #5B21B6;
+    --late-border: #A78BFA;
+    --support-bg: #FEF3C7;
+    --support-fg: #92400E;
+    --support-border: #FBBF24;
+    --off-bg: #F3F4F6;
+    --off-fg: #6B7280;
+    --holiday-bg: #FEE2E2;
+    --holiday-fg: #991B1B;
+    --event-bg: #FFEDD5;
+    --event-fg: #9A3412;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 16px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    line-height: 1.7;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  header { margin-bottom: 28px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--text-soft); font-size: 15px; margin: 0; }
+  .disclaimer {
+    display: inline-block; background: var(--accent-soft);
+    color: var(--accent); padding: 4px 12px; border-radius: 999px;
+    font-size: 13px; margin-top: 12px; font-weight: 500;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex; gap: 8px;
+    background: var(--card); padding: 6px; border-radius: 12px;
+    margin: 24px 0 20px; border: 1px solid var(--border);
+    max-width: fit-content;
+  }
+  .tab {
+    background: transparent; border: none; padding: 10px 20px;
+    border-radius: 8px; font-size: 15px; font-weight: 500;
+    color: var(--text-soft); cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    background: var(--text); color: white;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Employee selector */
+  .emp-selector {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+  }
+  .emp-selector label { font-size: 13px; color: var(--text-soft); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .emp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .emp-pill {
+    background: var(--border-soft); border: 1px solid transparent;
+    padding: 6px 14px; border-radius: 20px; font-size: 14px;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit; color: var(--text);
+  }
+  .emp-pill:hover { border-color: var(--accent); }
+  .emp-pill.active {
+    background: var(--text); color: white; border-color: var(--text);
+  }
+
+  /* Employee view: stats card */
+  .emp-stats {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 20px;
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: baseline;
+  }
+  .emp-name { font-size: 22px; font-weight: 600; }
+  .emp-role { font-size: 13px; color: var(--text-soft); padding: 2px 10px; background: var(--border-soft); border-radius: 4px; }
+  .emp-hours {
+    margin-left: auto; display: flex; gap: 20px; font-size: 14px;
+  }
+  .hour-stat { text-align: right; }
+  .hour-stat .label { color: var(--text-soft); font-size: 12px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  .hour-stat .value { font-size: 18px; font-weight: 600; }
+  .progress {
+    width: 100%; height: 6px; background: var(--border-soft);
+    border-radius: 3px; overflow: hidden; margin-top: 12px; flex-basis: 100%;
+  }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+
+  /* Day list (employee view) */
+  .day-list { display: flex; flex-direction: column; gap: 8px; }
+  .day-row {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px;
+    display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: center;
+  }
+  .day-row.holiday { background: linear-gradient(90deg, var(--holiday-bg) 0%, var(--card) 30%); border-color: var(--holiday-fg); }
+  .day-row.off { background: var(--off-bg); opacity: 0.85; }
+  .day-row.monday { background: #FAFAF8; opacity: 0.6; }
+  .day-date {
+    display: flex; flex-direction: column;
+  }
+  .day-date .md { font-size: 18px; font-weight: 600; }
+  .day-date .wd { font-size: 12px; color: var(--text-soft); }
+  .day-shift-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  }
+  .day-shift-pill.early { background: var(--early-bg); color: var(--early-fg); }
+  .day-shift-pill.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .day-shift-pill.late { background: var(--late-bg); color: var(--late-fg); }
+  .day-shift-pill.support { background: var(--support-bg); color: var(--support-fg); }
+  .day-shift-pill.off { background: var(--off-bg); color: var(--off-fg); }
+  .day-shift-pill.holiday { background: var(--holiday-bg); color: var(--holiday-fg); }
+  .day-notes {
+    margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .note-pill {
+    font-size: 12px; padding: 2px 8px; border-radius: 4px;
+    background: var(--event-bg); color: var(--event-fg);
+  }
+
+  /* Store view: day cards */
+  .day-nav {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
+  }
+  .day-nav button {
+    background: var(--border-soft); border: none; border-radius: 6px;
+    width: 36px; height: 36px; cursor: pointer; font-size: 18px;
+    font-family: inherit; color: var(--text);
+  }
+  .day-nav button:hover { background: var(--border); }
+  .day-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .day-nav .current-date {
+    flex: 1; text-align: center;
+    font-size: 18px; font-weight: 600;
+  }
+  .day-nav .current-date small { display: block; font-size: 13px; color: var(--text-soft); font-weight: normal; }
+  .day-nav input[type="date"] {
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; font-family: inherit; font-size: 14px; color: var(--text);
+  }
+
+  .day-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+    margin-bottom: 12px;
+  }
+  .day-card.holiday { border-top: 4px solid var(--holiday-fg); }
+  .day-card.monday { background: #F9FAFB; text-align: center; color: var(--text-soft); padding: 40px; }
+  .day-card h2 {
+    margin: 0 0 4px; font-size: 22px; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  }
+  .day-card .wd { font-size: 14px; color: var(--text-soft); font-weight: normal; }
+  .day-card .holiday-tag {
+    background: var(--holiday-bg); color: var(--holiday-fg);
+    padding: 2px 10px; border-radius: 4px; font-size: 13px; font-weight: 500;
+  }
+  .day-card .event-tag {
+    background: var(--event-bg); color: var(--event-fg);
+    padding: 2px 10px; border-radius: 4px; font-size: 13px; font-weight: 500;
+  }
+
+  .shift-block {
+    margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+    border-left: 4px solid;
+  }
+  .shift-block.early { background: var(--early-bg); border-color: var(--early-border); }
+  .shift-block.noon { background: var(--noon-bg); border-color: var(--noon-border); }
+  .shift-block.late { background: var(--late-bg); border-color: var(--late-border); }
+  .shift-block.support { background: var(--support-bg); border-color: var(--support-border); }
+  .shift-block h3 {
+    margin: 0 0 8px; font-size: 15px; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .shift-block .count { font-size: 13px; color: var(--text-soft); font-weight: 500; }
+  .shift-block .people {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .person-chip {
+    background: rgba(255,255,255,0.7); padding: 4px 12px; border-radius: 6px;
+    font-size: 14px; font-weight: 500;
+  }
+  .person-chip.fulltime { font-weight: 600; }
+  .person-chip.fulltime::before { content: "★ "; color: #F59E0B; }
+
+  .off-section {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+  }
+  .off-section .label { color: var(--text-soft); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .off-chip {
+    background: var(--off-bg); color: var(--off-fg);
+    padding: 3px 10px; border-radius: 4px; font-size: 13px;
+  }
+
+  .events-section {
+    margin-top: 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .event-row {
+    font-size: 14px; color: var(--text-soft);
+    display: flex; gap: 10px; align-items: baseline;
+  }
+  .event-row .time { color: var(--text); font-weight: 500; min-width: 50px; }
+  .event-row .tag { font-size: 11px; padding: 1px 6px; border-radius: 3px; background: var(--event-bg); color: var(--event-fg); }
+
+  /* Month summary */
+  .summary-table {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; border-collapse: collapse; font-size: 14px;
+  }
+  .summary-table th, .summary-table td {
+    text-align: left; padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .summary-table th {
+    background: #F9FAFB; font-weight: 600; font-size: 13px;
+    color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table .role-tag {
+    font-size: 11px; padding: 1px 6px; border-radius: 3px;
+  }
+  .role-tag.fulltime { background: #FEF3C7; color: #92400E; }
+  .role-tag.pt { background: #DBEAFE; color: #1E40AF; }
+  .role-tag.admin { background: #FCE7F3; color: #9F1239; }
+
+  /* Legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0;
+    font-size: 13px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .legend-item.early { background: var(--early-bg); color: var(--early-fg); }
+  .legend-item.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .legend-item.late { background: var(--late-bg); color: var(--late-fg); }
+  .legend-item.support { background: var(--support-bg); color: var(--support-fg); }
+  .legend-item.off { background: var(--off-bg); color: var(--off-fg); }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 20px 14px; }
+    h1 { font-size: 22px; }
+    .emp-stats { gap: 12px; }
+    .emp-hours { margin-left: 0; }
+    .day-row { grid-template-columns: 70px 1fr; padding: 10px 12px; }
+    .day-card { padding: 16px 18px; }
+    .shift-block { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🗓️ 排班系統 Demo</h1>
+  <p class="subtitle">2026 年 4 月 · 取自實際 Google Sheet 資料</p>
+  <span class="disclaimer">這是 UI 概念展示；資料從現有班表抽取，可能有遺漏</span>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="employee">👤 員工版</button>
+  <button class="tab" data-tab="store">🏪 全店版</button>
+  <button class="tab" data-tab="summary">📊 月度統計</button>
+</div>
+
+<!-- ============ Employee View ============ -->
+<section class="view active" id="view-employee">
+  <div class="emp-selector">
+    <label>選擇員工</label>
+    <div class="emp-pills" id="emp-pills"></div>
+  </div>
+
+  <div class="emp-stats" id="emp-stats"></div>
+  <div class="legend">
+    <span class="legend-item early">早班</span>
+    <span class="legend-item noon">午班</span>
+    <span class="legend-item late">晚班</span>
+    <span class="legend-item support">支援班</span>
+    <span class="legend-item off">休</span>
+  </div>
+
+  <div class="day-list" id="emp-day-list"></div>
+</section>
+
+<!-- ============ Store View ============ -->
+<section class="view" id="view-store">
+  <div class="day-nav">
+    <button id="prev-day">‹</button>
+    <div class="current-date" id="current-date">—</div>
+    <input type="date" id="date-picker" min="2026-04-01" max="2026-04-30" value="2026-04-03">
+    <button id="next-day">›</button>
+  </div>
+  <div id="store-day-card"></div>
+</section>
+
+<!-- ============ Summary View ============ -->
+<section class="view" id="view-summary">
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>員工</th>
+        <th>類別</th>
+        <th style="text-align: right;">目標工時</th>
+        <th style="text-align: right;">實排工時</th>
+        <th style="text-align: right;">特休</th>
+        <th style="text-align: right;">會議</th>
+        <th style="text-align: right;">達成</th>
+      </tr>
+    </thead>
+    <tbody id="summary-tbody"></tbody>
+  </table>
+</section>
+
+<script>
+// ============ DATA ============
+const EMPLOYEES = [
+  { name: '超威', role: 'fulltime', target: 152, actual: 134, leave: 16, meeting: 2 },
+  { name: '思坦', role: 'fulltime', target: 112, actual: 110, leave: 0, meeting: 2 },
+  { name: '蛋頭', role: 'fulltime', target: 128, actual: 126, leave: 0, meeting: 2 },
+  { name: 'Winnie', role: 'admin' },
+  { name: 'Fish', role: 'admin' },
+  { name: '政道', role: 'admin' },
+  { name: '佳佳', role: 'pt', target: 96, actual: 96, leave: 0, meeting: 2 },
+  { name: '小黃', role: 'pt', target: 94.5, actual: 94.5, leave: 0, meeting: 2 },
+  { name: '愛因', role: 'pt', target: 87, actual: 87, leave: 0, meeting: 2 },
+  { name: '91', role: 'pt', target: 80, actual: 80, leave: 0, meeting: 2 },
+  { name: 'Sin', role: 'pt', target: 79, actual: 79, leave: 0, meeting: 2 },
+  { name: '沛慈', role: 'pt', target: 71, actual: 71, leave: 0, meeting: 2 },
+  { name: 'Jessie', role: 'pt', target: 63, actual: 63, leave: 0, meeting: 2 },
+  { name: '景文', role: 'pt', target: 39.5, actual: 39.5, leave: 0, meeting: 0 },
+  { name: '子寧', role: 'pt', target: 39, actual: 39, leave: 0, meeting: 0 },
+  { name: '莎賓', role: 'pt', target: 38.5, actual: 38.5, leave: 0, meeting: 0 },
+  { name: '孟霏', role: 'pt', target: 24, actual: 24, leave: 0, meeting: 0 },
+];
+
+// 4/1 ~ 4/30 schedule data
+const SCHEDULE = {
+  '2026-04-01': { wd: '三', type: 'weekday',
+    early8: ['91', '景文'], noon8: ['超威', '子寧'], late75: [],
+    off: ['蛋頭', '思坦'],
+    notes: [
+      { time: '11:00', text: '點貨' },
+      { time: '11:30', text: '洗啤酒機＆製冰機' },
+      { time: '12:00', text: '財務會議', tag: '會議' }
+    ]
+  },
+  '2026-04-02': { wd: '四', type: 'weekday',
+    early8: ['思坦', '蛋頭'], noon8: ['超威', 'Sin'], late75: [],
+    off: [],
+    notes: [{ time: '—', text: '清酒資料整理' }]
+  },
+  '2026-04-03': { wd: '五', type: 'long',
+    early8: ['思坦', '蛋頭', '91', 'Jessie'], noon8: ['沛慈'],
+    late75: ['超威', '愛因', '莎賓', 'Sin'],
+    off: [], notes: []
+  },
+  '2026-04-04': { wd: '六', type: 'long', holiday: '兒童節',
+    early8: ['思坦', '蛋頭', '沛慈', 'Jessie'], noon8: ['小黃'],
+    late75: ['超威', '愛因', '莎賓', 'Sin'],
+    off: [], notes: []
+  },
+  '2026-04-05': { wd: '日', type: 'sunday', holiday: '清明節',
+    early8: ['思坦', '子寧'], noon8: ['超威', '小黃', 'Jessie'], late75: [],
+    off: ['蛋頭'],
+    notes: [{ time: '—', text: '點貨' }]
+  },
+  '2026-04-06': { wd: '一', type: 'monday' },
+  '2026-04-07': { wd: '二', type: 'weekday',
+    early8: ['超威', '佳佳'], noon8: ['蛋頭', '孟霏'], late75: [],
+    off: ['思坦'],
+    notes: [
+      { time: '10:00', text: 'WIP 會議', tag: '會議' },
+      { time: '12:00', text: '財務會議', tag: '會議' },
+      { time: '19:30', text: '店務會議', tag: '會議' }
+    ]
+  },
+  '2026-04-08': { wd: '三', type: 'weekday',
+    early8: ['佳佳', '91'], noon8: ['蛋頭', '孟霏'], late75: [],
+    support: ['Winnie'],
+    off: ['超威', '思坦'],
+    notes: [{ time: '—', text: '寄酒資料整理、洗啤酒機' }]
+  },
+  '2026-04-09': { wd: '四', type: 'weekday',
+    early8: ['思坦', '佳佳'], noon8: ['蛋頭', '子寧'], late75: [],
+    off: ['超威'],
+    notes: [{ time: '—', text: '清酒資料整理' }]
+  },
+  '2026-04-10': { wd: '五', type: 'long', event: 'Winnie 宜蘭',
+    early8: ['超威', '愛因', '小黃', '思坦'], noon8: ['佳佳'],
+    late75: ['Fish', '蛋頭', '子寧', 'Jessie'],
+    off: [], notes: []
+  },
+  '2026-04-11': { wd: '六', type: 'long',
+    early8: ['超威', '愛因', '小黃', '沛慈'], noon8: ['佳佳'],
+    late75: ['思坦', '蛋頭', 'Jessie', 'Sin'],
+    off: [], notes: []
+  },
+  '2026-04-12': { wd: '日', type: 'sunday',
+    early8: ['91', '愛因'], noon8: ['超威', 'Sin', 'Jessie'], late75: [],
+    off: ['蛋頭', '思坦'],
+    notes: [{ time: '—', text: '點貨' }]
+  },
+  '2026-04-13': { wd: '一', type: 'monday' },
+  '2026-04-14': { wd: '二', type: 'weekday',
+    early8: ['蛋頭', '91'], noon8: ['超威', '愛因'], late75: [],
+    off: ['思坦'],
+    notes: [
+      { time: '10:00', text: 'WIP 會議', tag: '會議' },
+      { time: '12:00', text: '財務會議', tag: '會議' }
+    ]
+  },
+  '2026-04-15': { wd: '三', type: 'weekday',
+    early8: ['蛋頭', '佳佳'], noon8: ['超威', '91'], late75: [],
+    off: ['Winnie', '思坦'],
+    notes: [
+      { time: '11:00', text: '點貨' },
+      { time: '11:30', text: '洗啤酒機＆製冰機' }
+    ]
+  },
+  '2026-04-16': { wd: '四', type: 'weekday',
+    early8: ['思坦', 'Sin'], noon8: ['蛋頭', '愛因'], late75: [],
+    off: ['Winnie', '超威'],
+    notes: [{ time: '—', text: '清酒資料整理' }]
+  },
+  '2026-04-17': { wd: '五', type: 'long', event: '清酒活動：瀧自慢社長來訪',
+    early8: ['思坦', '愛因', '小黃', 'Jessie'], noon8: ['佳佳'],
+    late75: ['超威', '沛慈', '景文', 'Sin'],
+    off: ['蛋頭'], notes: []
+  },
+  '2026-04-18': { wd: '六', type: 'long', event: '快閃大廚：蛋頭賣麵',
+    early8: ['思坦', '沛慈', '小黃', 'Jessie'], noon8: ['佳佳'],
+    late75: ['超威', '愛因', '莎賓', 'Fish'],
+    off: ['蛋頭'], notes: []
+  },
+  '2026-04-19': { wd: '日', type: 'sunday',
+    early8: ['沛慈', '小黃'], noon8: ['超威', '愛因', 'Winnie'], late75: [],
+    off: ['蛋頭', '思坦'], notes: []
+  },
+  '2026-04-20': { wd: '一', type: 'monday' },
+  '2026-04-21': { wd: '二', type: 'weekday',
+    early8: ['91', '景文'], noon8: ['Fish', '佳佳'], late75: [],
+    off: ['蛋頭', '超威', '思坦'], notes: []
+  },
+  '2026-04-22': { wd: '三', type: 'weekday',
+    early8: ['91', 'Sin'], noon8: ['蛋頭', '佳佳'], late75: [],
+    off: ['超威', '思坦'],
+    notes: [
+      { time: '10:00', text: 'WIP 會議', tag: '會議' },
+      { time: '12:00', text: '財務會議', tag: '會議' }
+    ]
+  },
+  '2026-04-23': { wd: '四', type: 'weekday',
+    early8: ['思坦', '小黃'], noon8: ['蛋頭', '景文'], late75: [],
+    off: ['超威'],
+    notes: [{ time: '—', text: '清酒資料整理' }]
+  },
+  '2026-04-24': { wd: '五', type: 'long',
+    early8: ['蛋頭', '沛慈', 'Sin', '佳佳'], noon8: ['91'],
+    late75: ['思坦', '小黃', '勲諺', '凱柏'],
+    off: ['超威'], notes: []
+  },
+  '2026-04-25': { wd: '六', type: 'long', event: '新富有樂市',
+    early8: ['沛慈', '景文', 'Sin', 'Winnie'], noon8: ['Fish'],
+    late75: ['思坦', '小黃', '莎賓', '子寧'],
+    off: ['蛋頭', '超威'], notes: []
+  },
+  '2026-04-26': { wd: '日', type: 'sunday', event: '新富有樂市',
+    early8: ['沛慈', 'Winnie'], noon8: ['Fish', '小黃', '莎賓'], late75: [],
+    off: ['蛋頭', '超威', '思坦'],
+    notes: [{ time: '打烊後', text: '小黃社團拍攝', tag: '活動' }]
+  },
+  '2026-04-27': { wd: '一', type: 'monday' },
+  '2026-04-28': { wd: '二', type: 'weekday',
+    early8: ['佳佳', '愛因'], noon8: ['超威', '91'], late75: [],
+    off: ['蛋頭', '思坦'],
+    notes: [
+      { time: '10:00', text: 'WIP 會議', tag: '會議' },
+      { time: '12:00', text: '財務會議', tag: '會議' }
+    ]
+  },
+  '2026-04-29': { wd: '三', type: 'weekday',
+    early8: ['蛋頭', 'Sin'], noon8: ['超威', '91'], late75: [],
+    off: ['思坦'],
+    notes: [
+      { time: '11:00', text: '點貨' },
+      { time: '11:30', text: '洗啤酒機＆製冰機' }
+    ]
+  },
+  '2026-04-30': { wd: '四', type: 'weekday',
+    early8: ['思坦', '蛋頭'], noon8: ['超威', '小黃'], late75: [],
+    off: [],
+    notes: [{ time: '—', text: '清酒資料整理' }]
+  },
+};
+
+// ============ Helpers ============
+const SHIFT_INFO = {
+  early8: { label: '早班 09–17', key: 'early', hours: 8 },
+  noon8:  { label: '午班 11–19', key: 'noon',  hours: 8 },
+  late75: { label: '晚班 17–00:30', key: 'late', hours: 7.5 },
+  support:{ label: '支援 17–19', key: 'support', hours: 2 }
+};
+
+function isFullTime(name) {
+  const emp = EMPLOYEES.find(e => e.name === name);
+  return emp && emp.role === 'fulltime';
+}
+
+function findShiftsForEmployee(name) {
+  const result = [];
+  for (const [date, day] of Object.entries(SCHEDULE)) {
+    if (day.type === 'monday') {
+      result.push({ date, day, status: 'monday' });
+      continue;
+    }
+    if (day.off && day.off.includes(name)) {
+      result.push({ date, day, status: 'off' });
+      continue;
+    }
+    const shifts = [];
+    for (const k of ['early8', 'noon8', 'late75', 'support']) {
+      if (day[k] && day[k].includes(name)) shifts.push(k);
+    }
+    if (shifts.length) {
+      result.push({ date, day, status: 'work', shifts });
+    } else {
+      result.push({ date, day, status: 'rest' });
+    }
+  }
+  return result;
+}
+
+// ============ Render ============
+function renderEmpPills() {
+  const container = document.getElementById('emp-pills');
+  container.innerHTML = EMPLOYEES
+    .filter(e => e.role !== 'admin' || e.name === 'Winnie')
+    .map((e, i) => `
+      <button class="emp-pill ${i === 0 ? 'active' : ''}" data-name="${e.name}">${e.name}</button>
+    `).join('');
+  container.querySelectorAll('.emp-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.emp-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderEmployeeView(btn.dataset.name);
+    });
+  });
+}
+
+function renderEmployeeView(name) {
+  const emp = EMPLOYEES.find(e => e.name === name);
+  const stats = document.getElementById('emp-stats');
+  const roleLabel = emp.role === 'fulltime' ? '正職' : emp.role === 'admin' ? '主管' : 'PT';
+
+  if (emp.target) {
+    const totalDelivered = emp.actual + emp.leave + emp.meeting;
+    const pct = Math.round(totalDelivered / emp.target * 100);
+    stats.innerHTML = `
+      <div class="emp-name">${emp.name}</div>
+      <span class="emp-role">${roleLabel}</span>
+      <div class="emp-hours">
+        <div class="hour-stat"><span class="label">目標</span><span class="value">${emp.target}h</span></div>
+        <div class="hour-stat"><span class="label">實排</span><span class="value">${emp.actual}h</span></div>
+        <div class="hour-stat"><span class="label">特休</span><span class="value">${emp.leave}h</span></div>
+        <div class="hour-stat"><span class="label">會議</span><span class="value">${emp.meeting}h</span></div>
+        <div class="hour-stat"><span class="label">達成</span><span class="value" style="color: ${pct >= 95 ? '#166534' : '#B45309'}">${pct}%</span></div>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width: ${Math.min(100, pct)}%"></div></div>
+    `;
+  } else {
+    stats.innerHTML = `
+      <div class="emp-name">${emp.name}</div>
+      <span class="emp-role">${roleLabel}</span>
+      <div style="color: var(--text-soft); margin-left: auto;">主管（支援管理為主，不列入工時統計）</div>
+    `;
+  }
+
+  const list = document.getElementById('emp-day-list');
+  const days = findShiftsForEmployee(name);
+  list.innerHTML = days.map(({ date, day, status, shifts }) => {
+    const d = new Date(date);
+    const mdFmt = `${d.getMonth() + 1}/${d.getDate()}`;
+    const cls = ['day-row'];
+    if (status === 'monday') cls.push('monday');
+    if (status === 'off') cls.push('off');
+    if (day.holiday) cls.push('holiday');
+
+    let pill = '';
+    if (status === 'monday') pill = '<span class="day-shift-pill off">週一公休</span>';
+    else if (status === 'off') pill = '<span class="day-shift-pill off">休</span>';
+    else if (status === 'rest') pill = '<span class="day-shift-pill off" style="background: transparent; color: var(--text-mute);">未排班</span>';
+    else pill = shifts.map(s => `<span class="day-shift-pill ${SHIFT_INFO[s].key}">${SHIFT_INFO[s].label}</span>`).join(' ');
+
+    const events = [];
+    if (day.holiday) events.push(`<span class="note-pill">${day.holiday}</span>`);
+    if (day.event) events.push(`<span class="note-pill">${day.event}</span>`);
+    if (day.notes) day.notes.forEach(n => events.push(`<span class="note-pill">${n.tag || ''} ${n.text}</span>`));
+
+    return `
+      <div class="${cls.join(' ')}">
+        <div class="day-date">
+          <span class="md">${mdFmt}</span>
+          <span class="wd">週${day.wd}</span>
+        </div>
+        <div>
+          ${pill}
+          ${events.length ? `<div class="day-notes">${events.join('')}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderStoreView(date) {
+  const day = SCHEDULE[date];
+  const dp = document.getElementById('date-picker');
+  dp.value = date;
+  const d = new Date(date);
+  const mdFmt = `${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+  document.getElementById('current-date').innerHTML = `${mdFmt} <small>週${day.wd}</small>`;
+
+  const card = document.getElementById('store-day-card');
+
+  if (day.type === 'monday') {
+    card.innerHTML = `
+      <div class="day-card monday">
+        <h2 style="justify-content: center;">週一公休</h2>
+        <p>全體休假</p>
+      </div>
+    `;
+    return;
+  }
+
+  const tags = [];
+  if (day.holiday) tags.push(`<span class="holiday-tag">🎉 ${day.holiday}</span>`);
+  if (day.event) tags.push(`<span class="event-tag">📌 ${day.event}</span>`);
+
+  const renderShift = (key) => {
+    const list = day[key];
+    if (!list || !list.length) return '';
+    const info = SHIFT_INFO[key];
+    const peopleHtml = list.map(n => `<span class="person-chip ${isFullTime(n) ? 'fulltime' : ''}">${n}</span>`).join('');
+    return `
+      <div class="shift-block ${info.key}">
+        <h3>${info.label} <span class="count">${list.length} 人 · ${info.hours}h</span></h3>
+        <div class="people">${peopleHtml}</div>
+      </div>
+    `;
+  };
+
+  const events = day.notes && day.notes.length ? `
+    <div class="events-section">
+      ${day.notes.map(n => `
+        <div class="event-row">
+          <span class="time">${n.time}</span>
+          ${n.tag ? `<span class="tag">${n.tag}</span>` : ''}
+          <span>${n.text}</span>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
+  const offHtml = day.off && day.off.length ? `
+    <div class="off-section">
+      <span class="label">休</span>
+      ${day.off.map(n => `<span class="off-chip">${n}</span>`).join('')}
+    </div>
+  ` : '';
+
+  card.innerHTML = `
+    <div class="day-card ${day.holiday ? 'holiday' : ''}">
+      <h2>${mdFmt} <span class="wd">週${day.wd}</span> ${tags.join(' ')}</h2>
+      ${renderShift('early8')}
+      ${renderShift('noon8')}
+      ${renderShift('late75')}
+      ${renderShift('support')}
+      ${events}
+      ${offHtml}
+    </div>
+  `;
+}
+
+function renderSummary() {
+  const tbody = document.getElementById('summary-tbody');
+  tbody.innerHTML = EMPLOYEES
+    .filter(e => e.role !== 'admin' || e.name === 'Winnie')
+    .map(e => {
+      if (!e.target) {
+        return `
+          <tr>
+            <td><strong>${e.name}</strong></td>
+            <td><span class="role-tag admin">主管</span></td>
+            <td colspan="5" style="color: var(--text-soft); text-align: center;">支援管理為主，不列入工時統計</td>
+          </tr>
+        `;
+      }
+      const delivered = e.actual + e.leave + e.meeting;
+      const pct = Math.round(delivered / e.target * 100);
+      const roleLabel = e.role === 'fulltime' ? '正職' : 'PT';
+      return `
+        <tr>
+          <td><strong>${e.name}</strong></td>
+          <td><span class="role-tag ${e.role}">${roleLabel}</span></td>
+          <td style="text-align: right;">${e.target}h</td>
+          <td style="text-align: right;">${e.actual}h</td>
+          <td style="text-align: right;">${e.leave || '—'}</td>
+          <td style="text-align: right;">${e.meeting || '—'}</td>
+          <td style="text-align: right; color: ${pct >= 95 ? '#166534' : '#B45309'}; font-weight: 600;">${pct}%</td>
+        </tr>
+      `;
+    }).join('');
+}
+
+// ============ Events ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${tab.dataset.tab}`).classList.add('active');
+  });
+});
+
+const dates = Object.keys(SCHEDULE).sort();
+let currentDateIdx = dates.indexOf('2026-04-03');
+
+document.getElementById('prev-day').addEventListener('click', () => {
+  if (currentDateIdx > 0) {
+    currentDateIdx--;
+    renderStoreView(dates[currentDateIdx]);
+  }
+});
+document.getElementById('next-day').addEventListener('click', () => {
+  if (currentDateIdx < dates.length - 1) {
+    currentDateIdx++;
+    renderStoreView(dates[currentDateIdx]);
+  }
+});
+document.getElementById('date-picker').addEventListener('change', (e) => {
+  if (SCHEDULE[e.target.value]) {
+    currentDateIdx = dates.indexOf(e.target.value);
+    renderStoreView(e.target.value);
+  }
+});
+
+// Init
+renderEmpPills();
+renderEmployeeView('超威');
+renderStoreView(dates[currentDateIdx]);
+renderSummary();
+</script>
+
+</div>
+</body>
+</html>
