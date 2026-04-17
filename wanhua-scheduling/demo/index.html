@@ -528,6 +528,108 @@
   .legend-item.support { background: var(--support-bg); color: var(--support-fg); }
   .legend-item.off { background: var(--off-bg); color: var(--off-fg); }
 
+  /* Store mode toggle */
+  .store-mode-toggle {
+    display: inline-flex; background: var(--border-soft);
+    padding: 3px; border-radius: 8px; gap: 2px;
+  }
+  .store-mode-btn {
+    background: transparent; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 13px; font-weight: 500;
+    color: var(--text-soft); cursor: pointer; font-family: inherit;
+  }
+  .store-mode-btn:hover { color: var(--text); }
+  .store-mode-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+  /* Gantt view */
+  .gantt-container {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: auto;
+    max-height: calc(100vh - 220px);
+  }
+  #gantt-body {
+    min-width: 1040px;
+    display: grid;
+    grid-template-columns: 130px 1fr;
+  }
+  .gantt-header-label {
+    position: sticky; left: 0; top: 0; z-index: 3;
+    background: var(--text); color: white;
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 10px 12px;
+    border-right: 1px solid var(--border);
+  }
+  .gantt-header-times {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--text); color: white;
+    padding: 0; height: 38px; position: relative;
+  }
+  .gantt-time-marks {
+    position: absolute; inset: 0;
+    display: grid; grid-template-columns: repeat(16, 1fr);
+    align-items: center;
+  }
+  .gantt-time-mark {
+    font-size: 11px; color: rgba(255,255,255,0.65);
+    padding-left: 4px; font-variant-numeric: tabular-nums;
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+  .gantt-time-mark.major { color: white; border-left-color: rgba(255,255,255,0.25); }
+
+  .gantt-row-label {
+    position: sticky; left: 0; z-index: 1;
+    background: var(--card); border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 3px;
+    font-size: 13px;
+  }
+  .gantt-row-date { font-size: 15px; font-weight: 600; display: flex; align-items: baseline; gap: 6px; }
+  .gantt-row-weekday { font-size: 12px; color: var(--text-soft); font-weight: 400; }
+  .gantt-row-meta { font-size: 11px; color: var(--text-soft); line-height: 1.4; }
+  .gantt-row-tag {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    background: #E5E7EB; color: #374151;
+    display: inline-block; margin-top: 3px;
+  }
+  .gantt-row-event { background: var(--event-bg); color: var(--event-fg); }
+  .gantt-row-off { font-size: 11px; color: var(--text-mute); }
+
+  .gantt-track {
+    position: relative;
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent 0, transparent calc(100% / 16 - 1px),
+      var(--border-soft) calc(100% / 16 - 1px), var(--border-soft) calc(100% / 16)
+    );
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .gantt-track.monday {
+    background: repeating-linear-gradient(45deg, #F3F4F6, #F3F4F6 6px, #E5E7EB 6px, #E5E7EB 12px);
+  }
+
+  .gantt-bar {
+    position: absolute;
+    height: 22px;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .gantt-bar:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.18); z-index: 2; }
+  .gantt-bar .bar-hours {
+    font-size: 10px; opacity: 0.85; font-weight: 500; margin-right: 4px;
+  }
+
   /* Store toolbar (sticky) */
   .store-toolbar {
     position: sticky; top: 0; z-index: 10;
@@ -889,6 +991,10 @@
     <div class="toolbar-row">
       <h2 style="margin: 0; font-size: 20px;">2026 年 4 月</h2>
       <span class="toolbar-hint">共 30 天</span>
+      <div class="store-mode-toggle">
+        <button class="store-mode-btn active" data-mode="timeline">📋 詳細</button>
+        <button class="store-mode-btn" data-mode="gantt">📊 時間軸</button>
+      </div>
       <div class="toolbar-right">
         <label for="jump-date" style="font-size: 13px; color: var(--text-soft);">📅</label>
         <input type="date" id="jump-date" min="2026-04-01" max="2026-04-30" value="2026-04-01">
@@ -897,14 +1003,21 @@
     <div class="week-jumper" id="week-jumper"></div>
   </div>
 
-  <div class="shift-legend">
-    <span class="legend-pill early">早班 09:00–17:00</span>
-    <span class="legend-pill noon">午班 11:00–19:00</span>
-    <span class="legend-pill late">晚班 17:00–00:30</span>
-    <span class="legend-pill support">支援 17:00–19:00</span>
+  <div id="timeline-panel">
+    <div class="shift-legend">
+      <span class="legend-pill early">早班 09:00–17:00</span>
+      <span class="legend-pill noon">午班 11:00–19:00</span>
+      <span class="legend-pill late">晚班 17:00–00:30</span>
+      <span class="legend-pill support">支援 17:00–19:00</span>
+    </div>
+    <div id="all-days"></div>
   </div>
 
-  <div id="all-days"></div>
+  <div id="gantt-panel" style="display: none;">
+    <div class="gantt-container">
+      <div id="gantt-body"></div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ Cowork Search View ============ -->
@@ -1148,27 +1261,65 @@ function isFullTime(name) {
   return emp && emp.role === 'fulltime';
 }
 
-// ============ Avatar helper ============
-const AVATAR_COLORS = ['#2563EB','#16A34A','#DC2626','#9333EA','#EA580C','#0891B2','#CA8A04','#DB2777','#7C3AED','#059669'];
+// ============ Avatar / bar colors ============
+// Colors extracted from the original Google Sheet
+const EMPLOYEE_COLORS = {
+  '超威':  '#34A853',  // green
+  '思坦':  '#00FF00',  // bright green
+  '蛋頭':  '#D9EAD3',  // light green
+  'Winnie':'#7CA7CE',  // light blue
+  'Fish':  '#FF6D01',  // orange
+  '政道':  '#FBBC04',  // amber
+  '佳佳':  '#FFF2CC',  // cream
+  '小黃':  '#F1C232',  // dark yellow
+  '愛因':  '#4476C9',  // blue
+  '91':    '#FFFF00',  // yellow
+  'Sin':   '#00FFFF',  // cyan
+  '沛慈':  '#FFFF00',  // yellow
+  'Jessie':'#E43B8F',  // magenta
+  '景文':  '#76A5AF',  // teal
+  '子寧':  '#F4CCCC',  // light pink
+  '莎賓':  '#EA9999',  // salmon pink
+  '孟霏':  '#D9D2E9',  // light purple
+  '凱柏':  '#FF00FF',  // magenta
+  '泓升':  '#8E7CC3',  // purple
+  'Kimb':  '#76A5AF',
+  'Rima':  '#F4CCCC',
+  'Ning':  '#D9D2E9',
+};
+const FALLBACK_COLORS = ['#2563EB','#16A34A','#DC2626','#9333EA','#EA580C','#0891B2','#CA8A04','#DB2777','#7C3AED','#059669'];
 function colorFor(name) {
+  if (EMPLOYEE_COLORS[name]) return EMPLOYEE_COLORS[name];
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+  return FALLBACK_COLORS[h % FALLBACK_COLORS.length];
+}
+
+// Some bg colors are too light — compute readable text color
+function textColorFor(bg) {
+  const hex = bg.replace('#','');
+  const r = parseInt(hex.slice(0,2), 16);
+  const g = parseInt(hex.slice(2,4), 16);
+  const b = parseInt(hex.slice(4,6), 16);
+  // Perceived luminance
+  const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+  return lum > 0.6 ? '#2C3345' : 'white';
 }
 function avatarHtml(name, size) {
   const emp = EMPLOYEES.find(e => e.name === name);
   const initial = (emp && emp.initial) || (name || '?').slice(0, 1);
   const bg = colorFor(name || '?');
+  const fg = textColorFor(bg);
   if (emp && emp.avatar) {
-    return `<span class="avatar avatar-${size}"><img class="avatar-photo" src="${emp.avatar}" alt="${name}" data-initial="${initial}" data-bg="${bg}" onerror="avatarImgError(this)"></span>`;
+    return `<span class="avatar avatar-${size}"><img class="avatar-photo" src="${emp.avatar}" alt="${name}" data-initial="${initial}" data-bg="${bg}" data-fg="${fg}" onerror="avatarImgError(this)"></span>`;
   }
-  return `<span class="avatar avatar-${size}" style="background:${bg}"><span class="avatar-fallback">${initial}</span></span>`;
+  return `<span class="avatar avatar-${size}" style="background:${bg}"><span class="avatar-fallback" style="color:${fg}">${initial}</span></span>`;
 }
 
 function avatarImgError(img) {
   const wrap = img.parentElement;
   wrap.style.background = img.dataset.bg;
-  wrap.innerHTML = `<span class="avatar-fallback">${img.dataset.initial}</span>`;
+  wrap.innerHTML = `<span class="avatar-fallback" style="color:${img.dataset.fg}">${img.dataset.initial}</span>`;
 }
 
 function findShiftsForEmployee(name) {
@@ -1459,6 +1610,115 @@ function renderAllDays() {
   container.innerHTML = allDates.map(buildDayCardHtml).join('');
 }
 
+// ============ Gantt view ============
+const GANTT_START = 9;   // 09:00
+const GANTT_END = 25;    // 01:00 next day (24:30 = 24.5)
+const GANTT_SPAN = GANTT_END - GANTT_START;
+
+function parseShiftTime(t) {
+  if (!t) return 0;
+  if (t.includes('00:30')) return 24.5;
+  const [h, m] = t.split(':').map(Number);
+  return h + (m || 0) / 60;
+}
+
+function renderGantt() {
+  const body = document.getElementById('gantt-body');
+  const dates = Object.keys(SCHEDULE).sort();
+
+  // Header row
+  const timeMarks = [];
+  for (let h = GANTT_START; h <= GANTT_END; h++) {
+    const hr = h >= 24 ? h - 24 : h;
+    const label = `${String(hr).padStart(2,'0')}`;
+    const isMajor = h % 2 === 1; // every 2 hours
+    timeMarks.push(`<div class="gantt-time-mark ${isMajor ? 'major' : ''}">${label}</div>`);
+  }
+  // First column empty header + time header spanning 16 columns over 16 hours
+  let html = `
+    <div class="gantt-header-label">日期</div>
+    <div class="gantt-header-times">
+      <div class="gantt-time-marks">${timeMarks.slice(0, 16).join('')}</div>
+    </div>
+  `;
+
+  const shiftTimes = {
+    early10: { start: 9,   end: 19 },
+    early8:  { start: 9,   end: 17 },
+    noon8:   { start: 11,  end: 19 },
+    support: { start: 17,  end: 19 },
+    late75:  { start: 17,  end: 24.5 },
+  };
+
+  for (const date of dates) {
+    const day = SCHEDULE[date];
+    const d = new Date(date);
+    const mdFmt = `${d.getMonth()+1}/${d.getDate()}`;
+
+    if (day.type === 'monday') {
+      html += `
+        <div class="gantt-row-label" id="gantt-row-${date}" data-date="${date}">
+          <div class="gantt-row-date">${mdFmt} <span class="gantt-row-weekday">週${day.wd}</span></div>
+          <div class="gantt-row-off">公休</div>
+        </div>
+        <div class="gantt-track monday" style="height: 44px;"></div>
+      `;
+      continue;
+    }
+
+    // Collect bars
+    const bars = [];
+    for (const [key, times] of Object.entries(shiftTimes)) {
+      if (day[key] && day[key].length) {
+        day[key].forEach(name => {
+          bars.push({ name, key, start: times.start, end: times.end });
+        });
+      }
+    }
+
+    const barHtml = bars.map((b, i) => {
+      const sPct = ((b.start - GANTT_START) / GANTT_SPAN) * 100;
+      const ePct = ((b.end - GANTT_START) / GANTT_SPAN) * 100;
+      const bg = colorFor(b.name);
+      const fg = textColorFor(bg);
+      const hours = (b.end - b.start).toFixed(b.end % 1 ? 1 : 0);
+      return `<div class="gantt-bar" style="top: ${4 + i * 26}px; left: ${sPct}%; width: ${ePct - sPct}%; background: ${bg}; color: ${fg}" data-emp="${b.name}" title="${b.name} · ${b.start}:00–${b.end}h">
+        <span class="bar-hours">${hours}h</span>${b.name}
+      </div>`;
+    }).join('');
+
+    const trackHeight = Math.max(44, bars.length * 26 + 8);
+
+    const metaParts = [];
+    if (day.holiday) metaParts.push(`<span class="gantt-row-tag">${day.holiday}</span>`);
+    if (day.event) metaParts.push(`<span class="gantt-row-tag gantt-row-event">${day.event}</span>`);
+    if (day.off?.length) metaParts.push(`<div class="gantt-row-off">休：${day.off.join('、')}</div>`);
+
+    html += `
+      <div class="gantt-row-label" id="gantt-row-${date}" data-date="${date}" style="min-height: ${trackHeight}px;">
+        <div class="gantt-row-date">${mdFmt} <span class="gantt-row-weekday">週${day.wd}</span></div>
+        ${metaParts.join('')}
+      </div>
+      <div class="gantt-track" style="height: ${trackHeight}px;">${barHtml}</div>
+    `;
+  }
+
+  body.innerHTML = html;
+
+  // Click a bar → jump to that employee
+  body.querySelectorAll('.gantt-bar[data-emp]').forEach(bar => {
+    bar.addEventListener('click', () => jumpToEmployee(bar.dataset.emp));
+  });
+}
+
+let currentStoreMode = 'timeline';
+function setStoreMode(mode) {
+  currentStoreMode = mode;
+  document.querySelectorAll('.store-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  document.getElementById('timeline-panel').style.display = mode === 'timeline' ? '' : 'none';
+  document.getElementById('gantt-panel').style.display = mode === 'gantt' ? '' : 'none';
+}
+
 const WEEK_JUMPS = [
   { label: '第 1 週', range: '4/1–4/5',   firstDate: '2026-04-01', lastDate: '2026-04-05' },
   { label: '第 2 週', range: '4/6–4/12',  firstDate: '2026-04-06', lastDate: '2026-04-12' },
@@ -1483,9 +1743,14 @@ function renderWeekJumper() {
 }
 
 function scrollToDate(date, highlight = true) {
-  const target = document.getElementById(`card-${date}`);
+  const targetId = currentStoreMode === 'gantt' ? `gantt-row-${date}` : `card-${date}`;
+  const target = document.getElementById(targetId);
   if (!target) return;
-  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (currentStoreMode === 'gantt') {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   if (highlight) {
     target.classList.add('highlight');
     setTimeout(() => target.classList.remove('highlight'), 1600);
@@ -1910,6 +2175,10 @@ document.getElementById('jump-date').addEventListener('change', (e) => {
   setRoute('store', e.target.value);
 });
 
+document.querySelectorAll('.store-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => setStoreMode(btn.dataset.mode));
+});
+
 function jumpToEmployee(name) {
   const exists = EMPLOYEES.find(e => e.name === name);
   if (!exists) {
@@ -1943,6 +2212,7 @@ document.querySelectorAll('#view-cowork .mode-pill').forEach(btn => {
 updateEmpTrigger();
 renderEmployeeView(currentEmployeeName);
 renderAllDays();
+renderGantt();
 renderWeekJumper();
 renderSummary();
 renderCoworkPills();
