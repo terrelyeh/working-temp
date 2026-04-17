@@ -109,14 +109,27 @@
   .filter-check input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
   .filter-check:hover { color: var(--text); }
 
-  /* Employee view: sticky dark header */
-  .emp-stats {
+  /* Employee view: sticky wrap (stats + filters) */
+  .emp-sticky-wrap {
     position: sticky; top: 0; z-index: 10;
-    background: var(--text); color: white;
-    border-radius: 12px; padding: 16px 22px; margin: 0 0 20px;
-    display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
-    box-shadow: 0 6px 20px -8px rgba(44, 51, 69, 0.4);
+    margin: 0 0 20px;
+    background: var(--bg);
+    padding-top: 4px;
   }
+  .emp-stats {
+    background: var(--text); color: white;
+    border-radius: 12px 12px 0 0; padding: 16px 22px;
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
+  }
+  .emp-filter-bar {
+    background: var(--card); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 12px 12px;
+    padding: 12px 18px;
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    box-shadow: 0 6px 20px -8px rgba(44, 51, 69, 0.15);
+  }
+  .emp-filter-bar .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .emp-filter-bar .filter-check { margin-left: auto; }
   .emp-stats .emp-name { font-size: 20px; font-weight: 600; color: white; }
   .emp-stats .emp-role {
     font-size: 12px; color: rgba(255,255,255,0.75);
@@ -675,21 +688,23 @@
   <div class="emp-selector">
     <label>選擇員工</label>
     <div class="emp-pills" id="emp-pills"></div>
-    <div class="emp-filter">
-      <label style="font-size: 13px; color: var(--text-soft); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">篩選</label>
+  </div>
+
+  <div class="emp-sticky-wrap">
+    <div class="emp-stats" id="emp-stats"></div>
+    <div class="emp-filter-bar">
       <div class="filter-pills">
         <button class="filter-pill" data-filter="all">全部</button>
         <button class="filter-pill active" data-filter="scheduled">只有排班</button>
         <button class="filter-pill" data-filter="off">只有未排班</button>
       </div>
-      <label class="filter-check" style="margin-top: 10px;">
+      <label class="filter-check">
         <input type="checkbox" id="show-events" checked>
-        <span>顯示店內活動資訊</span>
+        <span>顯示店內活動</span>
       </label>
     </div>
   </div>
 
-  <div class="emp-stats" id="emp-stats"></div>
   <div class="legend">
     <span class="legend-item early">早班</span>
     <span class="legend-item noon">午班</span>
