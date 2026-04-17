@@ -1159,11 +1159,16 @@ function avatarHtml(name, size) {
   const emp = EMPLOYEES.find(e => e.name === name);
   const initial = (emp && emp.initial) || (name || '?').slice(0, 1);
   const bg = colorFor(name || '?');
-  const fallback = `<span class="avatar-fallback" style="background:${bg}">${initial}</span>`;
-  if (!emp || !emp.avatar) {
-    return `<span class="avatar avatar-${size}">${fallback}</span>`;
+  if (emp && emp.avatar) {
+    return `<span class="avatar avatar-${size}"><img class="avatar-photo" src="${emp.avatar}" alt="${name}" data-initial="${initial}" data-bg="${bg}" onerror="avatarImgError(this)"></span>`;
   }
-  return `<span class="avatar avatar-${size}">${fallback}<img class="avatar-photo" src="${emp.avatar}" alt="${name}" onerror="this.remove()"></span>`;
+  return `<span class="avatar avatar-${size}" style="background:${bg}"><span class="avatar-fallback">${initial}</span></span>`;
+}
+
+function avatarImgError(img) {
+  const wrap = img.parentElement;
+  wrap.style.background = img.dataset.bg;
+  wrap.innerHTML = `<span class="avatar-fallback">${img.dataset.initial}</span>`;
 }
 
 function findShiftsForEmployee(name) {
