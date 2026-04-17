@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>排班系統 · 待 Winnie 確認清單</title>
+<style>
+  :root {
+    --text: #2C3345;
+    --text-soft: #5A6478;
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --accent: #2563EB;
+    --warn: #B45309;
+    --warn-bg: #FEF3C7;
+    --priority-high: #B91C1C;
+    --priority-high-bg: #FEE2E2;
+    --priority-mid: #B45309;
+    --priority-mid-bg: #FEF3C7;
+    --priority-low: #166534;
+    --priority-low-bg: #DCFCE7;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    line-height: 1.8;
+    font-feature-settings: "tnum";
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 112px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 32px; }
+  h1 { font-size: 36px; margin: 0 0 10px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--text-soft); font-size: 17px; margin: 0; }
+  .intro {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px 28px; margin-bottom: 36px;
+  }
+  .intro p { margin: 6px 0; font-size: 17px; }
+  .intro strong { color: var(--text); }
+  .category {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 28px 32px; margin: 24px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .category h2 {
+    margin: 0 0 12px; font-size: 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .category .hint {
+    color: var(--text-soft); font-size: 15px;
+    margin: 0 0 20px; font-style: italic;
+  }
+  .question {
+    border-top: 1px dashed var(--border);
+    padding: 18px 0;
+  }
+  .question:first-of-type { border-top: none; padding-top: 0; }
+  .question:last-of-type { padding-bottom: 0; }
+  .q-head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .q-num {
+    font-family: "SF Mono", Consolas, monospace;
+    font-weight: 700; color: var(--accent);
+    font-size: 16px; letter-spacing: 0.02em;
+  }
+  .q-title {
+    font-size: 18px; font-weight: 600;
+    color: var(--text); flex: 1; min-width: 0;
+  }
+  .priority {
+    display: inline-block; padding: 2px 10px; border-radius: 4px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+  }
+  .p-high { background: var(--priority-high-bg); color: var(--priority-high); }
+  .p-mid { background: var(--priority-mid-bg); color: var(--priority-mid); }
+  .p-low { background: var(--priority-low-bg); color: var(--priority-low); }
+  .q-context {
+    font-size: 15px; color: var(--text-soft); margin: 4px 0 8px;
+  }
+  .q-hint {
+    background: #F9FAFB; border-left: 3px solid var(--accent);
+    padding: 10px 14px; border-radius: 0 4px 4px 0;
+    font-size: 14px; color: var(--text); margin: 6px 0 0;
+  }
+  .q-hint strong { color: var(--accent); }
+  .answer {
+    margin-top: 10px; background: #FFFBEB;
+    border: 1px dashed var(--warn);
+    border-radius: 6px; padding: 10px 14px;
+    font-size: 14px; color: var(--warn); font-style: italic;
+  }
+  .summary-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin: 0 0 28px;
+  }
+  .summary-bar .stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; text-align: center;
+  }
+  .summary-bar .num { font-size: 28px; font-weight: 700; }
+  .summary-bar .label { font-size: 13px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+  .footer {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border);
+    color: var(--text-soft); font-size: 13px; text-align: center;
+  }
+  @media print {
+    body { background: white; }
+    .wrap { padding: 0; max-width: none; }
+    .category { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>給 Winnie 的確認清單</h1>
+  <p class="subtitle">排班系統 · 待確認議題 ｜ 請依項目逐一回覆</p>
+</header>
+
+<div class="intro">
+  <p><strong>背景</strong>：正在開發取代目前 Google Sheet 排班流程的系統。資料模型與核心流程已整理完成，剩下的業務細節需要您確認才能開始動工。</p>
+  <p><strong>重要程度</strong>：🔴 決定 Phase 1 能否開始 ｜ 🟡 決定 Phase 1 細節 ｜ 🟢 可延後到 Phase 2 再回覆</p>
+  <p><strong>時間</strong>：建議一起花 30–60 分鐘過完；紅色項目請優先回覆。</p>
+</div>
+
+<div class="summary-bar">
+  <div class="stat">
+    <div class="num" style="color: var(--priority-high);">9</div>
+    <div class="label">🔴 高優先</div>
+  </div>
+  <div class="stat">
+    <div class="num" style="color: var(--priority-mid);">7</div>
+    <div class="label">🟡 中優先</div>
+  </div>
+  <div class="stat">
+    <div class="num" style="color: var(--priority-low);">4</div>
+    <div class="label">🟢 可延後</div>
+  </div>
+</div>
+
+<!-- ============= A ============= -->
+<div class="category">
+  <h2>A. 組織現況</h2>
+  <p class="hint">員工資料與權限，決定系統能否建立第一批帳號。</p>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">A1</span>
+      <span class="q-title">完整員工清單</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">目前從 4 月班表看到至少 15+ 位：91、小黃、景文、子寧、愛因、莎賓、佳佳、沛慈、Jessie、Sin、孟霏、孟學……</div>
+    <div class="q-hint"><strong>需要欄位</strong>：姓名、類別（正職/PT）、Email / Google 帳號、是否可排 10h 班、目前是否在職</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">A2</span>
+      <span class="q-title">高階主管 Fish / 政道 的系統權限</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">目前只有 Winnie 排班。Fish、政道需要在系統裡嗎？</div>
+    <div class="q-hint"><strong>選項</strong>：(a) 僅查看全店班表 / (b) 可查看 + 可改班表 / (c) 不需進系統</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">A3</span>
+      <span class="q-title">原「固定 PT 56–90h」「不固定 PT 36h」規則</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">一年前的舊規則。現在 PT 是人力 pool，每月填意願表，上下限還用嗎？</div>
+    <div class="q-hint"><strong>選項</strong>：(a) 完全取消 / (b) 保留作為警戒線 / (c) 簡化成單一上限（例如 ≤ 100h）</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<!-- ============= B ============= -->
+<div class="category">
+  <h2>B. 工時計算（最關鍵）</h2>
+  <p class="hint">這是系統核心邏輯，公式對不對直接決定能否自動算出目標工時。</p>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">B1</span>
+      <span class="q-title">「排班目標工時」的正確公式</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">4 月超威班表顯示「152H / 134H + 16H 特休 + 2H 開會」。我推算：</div>
+    <div class="q-hint">
+      <strong>推論公式</strong>：<br>
+      月工時總額 = (當月天數 − 固定週休 − 特殊協議 − 國假) × 8H<br>
+      <strong>排班目標工時</strong> = 月工時總額 − 特休時數 − 會議時數<br><br>
+      超威：30 − 8 − 1 = 21 天，21 × 8 = 168H<br>
+      168 − 16 特休 − 2 開會 = <strong>150H</strong>（但實際寫 152H，差 2H）<br><br>
+      <strong>問題</strong>：正確公式是什麼？152H 怎麼算出來？
+    </div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">B2</span>
+      <span class="q-title">特休怎麼計入目標達成？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">特休是請年假的時數。它在系統裡怎麼表達？</div>
+    <div class="q-hint"><strong>我的理解</strong>：特休不上班、但算工時貢獻；會從「排班目標工時」裡扣掉（因為那幾天不用排進班表）。請確認對不對。</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">B3</span>
+      <span class="q-title">會議時數怎麼加？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">超威 4 月有 2H 開會。這個時數是怎麼來的？</div>
+    <div class="q-hint"><strong>選項</strong>：(a) 主管每月手動輸入每個人的會議時數 / (b) 在系統裡建會議、指定參與者、自動累計 / (c) 其他</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">B4</span>
+      <span class="q-title">國定假日落在固定週休日要補嗎？</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">例如清明節 4/4（週六）落在思坦的非固定休日，他該「多一天休假」嗎？2 月範例國假 6 天全加，4 月範例沒加清明。</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">B5</span>
+      <span class="q-title">跨月補時數的觸發條件與上限</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">蛋頭 1 月少 49H，2 月補回 → 2 月休假從 18 天降為 12 天。</div>
+    <div class="q-hint"><strong>需要定義</strong>：(a) 少多少才需要補？(b) 補的上限（怕一次補太多）？(c) 超過目標能否下月少上？(d) 誰負責計算？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<!-- ============= C ============= -->
+<div class="category">
+  <h2>C. 休假流程</h2>
+  <p class="hint">目前表單長什麼樣，系統照這個來做電子版。</p>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C1</span>
+      <span class="q-title">月休假表目前長怎樣？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">我只看到 2 月的文字版。需要看到實際表單（Google Doc / Form / Sheet）才能設計電子版。</div>
+    <div class="q-hint"><strong>請提供</strong>：最近一次的休假表連結或截圖</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C2</span>
+      <span class="q-title">PT 月排班意願表長怎樣？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">您提到「月底發排班意願與需求給大家回填」——系統會取代這張表。</div>
+    <div class="q-hint"><strong>請提供</strong>：最近一次的意願表連結或截圖，以及填寫欄位的說明</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C3</span>
+      <span class="q-title">正職年假可以怎麼請？</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-hint"><strong>需要定義</strong>：(a) 每月可請上限？(b) 可以切成半天嗎？(c) 要提前幾天申請？(d) 跨月可否一次請？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C4</span>
+      <span class="q-title">休假表提交時程</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-hint"><strong>需要定義</strong>：(a) 截止日（例：每月 25 號）？(b) 提交後可以改嗎？(c) 沒準時提交怎麼處理？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<!-- ============= D ============= -->
+<div class="category">
+  <h2>D. 硬規則</h2>
+  <p class="hint">這些會變成系統的紅燈警告。</p>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">D1</span>
+      <span class="q-title">「同日最多 N 位正職休假」 N = ?</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">原規則 N=3。現在只有 3 位正職（Winnie 轉主管後），規則失效（3 全休也不違反）。</div>
+    <div class="q-hint"><strong>選項</strong>：(a) 改成 N = 正職總數 − 1（目前等於 2）/ (b) 寫死 N = 2 / (c) 補正職到 4 人，維持 N = 3</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">D2</span>
+      <span class="q-title">主管 40h 是硬性還是警戒？</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-hint"><strong>選項</strong>：(a) 硬性：超過不給排 / (b) 警戒：超過顯示黃燈但可排</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">D3</span>
+      <span class="q-title">班次時數是否含用餐休息？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">影響薪資計算口徑。例如早班 09:00–17:00 寫「8h」，是含 1 小時用餐、實際工時 7h？還是真的 8h？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<!-- ============= E ============= -->
+<div class="category">
+  <h2>E. 流程細節</h2>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">E1</span>
+      <span class="q-title">班表發布後的變更流程</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-hint"><strong>需要定義</strong>：(a) 什麼情況下需要記錄原因？(b) 要不要通知所有員工？還是只通知被改的人？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">E2</span>
+      <span class="q-title">員工互相換班的流程</span>
+      <span class="priority p-low">🟢 可延後</span>
+    </div>
+    <div class="q-context">Phase 2 才做，但先想清楚會影響資料模型設計。</div>
+    <div class="q-hint"><strong>流程建議</strong>：員工 A 發起 → 指名 B → B 同意 → Winnie 核准 → 班表自動更新</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">E3</span>
+      <span class="q-title">有打卡系統嗎？</span>
+      <span class="priority p-low">🟢 可延後</span>
+    </div>
+    <div class="q-context">Phase 2 要不要做「排班 vs. 實際出勤」比對？</div>
+    <div class="q-hint"><strong>需知道</strong>：(a) 目前用什麼打卡？(b) 能否匯出資料？(c) 打卡時間 vs. 排班時間差多少算正常？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">E4</span>
+      <span class="q-title">Phase 1 希望幾月前上線？</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">估計 Phase 1 約 6–8 週能完成。您說 ASAP，想定個具體目標月份嗎？</div>
+    <div class="q-hint"><strong>建議</strong>：設定「某月開始用系統排下個月的班」——這個「某月」是哪一月？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<!-- ============= F ============= -->
+<div class="category">
+  <h2>F. 其他（可延後）</h2>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">F1</span>
+      <span class="q-title">國假優先正職的真正理由？</span>
+      <span class="priority p-low">🟢 可延後</span>
+    </div>
+    <div class="q-context">原版寫「雙倍薪資考量」邏輯反向（省成本應該優先 PT）。猜測原意是「正職享國假加倍薪資的權利」。</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">F2</span>
+      <span class="q-title">長班日（週五六）要不要有 10h 班版本？</span>
+      <span class="priority p-low">🟢 可延後</span>
+    </div>
+    <div class="q-context">平日和週日都有 10h 版本，週末工時最重反而沒有。是刻意還是漏？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">F3</span>
+      <span class="q-title">國假加給 vs. 補休可否選？</span>
+      <span class="priority p-low">🟢 可延後</span>
+    </div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">F4</span>
+      <span class="q-title">週一遇國假是否補假？</span>
+      <span class="priority p-mid">🟡 中優先</span>
+    </div>
+    <div class="q-context">規則寫「不補」，請確認。</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+</div>
+
+<div class="footer">
+  排班系統 · 待 Winnie 確認清單 ｜ 2026-04-17
+</div>
+
+</div>
+</body>
+</html>
