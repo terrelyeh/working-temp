@@ -969,8 +969,8 @@ const EMPLOYEES = [
   { name: '景文', role: 'pt', target: 39.5, actual: 39.5, leave: 0, meeting: 0 },
   { name: '子寧', role: 'pt', target: 39, actual: 39, leave: 0, meeting: 0 },
   { name: '莎賓', role: 'pt', target: 38.5, actual: 38.5, leave: 0, meeting: 0 },
-  { name: '孟霏', role: 'pt', target: 24, actual: 24, leave: 0, meeting: 0 },
-  { name: '孟學', role: 'pt' },
+  { name: '孟霏', role: 'pt', target: 24, actual: 24, leave: 0, meeting: 0, initial: '霏' },
+  { name: '孟學', role: 'pt', initial: '學' },
   { name: '勲諺', role: 'pt' },
   { name: '凱柏', role: 'pt' },
 ];
@@ -1157,7 +1157,7 @@ function colorFor(name) {
 }
 function avatarHtml(name, size) {
   const emp = EMPLOYEES.find(e => e.name === name);
-  const initial = (name || '?').slice(0, 1);
+  const initial = (emp && emp.initial) || (name || '?').slice(0, 1);
   const bg = colorFor(name || '?');
   const fallback = `<span class="avatar-fallback" style="background:${bg}">${initial}</span>`;
   if (!emp || !emp.avatar) {
