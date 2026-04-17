@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>公司排班規則 v2（系統開發 Spec）</title>
+<style>
+  :root {
+    --text: #2C3345;
+    --text-soft: #5A6478;
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --accent: #2563EB;
+    --warn: #D97706;
+    --warn-bg: #FEF3C7;
+    --change: #DC2626;
+    --change-bg: #FEE2E2;
+    --hard: #7C2D12;
+    --hard-bg: #FED7AA;
+    --soft: #1E40AF;
+    --soft-bg: #DBEAFE;
+    --pref: #166534;
+    --pref-bg: #DCFCE7;
+    --code-bg: #F3F4F6;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 16px; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    line-height: 1.7;
+    font-feature-settings: "tnum";
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .subtitle {
+    color: var(--text-soft);
+    font-size: 15px;
+    margin: 0;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--text);
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 28px 0 12px;
+    color: var(--text);
+  }
+  p, li { font-size: 15px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 13px;
+    color: var(--text);
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    font-family: "SF Mono", Consolas, monospace;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #F9FAFB;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  tr:last-child td { border-bottom: none; }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    background: #F0F7FF;
+    margin: 16px 0;
+    padding: 12px 18px;
+    color: var(--text-soft);
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p { margin: 4px 0; }
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+  .badge-todo { background: var(--warn-bg); color: var(--warn); }
+  .badge-change { background: var(--change-bg); color: var(--change); }
+  .badge-hard { background: var(--hard-bg); color: var(--hard); }
+  .badge-soft { background: var(--soft-bg); color: var(--soft); }
+  .badge-pref { background: var(--pref-bg); color: var(--pref); }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--card);
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 16px 0 24px;
+    font-size: 13px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0 32px;
+  }
+  .toc h3 { margin-top: 0; font-size: 14px; color: var(--text-soft); letter-spacing: 0.05em; text-transform: uppercase; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 13px;
+    text-align: center;
+  }
+  @media print {
+    body { background: white; }
+    .wrap { padding: 0; max-width: none; }
+    table { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>公司排班規則 v2</h1>
+  <p class="subtitle">系統開發 Spec ｜ 基於 v1（公司排班大規則 0630）改寫</p>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-todo">🟡 待決</span>需要使用者拍板</div>
+  <div class="legend-item"><span class="badge badge-change">🔴 修正</span>與 v1 不同之處</div>
+  <div class="legend-item"><span class="badge badge-hard">硬性</span>絕對不可違反</div>
+  <div class="legend-item"><span class="badge badge-soft">軟性</span>應盡量達成</div>
+  <div class="legend-item"><span class="badge badge-pref">偏好</span>可被覆蓋</div>
+</div>
+
+<nav class="toc">
+  <h3>目錄</h3>
+  <ol>
+    <li><a href="#sec0">名詞與時間定義</a></li>
+    <li><a href="#sec1">硬性限制（H1–H6）</a></li>
+    <li><a href="#sec2">軟性限制（S1–S3）</a></li>
+    <li><a href="#sec3">偏好（P1–P3）</a></li>
+    <li><a href="#sec4">標準班表</a></li>
+    <li><a href="#sec5">排班流程</a></li>
+    <li><a href="#sec6">異常處理流程</a></li>
+    <li><a href="#sec7">待決策清單</a></li>
+    <li><a href="#sec8">系統資料模型草稿</a></li>
+  </ol>
+</nav>
+
+<h2 id="sec0">0. 名詞與時間定義</h2>
+
+<h3>0.1 營業時段 <span class="badge badge-change">🔴 補齊</span></h3>
+<table>
+  <thead><tr><th>日別</th><th>中文標籤</th><th>營業時間</th><th>備註</th></tr></thead>
+  <tbody>
+    <tr><td>週一</td><td>公休日</td><td>—</td><td>全體休假，國定假日仍公休（不補）</td></tr>
+    <tr><td>週二、三、四</td><td><strong>平日</strong></td><td>09:00–19:00</td><td></td></tr>
+    <tr><td>週五、六</td><td><strong>長班日</strong>（原稱「週末」）<span class="badge badge-change">🔴</span></td><td>09:00–次日 00:30</td><td>含晚班</td></tr>
+    <tr><td>週日</td><td><strong>週日</strong></td><td>09:00–19:00</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>0.2 班次主檔 <span class="badge badge-change">🔴 補齊</span></h3>
+<table>
+  <thead><tr><th>班次代碼</th><th>時段</th><th>名目時數</th><th>含休息</th><th>實際工時</th><th>適用日</th></tr></thead>
+  <tbody>
+    <tr><td><code>M8</code> 早班 8h</td><td>09:00–17:00</td><td>8h</td><td>🟡 是/否</td><td>🟡</td><td>全部</td></tr>
+    <tr><td><code>M10</code> 早班 10h</td><td>09:00–19:00</td><td>10h</td><td>🟡</td><td>🟡</td><td>平日 / 週日</td></tr>
+    <tr><td><code>A8</code> 午班 8h</td><td>11:00–19:00</td><td>8h</td><td>🟡</td><td>🟡</td><td>全部</td></tr>
+    <tr><td><code>S2</code> 支援班</td><td>17:00–19:00</td><td>2h</td><td>否</td><td>2h</td><td>平日 / 週日</td></tr>
+    <tr><td><code>N7.5</code> 晚班</td><td>17:00–次日 00:30</td><td>7.5h</td><td>🟡</td><td>🟡</td><td>長班日</td></tr>
+  </tbody>
+</table>
+
+<blockquote>
+<p><span class="badge badge-todo">🟡 待決</span></p>
+<ol>
+  <li>班次「名目時數」是否含 1 小時用餐休息？影響工時統計與薪資。</li>
+  <li><code>S2</code> 支援班可不可以排給正職？最低排班時數限制？</li>
+</ol>
+</blockquote>
+
+<h3>0.3 員工分類</h3>
+<table>
+  <thead><tr><th>類別</th><th>月工時下限</th><th>月工時上限</th><th>預警 / 警戒</th><th>備註</th></tr></thead>
+  <tbody>
+    <tr><td>主管</td><td>—</td><td>40h（<strong>硬性</strong> <span class="badge badge-change">🔴</span> 由建議改硬性）</td><td>—</td><td>不排正職原本應上的班</td></tr>
+    <tr><td>正職</td><td>月目標（依需求表）</td><td>月上限（依需求表）</td><td>—</td><td>10h 班能力依需求表標註</td></tr>
+    <tr><td>固定 PT</td><td>56h</td><td>90h</td><td>70h 預警 / 80h 警戒</td><td></td></tr>
+    <tr><td>不固定 PT</td><td>0h</td><td>36h</td><td>—</td><td>僅填補缺口</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sec1">1. 硬性限制 <span class="badge badge-hard">HARD</span></h2>
+<p>排班系統<strong>絕對不能</strong>違反；違反即視為非法排班。</p>
+
+<h3>H1. 工時上限</h3>
+<ul>
+  <li>H1.1 固定 PT 月工時 ≤ 90h</li>
+  <li>H1.2 不固定 PT 月工時 ≤ 36h</li>
+  <li>H1.3 主管月支援工時 ≤ 40h <span class="badge badge-change">🔴</span> 由「建議」改硬性，可由設定切換</li>
+  <li>H1.4 正職月工時 ≤ 月上限（依當月需求表）</li>
+</ul>
+
+<h3>H2. 班次間休息 <span class="badge badge-change">🔴 新增</span>（依勞基法）</h3>
+<ul>
+  <li>H2.1 同一員工兩班次之間休息 ≥ <strong>11 小時</strong>
+    <ul>
+      <li>推論：長班日晚班 00:30 下班 → 下次最早 11:30 上班，因此<strong>不能排隔日早班（09:00）也不能排午班（11:00）</strong>。</li>
+      <li>修正 v1「前一天晚班員工不可排隔日早班」→ <strong>連午班也不行</strong>，且全週適用。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>H3. 連續工作天數 <span class="badge badge-change">🔴 補齊混排規則</span></h3>
+<ul>
+  <li>H3.1 連續工作天數 ≤ 6 天（任何日數，週一公休自然限制）</li>
+  <li>H3.2 純 8h 班次連續 ≤ 5 天</li>
+  <li>H3.3 含 10h 班次的連續工作 ≤ 2 天（任一連 2 日內若兩天都有 10h 班，視為觸頂）</li>
+  <li>H3.4 跨月計算：12/30、12/31、1/1、1/2 視為連續</li>
+</ul>
+
+<h3>H4. 關鍵時段最低人力</h3>
+<ul>
+  <li>H4.1 平日：每個班至少 1 位正職（午班與支援班可共用同一位）</li>
+  <li>H4.2 長班日：早班 ≥ 2 正職、晚班 ≥ 1 正職</li>
+  <li>H4.3 週日：早班 ≥ 1 正職、午班 ≥ 1 正職</li>
+  <li>H4.4 國定假日（非週一）：依該日對應的日別規則 + 至少 1 位正職</li>
+</ul>
+
+<h3>H5. 同日多班 <span class="badge badge-change">🔴 新增</span></h3>
+<ul>
+  <li>H5.1 同一員工同一日只能排一個班次（<strong>禁止 split shift</strong>）
+    <ul><li>🟡 待決：是否開放例外？</li></ul>
+  </li>
+</ul>
+
+<h3>H6. 主管使用限制</h3>
+<ul>
+  <li>H6.1 主管不可佔據「該日仍有正職可排」的班次</li>
+  <li>H6.2 「所有正職都無法排」= <strong>當天可排班正職皆已排滿、休假、或請假</strong> <span class="badge badge-change">🔴 釐清原文歧義</span></li>
+</ul>
+
+<h2 id="sec2">2. 軟性限制 <span class="badge badge-soft">SOFT</span></h2>
+<p><strong>應盡量達成</strong>；無法達成需記錄理由並由主管核准。</p>
+
+<h3>S1. 工時目標</h3>
+<ul>
+  <li>S1.1 正職月工時達到目標（依需求表）</li>
+  <li>S1.2 固定 PT 月工時 ≥ 56h</li>
+  <li>S1.3 固定 PT 月工時 ≤ 70h（預警線；超過需理由）</li>
+  <li>S1.4 固定 PT 月工時 ≤ 80h（警戒線；超過需主管核准）</li>
+</ul>
+
+<h3>S2. 公平性指標 <span class="badge badge-change">🔴 新增</span>（原章節有名無實）</h3>
+<ul>
+  <li>S2.1 員工間「晚班次數」標準差 ≤ 🟡（建議 1.5）</li>
+  <li>S2.2 員工間「長班日上班次數」標準差 ≤ 🟡</li>
+  <li>S2.3 同一員工不應連續多週都被排到不喜歡的班（需記錄員工偏好）</li>
+</ul>
+
+<h3>S3. 班次配置偏好</h3>
+<ul>
+  <li>S3.1 有 10h 能力的正職優先排 10h 班（達標效率高）</li>
+  <li>S3.2 國定假日優先安排正職（基於正職享國假加倍薪資的權利）<span class="badge badge-change">🔴 重寫原文邏輯</span></li>
+</ul>
+
+<h2 id="sec3">3. 偏好 <span class="badge badge-pref">PREFERENCE</span></h2>
+<p>員工個人設定，影響排班但可被覆蓋。</p>
+<ul>
+  <li>P1. 不可上某類班次（如：不能上晚班、不能上週末）</li>
+  <li>P2. 偏好班次（早班 / 午班 / 晚班）</li>
+  <li>P3. 希望休假日（每月最多 N 天可指定）</li>
+</ul>
+<blockquote>
+<p><span class="badge badge-todo">🟡 待決</span> 偏好違反的優先級。建議：硬偏好（P1）視為硬性限制，軟偏好（P2/P3）視為軟性。</p>
+</blockquote>
+
+<h2 id="sec4">4. 標準班表</h2>
+
+<h3>4.1 平日（週二、三、四）</h3>
+<p><strong>標準版</strong>：</p>
+<table>
+  <thead><tr><th>班</th><th>人數</th></tr></thead>
+  <tbody>
+    <tr><td><code>M8</code> 早班 09–17</td><td>2</td></tr>
+    <tr><td><code>A8</code> 午班 11–19</td><td>2</td></tr>
+    <tr><td><code>S2</code> 支援 17–19</td><td>1</td></tr>
+  </tbody>
+</table>
+<p><strong>10h 版</strong>（有員工可排 10h 時）：</p>
+<table>
+  <thead><tr><th>班</th><th>人數</th></tr></thead>
+  <tbody>
+    <tr><td><code>M10</code> 早班 09–19</td><td>1</td></tr>
+    <tr><td><code>M8</code> 早班 09–17</td><td>1</td></tr>
+    <tr><td><code>A8</code> 午班 11–19</td><td>2</td></tr>
+  </tbody>
+</table>
+
+<h3>4.2 長班日（週五、六）</h3>
+<table>
+  <thead><tr><th>班</th><th>人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td><code>M8</code> 早班 09–17</td><td>3</td><td>≥ 2 正職</td></tr>
+    <tr><td><code>A8</code> 午班 11–19</td><td>2</td><td></td></tr>
+    <tr><td><code>N7.5</code> 晚班 17–00:30</td><td>3</td><td>≥ 1 正職</td></tr>
+  </tbody>
+</table>
+<blockquote>
+<p><span class="badge badge-todo">🟡 待決</span> 長班日是否要設計 10h 班版本？目前原文沒有，但工時最重，理論上最該用。</p>
+</blockquote>
+
+<h3>4.3 週日</h3>
+<p><strong>標準版</strong>：</p>
+<table>
+  <thead><tr><th>班</th><th>人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td><code>M8</code> 早班 09–17</td><td>2</td><td>≥ 1 正職</td></tr>
+    <tr><td><code>A8</code> 午班 11–19</td><td>3</td><td>≥ 1 正職</td></tr>
+    <tr><td><code>S2</code> 支援 17–19</td><td>1</td><td></td></tr>
+  </tbody>
+</table>
+<p><strong>10h 版</strong>：</p>
+<table>
+  <thead><tr><th>班</th><th>人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td><code>M10</code> 早班 09–19</td><td>1</td><td><strong>必須正職</strong></td></tr>
+    <tr><td><code>M8</code> 早班 09–17</td><td>1</td><td></td></tr>
+    <tr><td><code>A8</code> 午班 11–19</td><td>3</td><td>≥ 1 正職</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sec5">5. 排班流程</h2>
+
+<h3>5.1 月初準備</h3>
+<ol>
+  <li>接收當月排班需求摘要表</li>
+  <li>計算可行性
+    <ul>
+      <li><code>每位正職最大可能工時 = (該月營業日 - 該員工不可排日數) × 該員工最大日工時</code></li>
+      <li><code>緩衝率 = 目標工時 ÷ 最大可能工時</code></li>
+      <li>緩衝率 ≤ 0.95：可達成</li>
+      <li>0.95 &lt; 緩衝率 ≤ 1.00：高風險（需協調）</li>
+      <li>緩衝率 &gt; 1.00：不可達成（必須調整目標或休假）</li>
+    </ul>
+  </li>
+  <li>蒐集員工偏好與請假需求</li>
+</ol>
+
+<h3>5.2 排班優先序</h3>
+<ol>
+  <li><strong>正職達標</strong>（含 10h 班、關鍵時段）</li>
+  <li><strong>關鍵時段補位</strong>（H4 各條）</li>
+  <li><strong>固定 PT 達 56h</strong></li>
+  <li><strong>不固定 PT 填缺</strong>（不超過 36h）</li>
+  <li><strong>主管支援</strong>（不超過 40h）</li>
+</ol>
+
+<h3>5.3 排班結果驗證（最終檢查）</h3>
+<p>所有 H1–H6 硬性限制必須通過；軟性限制違反需列出理由清單。</p>
+
+<h2 id="sec6">6. 異常處理流程 <span class="badge badge-change">🔴 新增</span></h2>
+
+<h3>6.1 臨時請假</h3>
+<ol>
+  <li>系統標記該員工該日為「不可排」</li>
+  <li>重新驗證受影響日的關鍵時段人力是否仍達標</li>
+  <li>不達標 → 依以下順序找代班：
+    <ol>
+      <li>同類別、當日休假且未排滿月工時的員工</li>
+      <li>不固定 PT（若未達 36h 上限）</li>
+      <li>主管支援</li>
+    </ol>
+  </li>
+  <li>通知相關員工，記錄代班補償</li>
+</ol>
+
+<h3>6.2 月中入職 / 離職</h3>
+<ul>
+  <li>工時目標按比例調整：<code>調整後目標 = 原目標 × (在職天數 ÷ 當月總天數)</code></li>
+  <li>入職首週不安排晚班（🟡 待決）</li>
+</ul>
+
+<h3>6.3 颱風 / 天災停業</h3>
+<ul>
+  <li>該日不計入連續工作天數</li>
+  <li>工時目標按比例下修</li>
+  <li>員工出勤費用依公司政策（🟡 待決）</li>
+</ul>
+
+<h3>6.4 國定假日特殊規則</h3>
+<ul>
+  <li>非週一國假：照常營業，正職享加倍薪資</li>
+  <li>週一遇國假：仍公休，<strong>不補假</strong>（🟡 確認）</li>
+  <li>國假計入正職休假天數配額</li>
+</ul>
+
+<h2 id="sec7">7. 待使用者確認的決策清單 <span class="badge badge-todo">🟡 整合</span></h2>
+<p>開發前需要決定的項目：</p>
+<ol>
+  <li>班次名目時數是否含休息？是的話休息幾分鐘？</li>
+  <li><code>S2</code> 支援班可否排給正職？是否設最低時數限制（例如 PT 一班至少 4h）？</li>
+  <li>主管 40h 上限是「硬性」還是「警戒」？</li>
+  <li>是否禁止 split shift？例外條件？</li>
+  <li>公平性指標的標準差容許值？</li>
+  <li>員工偏好的優先級分層？</li>
+  <li>長班日是否要設計 10h 班版本？</li>
+  <li>入職首週的限制？</li>
+  <li>颱風假員工出勤的薪資政策？</li>
+  <li>週一遇國假是否補假？</li>
+  <li>國定假日加給 vs. 補休是否讓員工選？</li>
+  <li>「個人休假天數配額」的具體計算公式？</li>
+</ol>
+
+<h2 id="sec8">8. 系統資料模型建議（草稿）</h2>
+<pre>Employee {
+  id, name, role (主管/正職/固定PT/不固定PT),
+  can_work_10h: bool,
+  monthly_target_hours: int (正職),
+  preferences: { cannot_work: [shift_codes], preferred: [...] }
+}
+
+Shift {
+  code, day_type (平日/長班日/週日),
+  start_time, end_time,
+  nominal_hours, actual_hours,
+  required_count, required_fulltime_count,
+  allowed_roles: [roles]
+}
+
+ScheduleEntry {
+  date, employee_id, shift_code,
+  is_overtime, is_substitute, note
+}
+
+LeaveRequest {
+  employee_id, date, reason, status
+}
+
+MonthlyRequirement {
+  year_month,
+  per_employee_target: { employee_id: hours },
+  per_employee_can_10h: { employee_id: bool },
+  holidays: [dates]
+}</pre>
+
+<div class="footer">
+  公司排班規則 v2 ｜ 系統開發 Spec ｜ 內部討論用
+</div>
+
+</div>
+</body>
+</html>

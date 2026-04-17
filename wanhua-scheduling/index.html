@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>公司排班規則（討論版）</title>
+<style>
+  :root {
+    --text: #2C3345;
+    --text-soft: #5A6478;
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --accent: #2563EB;
+    --warn: #B45309;
+    --warn-bg: #FEF3C7;
+    --change: #B91C1C;
+    --change-bg: #FEE2E2;
+    --must: #7C2D12;
+    --must-bg: #FED7AA;
+    --should: #1E40AF;
+    --should-bg: #DBEAFE;
+    --nice: #166534;
+    --nice-bg: #DCFCE7;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 16px; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    line-height: 1.75;
+    font-feature-settings: "tnum";
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: var(--text-soft);
+    font-size: 15px;
+    margin: 0;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--text);
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 28px 0 12px;
+  }
+  p, li { font-size: 15px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--card);
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #F9FAFB;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  tr:last-child td { border-bottom: none; }
+  blockquote {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-bg);
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p { margin: 4px 0; color: var(--text); }
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+  .badge-todo { background: var(--warn-bg); color: var(--warn); }
+  .badge-change { background: var(--change-bg); color: var(--change); }
+  .badge-must { background: var(--must-bg); color: var(--must); }
+  .badge-should { background: var(--should-bg); color: var(--should); }
+  .badge-nice { background: var(--nice-bg); color: var(--nice); }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--card);
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 16px 0 24px;
+    font-size: 13px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0 32px;
+  }
+  .toc h3 { margin-top: 0; font-size: 13px; color: var(--text-soft); letter-spacing: 0.05em; text-transform: uppercase; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .question-box {
+    background: var(--card);
+    border: 1px solid var(--warn);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .question-box .q-title {
+    font-weight: 600;
+    color: var(--warn);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 13px;
+    text-align: center;
+  }
+  @media print {
+    body { background: white; }
+    .wrap { padding: 0; max-width: none; }
+    table { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>公司排班規則（討論版）</h1>
+  <p class="subtitle">內部溝通用 ｜ 基於原版「公司排班大規則 0630」整理與補齊</p>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-must">必須遵守</span>絕對不可違反</div>
+  <div class="legend-item"><span class="badge badge-should">應該達成</span>盡量做到，例外需理由</div>
+  <div class="legend-item"><span class="badge badge-nice">個人偏好</span>盡量配合</div>
+  <div class="legend-item"><span class="badge badge-todo">🟡 待討論</span>請大家給意見</div>
+  <div class="legend-item"><span class="badge badge-change">🔴 與原版不同</span></div>
+</div>
+
+<nav class="toc">
+  <h3>目錄</h3>
+  <ol>
+    <li><a href="#sec1">營業時間與班次定義</a></li>
+    <li><a href="#sec2">員工分類與工時規範</a></li>
+    <li><a href="#sec3">必須遵守的規則</a></li>
+    <li><a href="#sec4">應該達成的目標</a></li>
+    <li><a href="#sec5">個人偏好的處理</a></li>
+    <li><a href="#sec6">每日標準班表</a></li>
+    <li><a href="#sec7">排班的優先順序</a></li>
+    <li><a href="#sec8">特殊情況的處理</a></li>
+    <li><a href="#sec9">需要大家一起決定的事</a></li>
+  </ol>
+</nav>
+
+<h2 id="sec1">1. 營業時間與班次定義</h2>
+
+<h3>1.1 每週營業時間</h3>
+<table>
+  <thead><tr><th>日別</th><th>狀態</th><th>營業時間</th><th>備註</th></tr></thead>
+  <tbody>
+    <tr><td>週一</td><td>公休</td><td>—</td><td>全體休假；國定假日落在週一仍公休（不補）</td></tr>
+    <tr><td>週二、三、四</td><td>平日</td><td>09:00–19:00</td><td></td></tr>
+    <tr><td>週五、六</td><td>長班日 <span class="badge badge-change">🔴</span></td><td>09:00–次日 00:30</td><td>原稱「週末」，因週日另有規則，更名避免混淆</td></tr>
+    <tr><td>週日</td><td>週日</td><td>09:00–19:00</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>1.2 班次種類</h3>
+<table>
+  <thead><tr><th>班次</th><th>時段</th><th>時數</th><th>適用日</th></tr></thead>
+  <tbody>
+    <tr><td>早班 8 小時</td><td>09:00–17:00</td><td>8h</td><td>全部</td></tr>
+    <tr><td>早班 10 小時</td><td>09:00–19:00</td><td>10h</td><td>平日 / 週日</td></tr>
+    <tr><td>午班 8 小時</td><td>11:00–19:00</td><td>8h</td><td>全部</td></tr>
+    <tr><td>支援班</td><td>17:00–19:00</td><td>2h</td><td>平日 / 週日</td></tr>
+    <tr><td>晚班</td><td>17:00–次日 00:30</td><td>7.5h</td><td>長班日</td></tr>
+  </tbody>
+</table>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <ul>
+    <li>班次時數是否含 1 小時用餐休息？這會影響薪資計算與工時統計。</li>
+    <li>2 小時的支援班可以排給正職嗎？還是只給 PT？</li>
+    <li>單一班次是否設最低時數（例如 PT 一班至少 4 小時，避免太碎）？</li>
+  </ul>
+</div>
+
+<h2 id="sec2">2. 員工分類與工時規範</h2>
+
+<table>
+  <thead><tr><th>類別</th><th>月工時下限</th><th>月工時上限</th><th>預警 / 警戒</th><th>主要角色</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>主管</strong></td>
+      <td>—</td>
+      <td>40h <span class="badge badge-change">🔴</span></td>
+      <td>—</td>
+      <td>填補人力缺口、具備 10h 班能力。<br><strong>不替代正職應上的班</strong>。</td>
+    </tr>
+    <tr>
+      <td><strong>正職</strong></td>
+      <td>月目標（依需求表）</td>
+      <td>月上限（依需求表）</td>
+      <td>—</td>
+      <td>排班絕對主力，工時達標最優先。</td>
+    </tr>
+    <tr>
+      <td><strong>固定 PT</strong></td>
+      <td>56h</td>
+      <td>90h</td>
+      <td>70h 預警 ／ 80h 警戒</td>
+      <td>穩定排班來源。</td>
+    </tr>
+    <tr>
+      <td><strong>不固定 PT</strong></td>
+      <td>無</td>
+      <td>36h</td>
+      <td>—</td>
+      <td>填補剩餘人力需求。</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>原版寫主管「<strong>建議</strong>不超過 40h」。我們應該把它當「硬性上限」（超過就不行）還是「警戒線」（可超過但需理由）？</p>
+</div>
+
+<h2 id="sec3">3. 必須遵守的規則 <span class="badge badge-must">必須遵守</span></h2>
+
+<h3>3.1 工時上限</h3>
+<ul>
+  <li>固定 PT 月工時 ≤ 90 小時</li>
+  <li>不固定 PT 月工時 ≤ 36 小時</li>
+  <li>主管月支援工時 ≤ 40 小時</li>
+  <li>正職月工時 ≤ 月上限（依當月需求表）</li>
+</ul>
+
+<h3>3.2 兩班之間的休息 <span class="badge badge-change">🔴 補強</span></h3>
+<ul>
+  <li>同一員工兩班之間休息時間 ≥ <strong>11 小時</strong>（依勞基法）</li>
+  <li>實際影響：晚班 00:30 下班後，下次最早 11:30 才能上班 → <strong>不能排隔日早班（09:00），也不能排午班（11:00）</strong></li>
+  <li>原版只寫「前一天晚班員工不可排隔日早班」，且只限週末段落 → <strong>應全週適用，且午班也禁</strong></li>
+</ul>
+
+<h3>3.3 連續工作天數 <span class="badge badge-change">🔴 補齊</span></h3>
+<ul>
+  <li>連續工作天數 ≤ 6 天（週一公休天然限制）</li>
+  <li>純 8 小時班連續 ≤ 5 天</li>
+  <li>含 10 小時班的連續工作 ≤ 2 天</li>
+  <li><strong>跨月連續</strong>：例如 12/30、12/31、1/1、1/2 視為連續</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>原版沒寫「8h+10h 混排」的算法。建議：只要連續日子裡有任何一天是 10h 班，當天就觸發 2 天上限。大家覺得合理嗎？</p>
+</div>
+
+<h3>3.4 關鍵時段最低人力</h3>
+<ul>
+  <li>平日：每個班至少 1 位正職</li>
+  <li>長班日：早班至少 2 位正職、晚班至少 1 位正職</li>
+  <li>週日：早班至少 1 位正職、午班至少 1 位正職</li>
+  <li>國定假日（非週一）：依當天日別規則 + 至少 1 位正職</li>
+</ul>
+
+<h3>3.5 同日多班 <span class="badge badge-change">🔴 新增</span></h3>
+<ul>
+  <li>同一員工同一日只能排一個班次（禁止「早班 + 晚班」這種拆開排）</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>是否要保留例外？例如員工自願、或人力極度緊急時。</p>
+</div>
+
+<h3>3.6 主管的角色限制</h3>
+<ul>
+  <li>主管不可佔據「該日仍有正職可排」的班次</li>
+  <li>「所有正職都無法排」明確定義為：<strong>當天可排班的正職都已排滿、休假、或請假</strong> <span class="badge badge-change">🔴 釐清原版歧義</span></li>
+</ul>
+
+<h2 id="sec4">4. 應該達成的目標 <span class="badge badge-should">應該達成</span></h2>
+
+<h3>4.1 工時目標</h3>
+<ul>
+  <li>正職達到當月工時目標</li>
+  <li>固定 PT 達到 56 小時最低工時</li>
+  <li>固定 PT 不超過 70 小時（預警線；超過需記錄理由）</li>
+  <li>固定 PT 不超過 80 小時（警戒線；超過需主管核准）</li>
+</ul>
+
+<h3>4.2 公平性 <span class="badge badge-change">🔴 新增</span></h3>
+<p>原版章節有「公平性原則」標題但沒有實際規則，補上：</p>
+<ul>
+  <li>員工之間「晚班次數」應盡量平均</li>
+  <li>員工之間「長班日上班次數」應盡量平均</li>
+  <li>不應該讓某個員工連續好幾週都被排到不喜歡的班</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>「平均」要平均到什麼程度？例如允許正負幾班的差距？這會直接影響排班彈性。</p>
+</div>
+
+<h3>4.3 班次配置原則</h3>
+<ul>
+  <li>有 10h 班能力的正職，優先排 10h 班（達標效率高）</li>
+  <li>國定假日優先安排正職（基於正職享國假加倍薪資的權利）<span class="badge badge-change">🔴</span></li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 原版邏輯確認</div>
+  <p>原版寫「優先安排正職（基於雙倍薪資考量）」，但雙倍薪資是成本因素，按理應該優先 PT 才對。我猜原意是「正職有領國假加倍薪的權利，所以優先排給他們」。請確認是否正確。</p>
+</div>
+
+<h2 id="sec5">5. 個人偏好的處理 <span class="badge badge-nice">個人偏好</span></h2>
+
+<p>員工可登記三類偏好：</p>
+<ul>
+  <li><strong>不可上的班次</strong>：例如不能上晚班（需接小孩）、不能上週末</li>
+  <li><strong>偏好的班次</strong>：早班 / 午班 / 晚班</li>
+  <li><strong>希望休假的日期</strong>：每月最多可指定 N 天</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <ul>
+    <li>「不可上的班次」應該視為硬性限制（強制不排）還是強烈偏好（盡量不排）？</li>
+    <li>「希望休假」每月可指定幾天？是否需要事前提交期限？</li>
+  </ul>
+</div>
+
+<h2 id="sec6">6. 每日標準班表</h2>
+
+<h3>6.1 平日（週二、三、四）</h3>
+<p><strong>標準版</strong>：</p>
+<table>
+  <thead><tr><th>班次</th><th>需求人數</th></tr></thead>
+  <tbody>
+    <tr><td>早班 09:00–17:00</td><td>2</td></tr>
+    <tr><td>午班 11:00–19:00</td><td>2</td></tr>
+    <tr><td>支援 17:00–19:00</td><td>1</td></tr>
+  </tbody>
+</table>
+<p><strong>10h 版</strong>（有員工可排 10h 時）：</p>
+<table>
+  <thead><tr><th>班次</th><th>需求人數</th></tr></thead>
+  <tbody>
+    <tr><td>早班 09:00–19:00（10h）</td><td>1</td></tr>
+    <tr><td>早班 09:00–17:00</td><td>1</td></tr>
+    <tr><td>午班 11:00–19:00</td><td>2</td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 長班日（週五、六）</h3>
+<table>
+  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td>早班 09:00–17:00</td><td>3</td><td>至少 2 位正職</td></tr>
+    <tr><td>午班 11:00–19:00</td><td>2</td><td></td></tr>
+    <tr><td>晚班 17:00–次日 00:30</td><td>3</td><td>至少 1 位正職</td></tr>
+  </tbody>
+</table>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>長班日要不要設計 10h 班版本？目前原版沒有，但長班日工時最重，理論上最該用 10h 班來提升效率。</p>
+</div>
+
+<h3>6.3 週日</h3>
+<p><strong>標準版</strong>：</p>
+<table>
+  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td>早班 09:00–17:00</td><td>2</td><td>至少 1 位正職</td></tr>
+    <tr><td>午班 11:00–19:00</td><td>3</td><td>至少 1 位正職</td></tr>
+    <tr><td>支援 17:00–19:00</td><td>1</td><td></td></tr>
+  </tbody>
+</table>
+<p><strong>10h 版</strong>：</p>
+<table>
+  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
+  <tbody>
+    <tr><td>早班 09:00–19:00（10h）</td><td>1</td><td><strong>必須是正職</strong></td></tr>
+    <tr><td>早班 09:00–17:00</td><td>1</td><td></td></tr>
+    <tr><td>午班 11:00–19:00</td><td>3</td><td>至少 1 位正職</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sec7">7. 排班的優先順序</h2>
+
+<p>當資源有限或衝突時，依以下順序處理：</p>
+<ol>
+  <li><strong>正職達到工時目標</strong>（含 10h 班、關鍵時段）</li>
+  <li><strong>關鍵時段人力到位</strong>（每日最少正職人數）</li>
+  <li><strong>固定 PT 達到 56 小時最低工時</strong></li>
+  <li><strong>不固定 PT 填補剩餘缺口</strong>（不超過 36h）</li>
+  <li><strong>主管支援</strong>（不超過 40h）</li>
+</ol>
+
+<h2 id="sec8">8. 特殊情況的處理 <span class="badge badge-change">🔴 補齊</span></h2>
+
+<h3>8.1 臨時請假</h3>
+<ol>
+  <li>該員工該日標記為不可排</li>
+  <li>檢查當天關鍵時段人力是否仍達標</li>
+  <li>不達標時，依以下順序找代班：
+    <ol>
+      <li>同類別、當日休假且月工時未滿的員工</li>
+      <li>不固定 PT（若未達 36h 上限）</li>
+      <li>主管支援</li>
+    </ol>
+  </li>
+</ol>
+
+<h3>8.2 月中入職 / 離職</h3>
+<ul>
+  <li>工時目標按比例調整：<strong>調整後目標 = 原目標 × (在職天數 ÷ 當月總天數)</strong></li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>新人入職首週要不要避免排晚班 / 長班日？</p>
+</div>
+
+<h3>8.3 颱風 / 天災停業</h3>
+<ul>
+  <li>該日不計入連續工作天數</li>
+  <li>當月工時目標按比例下修</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <p>颱風假員工出勤是否額外加給？薪資政策如何？</p>
+</div>
+
+<h3>8.4 國定假日</h3>
+<ul>
+  <li>非週一國假：照常營業，正職享加倍薪資</li>
+  <li>週一遇國假：仍公休，<strong>不補假</strong></li>
+  <li>國假計入正職的當月休假天數配額</li>
+</ul>
+
+<div class="question-box">
+  <div class="q-title">🟡 待討論</div>
+  <ul>
+    <li>週一遇國假確實不補假？</li>
+    <li>國定假日是否讓員工選「加給」或「補休」？</li>
+    <li>「個人休假天數配額」原版沒有明確公式，要怎麼算？</li>
+  </ul>
+</div>
+
+<h2 id="sec9">9. 需要大家一起決定的事 <span class="badge badge-todo">🟡</span></h2>
+
+<p>這份規則裡所有 🟡 標記，整理如下，方便會議逐項討論：</p>
+
+<table>
+  <thead><tr><th style="width: 60px;">編號</th><th>議題</th><th>影響</th></tr></thead>
+  <tbody>
+    <tr><td>Q1</td><td>班次時數是否含 1 小時用餐休息？</td><td>薪資、工時統計</td></tr>
+    <tr><td>Q2</td><td>2 小時支援班可否排給正職？</td><td>排班彈性</td></tr>
+    <tr><td>Q3</td><td>單一班次最低時數？</td><td>PT 排班碎片化</td></tr>
+    <tr><td>Q4</td><td>主管 40h 是硬性還是警戒？</td><td>主管使用</td></tr>
+    <tr><td>Q5</td><td>8h+10h 混排的連續天數怎麼算？</td><td>連續工作限制</td></tr>
+    <tr><td>Q6</td><td>是否禁止同日多班（split shift）？例外？</td><td>員工負荷</td></tr>
+    <tr><td>Q7</td><td>公平性「平均」的容許差距？</td><td>排班彈性</td></tr>
+    <tr><td>Q8</td><td>國假優先正職的真正理由是什麼？</td><td>排班邏輯</td></tr>
+    <tr><td>Q9</td><td>個人「不可上」是強制還是強烈偏好？</td><td>偏好處理</td></tr>
+    <tr><td>Q10</td><td>個人希望休假每月可指定幾天？</td><td>偏好處理</td></tr>
+    <tr><td>Q11</td><td>長班日要不要 10h 班版本？</td><td>班表設計</td></tr>
+    <tr><td>Q12</td><td>新人入職首週限制？</td><td>新人保護</td></tr>
+    <tr><td>Q13</td><td>颱風假出勤的薪資政策？</td><td>異常處理</td></tr>
+    <tr><td>Q14</td><td>週一遇國假是否補假？</td><td>休假配額</td></tr>
+    <tr><td>Q15</td><td>國假加給 vs. 補休是否讓員工選？</td><td>休假配額</td></tr>
+    <tr><td>Q16</td><td>「個人休假天數配額」公式？</td><td>休假配額</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  公司排班規則 · 討論版 ｜ 內部溝通用
+</div>
+
+</div>
+</body>
+</html>
