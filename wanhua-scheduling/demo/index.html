@@ -197,6 +197,72 @@
     padding: 2px 10px; border-radius: 4px; font-size: 13px; font-weight: 500;
   }
 
+  /* Timeline (day detail view) */
+  .timeline { margin-top: 20px; }
+  .tl-row {
+    display: grid; grid-template-columns: 70px 6px 1fr;
+    gap: 14px; align-items: stretch;
+    position: relative;
+  }
+  .tl-time {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    text-align: right; font-variant-numeric: tabular-nums;
+    padding: 12px 0 8px; line-height: 1.3;
+  }
+  .tl-time .tl-end { display: block; font-size: 11px; color: var(--text-mute); font-weight: 400; }
+  .tl-bar {
+    background: var(--border-soft);
+    border-radius: 3px; align-self: stretch;
+    position: relative;
+  }
+  .tl-bar::before {
+    content: ''; position: absolute; top: 16px; left: -3px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--text-mute); border: 2px solid var(--bg);
+  }
+  .tl-bar.early { background: var(--early-border); }
+  .tl-bar.early::before { background: var(--early-fg); }
+  .tl-bar.noon { background: var(--noon-border); }
+  .tl-bar.noon::before { background: var(--noon-fg); }
+  .tl-bar.late { background: var(--late-border); }
+  .tl-bar.late::before { background: var(--late-fg); }
+  .tl-bar.support { background: var(--support-border); }
+  .tl-bar.support::before { background: var(--support-fg); }
+  .tl-bar.note { background: var(--event-fg); opacity: 0.4; }
+  .tl-bar.note::before { background: var(--event-fg); }
+  .tl-content { padding: 8px 0 16px; }
+  .tl-shift-head {
+    display: flex; justify-content: space-between;
+    padding: 10px 14px; border-radius: 8px;
+    margin-bottom: 8px; align-items: baseline; flex-wrap: wrap; gap: 8px;
+    font-weight: 600;
+  }
+  .tl-shift-head.early { background: var(--early-bg); color: var(--early-fg); }
+  .tl-shift-head.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .tl-shift-head.late { background: var(--late-bg); color: var(--late-fg); }
+  .tl-shift-head.support { background: var(--support-bg); color: var(--support-fg); }
+  .tl-shift-head .count { font-size: 13px; font-weight: 500; opacity: 0.75; }
+  .tl-note-card {
+    background: var(--event-bg); color: var(--event-fg);
+    padding: 10px 14px; border-radius: 8px;
+    display: flex; gap: 8px; align-items: center; font-size: 14px;
+  }
+  .tl-note-card .tag {
+    background: var(--event-fg); color: white;
+    padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600;
+  }
+  .tl-untimed-group {
+    margin-top: 12px; padding: 12px 16px;
+    background: #F9FAFB; border-radius: 8px;
+    border: 1px dashed var(--border);
+  }
+  .tl-untimed-group h4 {
+    margin: 0 0 8px; font-size: 13px; color: var(--text-soft);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .tl-untimed-group .items { display: flex; flex-direction: column; gap: 6px; }
+  .tl-untimed-group .tl-note-card { margin: 0; }
+
   .shift-block {
     margin-top: 16px; padding: 14px 16px; border-radius: 10px;
     border-left: 4px solid;
@@ -313,10 +379,16 @@
   .week-day {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 10px; padding: 12px 10px;
-    display: flex; flex-direction: column; min-height: 240px;
+    display: flex; flex-direction: column; min-height: 260px;
   }
   .week-day.monday { background: #F9FAFB; opacity: 0.7; }
   .week-day.holiday { border-top: 3px solid var(--holiday-fg); }
+  .week-day.long-day { background: linear-gradient(180deg, #FFFBEB 0%, var(--card) 40%); }
+  .week-day.out-of-month {
+    background: repeating-linear-gradient(45deg, #F9FAFB, #F9FAFB 10px, #F3F4F6 10px, #F3F4F6 20px);
+    opacity: 0.6; cursor: not-allowed;
+  }
+  .week-day.out-of-month .wd-head, .week-day.out-of-month .wd-date { color: var(--text-mute); }
   .week-day .wd-head {
     font-size: 13px; color: var(--text-soft); font-weight: 500; margin-bottom: 2px;
   }
@@ -339,7 +411,8 @@
   .week-shift.noon { background: var(--noon-bg); color: var(--noon-fg); }
   .week-shift.late { background: var(--late-bg); color: var(--late-fg); }
   .week-shift.support { background: var(--support-bg); color: var(--support-fg); }
-  .week-shift .shift-label { font-weight: 600; font-size: 10px; display: block; margin-bottom: 2px; }
+  .week-shift .shift-label { font-weight: 600; font-size: 11px; display: block; margin-bottom: 3px; }
+  .week-shift .shift-time { font-weight: 500; opacity: 0.75; font-size: 10px; margin-left: 2px; font-variant-numeric: tabular-nums; }
   .week-shift .shift-names { line-height: 1.4; }
   .week-shift .star { color: #F59E0B; }
   .week-day .wd-off {
@@ -356,6 +429,17 @@
     display: flex; justify-content: space-between; align-items: baseline;
     margin-bottom: 12px;
   }
+  .shift-legend {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    font-size: 12px; font-variant-numeric: tabular-nums;
+  }
+  .legend-pill {
+    padding: 3px 10px; border-radius: 4px; font-weight: 500;
+  }
+  .legend-pill.early { background: var(--early-bg); color: var(--early-fg); }
+  .legend-pill.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .legend-pill.late { background: var(--late-bg); color: var(--late-fg); }
+  .legend-pill.support { background: var(--support-bg); color: var(--support-fg); }
   .month-grid {
     display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
   }
@@ -375,6 +459,13 @@
   .month-cell.monday { background: #F9FAFB; opacity: 0.6; cursor: default; }
   .month-cell.monday:hover { box-shadow: none; border-color: var(--border); }
   .month-cell.holiday { border-top: 3px solid var(--holiday-fg); }
+  .month-cell.long-day { background: linear-gradient(180deg, #FFFBEB 0%, var(--card) 40%); }
+  .month-cell.out-of-month {
+    background: repeating-linear-gradient(45deg, #F9FAFB, #F9FAFB 8px, #F3F4F6 8px, #F3F4F6 16px);
+    opacity: 0.5; cursor: default;
+  }
+  .month-cell.out-of-month:hover { box-shadow: none; border-color: var(--border); }
+  .month-cell.out-of-month .m-date { color: var(--text-mute); }
   .month-cell .m-date { font-size: 14px; font-weight: 600; }
   .month-cell .m-holiday { font-size: 10px; color: var(--holiday-fg); font-weight: 500; }
   .month-cell .m-event { font-size: 10px; color: var(--event-fg); font-weight: 500; line-height: 1.3; }
@@ -395,10 +486,21 @@
   }
 
   @media (max-width: 900px) {
-    .week-grid { grid-template-columns: 1fr; gap: 6px; }
-    .week-day { min-height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px 14px; }
-    .week-day .wd-head, .week-day .wd-date { margin-right: 10px; margin-bottom: 0; }
-    .week-shift { flex: 1; min-width: 120px; }
+    .week-grid { grid-template-columns: 1fr; gap: 8px; }
+    .week-day { min-height: auto; padding: 14px 16px; }
+    .week-day .wd-head, .week-day .wd-date {
+      display: inline-block; margin-bottom: 0; margin-right: 8px;
+    }
+    .week-day .wd-head { font-size: 13px; }
+    .week-day .wd-date { font-size: 17px; }
+    .week-day .wd-tag, .week-day .wd-event { font-size: 11px; margin-top: 6px; }
+    .week-shift {
+      font-size: 13px; padding: 8px 12px; margin-top: 8px; margin-bottom: 0;
+    }
+    .week-shift .shift-label { font-size: 12px; }
+    .week-shift .shift-time { font-size: 11px; }
+    .week-day .wd-off { margin-top: 10px; font-size: 12px; }
+
     .month-cell { min-height: 70px; padding: 6px 8px; }
     .month-cell .m-date { font-size: 13px; }
     .m-count-pill { font-size: 9px; }
@@ -485,6 +587,12 @@
     <div class="month-header">
       <h2 style="margin: 0; font-size: 20px;">2026 年 4 月</h2>
       <span style="color: var(--text-soft); font-size: 14px;">點任一天查看詳細</span>
+    </div>
+    <div class="shift-legend">
+      <span class="legend-pill early">早 = 早班 09:00–17:00</span>
+      <span class="legend-pill noon">午 = 午班 11:00–19:00</span>
+      <span class="legend-pill late">晚 = 晚班 17:00–00:30</span>
+      <span class="legend-pill support">支 = 支援班 17:00–19:00</span>
     </div>
     <div id="month-grid"></div>
   </div>
@@ -835,28 +943,77 @@ function renderStoreView(date) {
   if (day.holiday) tags.push(`<span class="holiday-tag">🎉 ${day.holiday}</span>`);
   if (day.event) tags.push(`<span class="event-tag">📌 ${day.event}</span>`);
 
-  const renderShift = (key) => {
-    const list = day[key];
-    if (!list || !list.length) return '';
-    const info = SHIFT_INFO[key];
-    const peopleHtml = list.map(n => `<span class="person-chip ${isFullTime(n) ? 'fulltime' : ''}">${n}</span>`).join('');
-    return `
-      <div class="shift-block ${info.key}">
-        <h3>${info.label} <span class="count">${list.length} 人 · ${info.hours}h</span></h3>
-        <div class="people">${peopleHtml}</div>
-      </div>
-    `;
+  // === Build timeline events ===
+  const timelineEvents = [];
+  const shiftTimes = {
+    early10: { start: '09:00', end: '19:00' },
+    early8:  { start: '09:00', end: '17:00' },
+    noon8:   { start: '11:00', end: '19:00' },
+    support: { start: '17:00', end: '19:00' },
+    late75:  { start: '17:00', end: '次日 00:30' },
   };
+  for (const key of ['early10','early8','noon8','support','late75']) {
+    if (day[key] && day[key].length) {
+      timelineEvents.push({ sort: shiftTimes[key].start, type: 'shift', key, start: shiftTimes[key].start, end: shiftTimes[key].end, people: day[key] });
+    }
+  }
+  const untimed = [];
+  if (day.notes) {
+    day.notes.forEach(n => {
+      const t = n.time;
+      const isTimed = t && /^\d{1,2}:\d{2}$/.test(t);
+      if (isTimed) {
+        timelineEvents.push({ sort: t, type: 'note', time: t, tag: n.tag, text: n.text });
+      } else {
+        untimed.push({ time: t, tag: n.tag, text: n.text });
+      }
+    });
+  }
+  timelineEvents.sort((a, b) => a.sort.localeCompare(b.sort));
 
-  const events = day.notes && day.notes.length ? `
-    <div class="events-section">
-      ${day.notes.map(n => `
-        <div class="event-row">
-          <span class="time">${n.time}</span>
-          ${n.tag ? `<span class="tag">${n.tag}</span>` : ''}
-          <span>${n.text}</span>
-        </div>
-      `).join('')}
+  const timelineHtml = timelineEvents.map(ev => {
+    if (ev.type === 'shift') {
+      const info = SHIFT_INFO[ev.key];
+      const peopleHtml = ev.people.map(n => `<span class="person-chip ${isFullTime(n) ? 'fulltime' : ''}">${n}</span>`).join('');
+      return `
+        <div class="tl-row">
+          <div class="tl-time">${ev.start}<span class="tl-end">至 ${ev.end}</span></div>
+          <div class="tl-bar ${info.key}"></div>
+          <div class="tl-content">
+            <div class="tl-shift-head ${info.key}">
+              <span>${info.label}</span>
+              <span class="count">${ev.people.length} 人 · ${info.hours}h</span>
+            </div>
+            <div class="people">${peopleHtml}</div>
+          </div>
+        </div>`;
+    } else {
+      return `
+        <div class="tl-row">
+          <div class="tl-time">${ev.time}</div>
+          <div class="tl-bar note"></div>
+          <div class="tl-content">
+            <div class="tl-note-card">
+              ${ev.tag ? `<span class="tag">${ev.tag}</span>` : '📝'}
+              <span>${ev.text}</span>
+            </div>
+          </div>
+        </div>`;
+    }
+  }).join('');
+
+  const untimedHtml = untimed.length ? `
+    <div class="tl-untimed-group">
+      <h4>當日事項（無固定時間）</h4>
+      <div class="items">
+        ${untimed.map(n => `
+          <div class="tl-note-card">
+            ${n.tag ? `<span class="tag">${n.tag}</span>` : '📝'}
+            <span>${n.text}</span>
+            ${n.time && n.time !== '—' ? `<span style="margin-left: auto; font-size: 12px; opacity: 0.8;">${n.time}</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>
   ` : '';
 
@@ -870,11 +1027,8 @@ function renderStoreView(date) {
   card.innerHTML = `
     <div class="day-card ${day.holiday ? 'holiday' : ''}">
       <h2>${mdFmt} <span class="wd">週${day.wd}</span> ${tags.join(' ')}</h2>
-      ${renderShift('early8')}
-      ${renderShift('noon8')}
-      ${renderShift('late75')}
-      ${renderShift('support')}
-      ${events}
+      <div class="timeline">${timelineHtml}</div>
+      ${untimedHtml}
       ${offHtml}
     </div>
   `;
@@ -940,10 +1094,10 @@ function renderWeekView() {
     const mdFmt = `${d.getMonth()+1}/${d.getDate()}`;
 
     if (!day) {
-      return `<div class="week-day" style="opacity: 0.3;">
+      return `<div class="week-day out-of-month">
         <div class="wd-head">週${WD_NAMES[i]}</div>
         <div class="wd-date">${mdFmt}</div>
-        <div style="color: var(--text-mute); font-size: 11px;">月外</div>
+        <div style="color: var(--text-mute); font-size: 11px;">非四月</div>
       </div>`;
     }
 
@@ -960,14 +1114,16 @@ function renderWeekView() {
       if (!list || !list.length) return '';
       const info = SHIFT_INFO[key];
       const names = list.map(n => isFullTime(n) ? `<span class="star">★</span>${n}` : n).join('、');
+      const [shiftName, shiftTime] = info.label.split(' ');
       return `<div class="week-shift ${info.key}">
-        <span class="shift-label">${info.label.replace(/ \d.*/,'')}</span>
+        <span class="shift-label">${shiftName} <span class="shift-time">${shiftTime}</span></span>
         <span class="shift-names">${names}</span>
       </div>`;
     };
 
     const cls = ['week-day'];
     if (day.holiday) cls.push('holiday');
+    if (day.type === 'long') cls.push('long-day');
 
     return `<div class="${cls.join(' ')}">
       <div class="wd-head">週${day.wd}</div>
@@ -1019,6 +1175,7 @@ function renderMonthView() {
 
     const cls = ['month-cell'];
     if (day.holiday) cls.push('holiday');
+    if (day.type === 'long') cls.push('long-day');
 
     cells.push(`<div class="${cls.join(' ')}" data-date="${dateStr}">
       <div class="m-date">${d} <span style="font-weight: normal; color: var(--text-soft); font-size: 11px;">週${day.wd}</span></div>
