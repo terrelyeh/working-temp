@@ -359,19 +359,39 @@
   /* Store toolbar (sticky) */
   .store-toolbar {
     position: sticky; top: 0; z-index: 10;
-    background: var(--bg); padding: 12px 0;
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 16px; flex-wrap: wrap;
+    background: rgba(250, 250, 248, 0.92);
+    backdrop-filter: saturate(180%) blur(10px);
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    padding: 14px 16px; margin: 0 -16px 16px -16px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
+    display: flex; flex-direction: column; gap: 10px;
   }
-  .toolbar-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .toolbar-hint { color: var(--text-soft); font-size: 13px; }
-  .toolbar-right { display: flex; align-items: center; gap: 8px; }
+  .store-toolbar.shadowed {
+    box-shadow: 0 4px 12px -4px rgba(0,0,0,0.08);
+  }
+  .toolbar-row {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .toolbar-hint { color: var(--text-soft); font-size: 13px; margin-right: auto; }
+  .toolbar-right { display: flex; align-items: center; gap: 6px; }
   .toolbar-right input[type="date"] {
     border: 1px solid var(--border); border-radius: 6px;
     padding: 6px 10px; font-family: inherit; font-size: 14px; color: var(--text);
+    background: var(--card);
   }
+  .week-jumper {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .week-pill {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px; font-size: 13px;
+    cursor: pointer; font-family: inherit; color: var(--text);
+    transition: all 0.15s;
+    font-variant-numeric: tabular-nums;
+  }
+  .week-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .week-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .week-pill .week-range { opacity: 0.7; margin-left: 4px; font-weight: 500; }
 
   #all-days { display: flex; flex-direction: column; gap: 12px; }
   #all-days .day-card { scroll-margin-top: 80px; }
@@ -585,14 +605,15 @@
 <!-- ============ Store View ============ -->
 <section class="view" id="view-store">
   <div class="store-toolbar">
-    <div class="toolbar-left">
+    <div class="toolbar-row">
       <h2 style="margin: 0; font-size: 20px;">2026 年 4 月</h2>
-      <span class="toolbar-hint">共 30 天 · 往下捲動看整月</span>
+      <span class="toolbar-hint">共 30 天</span>
+      <div class="toolbar-right">
+        <label for="jump-date" style="font-size: 13px; color: var(--text-soft);">📅</label>
+        <input type="date" id="jump-date" min="2026-04-01" max="2026-04-30" value="2026-04-01">
+      </div>
     </div>
-    <div class="toolbar-right">
-      <label for="jump-date" style="font-size: 13px; color: var(--text-soft);">跳到</label>
-      <input type="date" id="jump-date" min="2026-04-01" max="2026-04-30" value="2026-04-01">
-    </div>
+    <div class="week-jumper" id="week-jumper"></div>
   </div>
 
   <div class="shift-legend">
@@ -1044,6 +1065,69 @@ function renderAllDays() {
   container.innerHTML = allDates.map(buildDayCardHtml).join('');
 }
 
+const WEEK_JUMPS = [
+  { label: '第 1 週', range: '4/1–4/5',   firstDate: '2026-04-01', lastDate: '2026-04-05' },
+  { label: '第 2 週', range: '4/6–4/12',  firstDate: '2026-04-06', lastDate: '2026-04-12' },
+  { label: '第 3 週', range: '4/13–4/19', firstDate: '2026-04-13', lastDate: '2026-04-19' },
+  { label: '第 4 週', range: '4/20–4/26', firstDate: '2026-04-20', lastDate: '2026-04-26' },
+  { label: '第 5 週', range: '4/27–4/30', firstDate: '2026-04-27', lastDate: '2026-04-30' },
+];
+
+function renderWeekJumper() {
+  const jumper = document.getElementById('week-jumper');
+  jumper.innerHTML = WEEK_JUMPS.map((w, i) => `
+    <button class="week-pill" data-week-idx="${i}">
+      ${w.label}<span class="week-range">${w.range}</span>
+    </button>
+  `).join('');
+  jumper.querySelectorAll('.week-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.weekIdx);
+      scrollToDate(WEEK_JUMPS[idx].firstDate, false);
+    });
+  });
+}
+
+function scrollToDate(date, highlight = true) {
+  const target = document.getElementById(`card-${date}`);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (highlight) {
+    target.classList.add('highlight');
+    setTimeout(() => target.classList.remove('highlight'), 1600);
+  }
+}
+
+function setupScrollTracking() {
+  const toolbar = document.querySelector('.store-toolbar');
+  const cards = Array.from(document.querySelectorAll('#all-days .day-card'));
+
+  // Shadow on sticky toolbar when scrolled
+  const sentinel = document.createElement('div');
+  sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;';
+  document.getElementById('view-store').prepend(sentinel);
+  new IntersectionObserver(([entry]) => {
+    toolbar.classList.toggle('shadowed', !entry.isIntersecting);
+  }, { threshold: 0 }).observe(sentinel);
+
+  // Highlight current week pill based on viewport
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        const date = id.replace('card-', '');
+        const weekIdx = WEEK_JUMPS.findIndex(w => date >= w.firstDate && date <= w.lastDate);
+        if (weekIdx >= 0) {
+          document.querySelectorAll('.week-pill').forEach((p, i) => {
+            p.classList.toggle('active', i === weekIdx);
+          });
+        }
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  cards.forEach(c => observer.observe(c));
+}
+
 function renderSummary() {
   const tbody = document.getElementById('summary-tbody');
   tbody.innerHTML = EMPLOYEES
@@ -1238,19 +1322,16 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 document.getElementById('jump-date').addEventListener('change', (e) => {
-  const target = document.getElementById(`card-${e.target.value}`);
-  if (target) {
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    target.classList.add('highlight');
-    setTimeout(() => target.classList.remove('highlight'), 1600);
-  }
+  scrollToDate(e.target.value);
 });
 
 // Init
 renderEmpPills();
 renderEmployeeView('超威');
 renderAllDays();
+renderWeekJumper();
 renderSummary();
+setupScrollTracking();
 </script>
 
 </div>
