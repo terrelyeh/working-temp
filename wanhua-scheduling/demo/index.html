@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>排班系統 Demo · 2026 年 4 月</title>
+<title>萬華世界排班系統 Demo · 2026 年 4 月</title>
 <style>
   :root {
     --text: #2C3345;
@@ -352,6 +352,77 @@
   .role-tag.pt { background: #DBEAFE; color: #1E40AF; }
   .role-tag.admin { background: #FCE7F3; color: #9F1239; }
 
+  /* Cowork search */
+  .cowork-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; }
+  .cowork-header { margin-bottom: 20px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .cowork-section { margin-top: 20px; }
+  .cowork-label {
+    font-size: 13px; color: var(--text-soft); display: flex;
+    align-items: center; gap: 10px;
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .cowork-count {
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    text-transform: none; letter-spacing: 0;
+  }
+  .cowork-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cw-pill {
+    background: var(--border-soft); border: 2px solid transparent;
+    padding: 6px 14px; border-radius: 20px; font-size: 14px;
+    cursor: pointer; font-family: inherit; color: var(--text);
+    transition: all 0.15s;
+  }
+  .cw-pill:hover { border-color: var(--accent); }
+  .cw-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .cw-pill:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cowork-modes { display: flex; gap: 6px; }
+  .cowork-modes .mode-pill {
+    background: var(--border-soft); border: 1px solid transparent;
+    padding: 6px 16px; border-radius: 8px; font-size: 14px;
+    cursor: pointer; font-family: inherit; color: var(--text-soft);
+  }
+  .cowork-modes .mode-pill:hover { color: var(--text); }
+  .cowork-modes .mode-pill.active { background: var(--text); color: white; }
+
+  .cowork-result { margin-top: 28px; }
+  .cowork-stat {
+    background: var(--accent-soft); border: 1px solid var(--accent);
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 16px;
+    color: var(--accent); font-weight: 600;
+  }
+  .cowork-stat strong { font-size: 28px; font-weight: 700; margin-right: 6px; }
+  .cowork-empty {
+    padding: 40px; text-align: center;
+    color: var(--text-soft); border: 1px dashed var(--border);
+    border-radius: 10px; background: var(--bg);
+  }
+  .cowork-day {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;
+    display: grid; grid-template-columns: 100px 1fr; gap: 16px; align-items: start;
+  }
+  .cowork-day.long-day { border-left: 3px solid var(--support-border); }
+  .cowork-day.holiday { border-left: 3px solid #9CA3AF; }
+  .cowork-day .cd-date { font-size: 16px; font-weight: 600; }
+  .cowork-day .cd-date small { display: block; font-size: 12px; color: var(--text-soft); font-weight: 400; }
+  .cowork-day .cd-tag {
+    display: inline-block; font-size: 11px; padding: 1px 6px;
+    border-radius: 3px; background: #E5E7EB; color: #374151; margin-top: 4px;
+  }
+  .cowork-day .cd-shifts { display: flex; flex-direction: column; gap: 4px; }
+  .cowork-shift-line {
+    display: flex; gap: 8px; align-items: center;
+    font-size: 14px; padding: 4px 10px; border-radius: 6px;
+  }
+  .cowork-shift-line.early { background: var(--early-bg); color: var(--early-fg); }
+  .cowork-shift-line.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .cowork-shift-line.late { background: var(--late-bg); color: var(--late-fg); }
+  .cowork-shift-line.support { background: var(--support-bg); color: var(--support-fg); }
+  .cowork-shift-line .shift-name { font-weight: 600; min-width: 110px; font-variant-numeric: tabular-nums; }
+  .cowork-shift-line .people { font-weight: 500; }
+
   /* Legend */
   .legend {
     display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0;
@@ -574,7 +645,7 @@
 <div class="wrap">
 
 <header>
-  <h1>🗓️ 排班系統 Demo</h1>
+  <h1>🗓️ 萬華世界排班系統 Demo</h1>
   <p class="subtitle">2026 年 4 月 · 取自實際 Google Sheet 資料</p>
   <span class="disclaimer">這是 UI 概念展示；資料從現有班表抽取，可能有遺漏</span>
 </header>
@@ -583,6 +654,7 @@
   <button class="tab active" data-tab="employee">👤 員工版</button>
   <button class="tab" data-tab="store">🏪 全店版</button>
   <button class="tab" data-tab="summary">📊 月度統計</button>
+  <button class="tab" data-tab="cowork">🔍 搭班查詢</button>
 </div>
 
 <!-- ============ Employee View ============ -->
@@ -638,6 +710,31 @@
   </div>
 
   <div id="all-days"></div>
+</section>
+
+<!-- ============ Cowork Search View ============ -->
+<section class="view" id="view-cowork">
+  <div class="cowork-panel">
+    <div class="cowork-header">
+      <h2 style="margin: 0; font-size: 20px;">搭班查詢</h2>
+      <span style="color: var(--text-soft); font-size: 14px;">選 2–4 位員工，查他們一起上班的日子</span>
+    </div>
+
+    <div class="cowork-section">
+      <label class="cowork-label">① 選擇員工 <span id="cowork-count" class="cowork-count">0 / 4</span></label>
+      <div class="cowork-pills" id="cowork-pills"></div>
+    </div>
+
+    <div class="cowork-section">
+      <label class="cowork-label">② 搭班條件</label>
+      <div class="cowork-modes">
+        <button class="mode-pill active" data-mode="same-day">同一天上班</button>
+        <button class="mode-pill" data-mode="same-shift">同一班次</button>
+      </div>
+    </div>
+
+    <div class="cowork-result" id="cowork-result"></div>
+  </div>
 </section>
 
 <!-- ============ Summary View ============ -->
@@ -1147,6 +1244,141 @@ function setupScrollTracking() {
   cards.forEach(c => observer.observe(c));
 }
 
+// ============ Cowork Search ============
+const coworkSelected = new Set();
+const MAX_COWORK = 4;
+
+function renderCoworkPills() {
+  const c = document.getElementById('cowork-pills');
+  c.innerHTML = EMPLOYEES
+    .filter(e => e.role !== 'admin' || e.name === 'Winnie')
+    .map(e => `<button class="cw-pill" data-name="${e.name}">${e.name}</button>`)
+    .join('');
+  c.querySelectorAll('.cw-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      if (coworkSelected.has(name)) {
+        coworkSelected.delete(name);
+        btn.classList.remove('active');
+      } else if (coworkSelected.size < MAX_COWORK) {
+        coworkSelected.add(name);
+        btn.classList.add('active');
+      }
+      updateCoworkPillsDisabled();
+      renderCoworkResult();
+    });
+  });
+}
+
+function updateCoworkPillsDisabled() {
+  const full = coworkSelected.size >= MAX_COWORK;
+  document.querySelectorAll('.cw-pill').forEach(btn => {
+    btn.disabled = full && !coworkSelected.has(btn.dataset.name);
+  });
+  document.getElementById('cowork-count').textContent = `${coworkSelected.size} / ${MAX_COWORK}`;
+}
+
+function findCoworkDays(names, mode) {
+  const results = [];
+  for (const [date, day] of Object.entries(SCHEDULE)) {
+    if (day.type === 'monday') continue;
+    const shiftKeys = ['early10','early8','noon8','support','late75'];
+
+    if (mode === 'same-day') {
+      const shiftsByPerson = {};
+      let allWorking = true;
+      for (const n of names) {
+        const found = shiftKeys.find(k => day[k]?.includes(n));
+        if (!found) { allWorking = false; break; }
+        shiftsByPerson[n] = found;
+      }
+      if (allWorking) results.push({ date, day, shiftsByPerson });
+    } else {
+      // same-shift: all names in the same shift key
+      for (const k of shiftKeys) {
+        if (day[k] && names.every(n => day[k].includes(n))) {
+          results.push({ date, day, sameShift: k });
+        }
+      }
+    }
+  }
+  return results;
+}
+
+function renderCoworkResult() {
+  const result = document.getElementById('cowork-result');
+  if (coworkSelected.size < 2) {
+    result.innerHTML = `<div class="cowork-empty">請至少選擇 2 位員工</div>`;
+    return;
+  }
+
+  const names = [...coworkSelected];
+  const mode = document.querySelector('#view-cowork .mode-pill.active').dataset.mode;
+  const days = findCoworkDays(names, mode);
+
+  const statHtml = `
+    <div class="cowork-stat">
+      <strong>${days.length}</strong>
+      天${mode === 'same-day' ? '同日上班' : '同班次'}
+      <span style="font-weight: 400; opacity: 0.85;">· ${names.join(' + ')}</span>
+    </div>
+  `;
+
+  if (!days.length) {
+    result.innerHTML = statHtml + `<div class="cowork-empty">4 月沒有符合條件的日期</div>`;
+    return;
+  }
+
+  const listHtml = days.map(({ date, day, shiftsByPerson, sameShift }) => {
+    const d = new Date(date);
+    const mdFmt = `${d.getMonth()+1}/${d.getDate()}`;
+    const cls = ['cowork-day'];
+    if (day.type === 'long') cls.push('long-day');
+    if (day.holiday) cls.push('holiday');
+
+    const tag = day.holiday ? `<div class="cd-tag">${day.holiday}</div>`
+              : day.event ? `<div class="cd-tag">${day.event}</div>` : '';
+
+    let shiftsHtml;
+    if (sameShift) {
+      const info = SHIFT_INFO[sameShift];
+      shiftsHtml = `
+        <div class="cowork-shift-line ${info.key}">
+          <span class="shift-name">${info.label}</span>
+          <span class="people">${names.join('、')}</span>
+        </div>
+      `;
+    } else {
+      // Group by shift
+      const grouped = {};
+      for (const [name, key] of Object.entries(shiftsByPerson)) {
+        (grouped[key] ||= []).push(name);
+      }
+      shiftsHtml = Object.entries(grouped).map(([k, ppl]) => {
+        const info = SHIFT_INFO[k];
+        return `
+          <div class="cowork-shift-line ${info.key}">
+            <span class="shift-name">${info.label}</span>
+            <span class="people">${ppl.join('、')}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    return `
+      <div class="${cls.join(' ')}">
+        <div>
+          <div class="cd-date">${mdFmt}<small>週${day.wd}</small></div>
+          ${tag}
+        </div>
+        <div class="cd-shifts">${shiftsHtml}</div>
+      </div>
+    `;
+  }).join('');
+
+  result.innerHTML = statHtml + listHtml;
+}
+
 function renderSummary() {
   const tbody = document.getElementById('summary-tbody');
   tbody.innerHTML = EMPLOYEES
@@ -1383,12 +1615,22 @@ document.addEventListener('click', (e) => {
   }
 });
 
+document.querySelectorAll('#view-cowork .mode-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#view-cowork .mode-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCoworkResult();
+  });
+});
+
 // Init
 renderEmpPills();
 renderEmployeeView('超威');
 renderAllDays();
 renderWeekJumper();
 renderSummary();
+renderCoworkPills();
+renderCoworkResult();
 setupScrollTracking();
 </script>
 
