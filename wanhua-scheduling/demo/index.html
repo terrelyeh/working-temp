@@ -2087,15 +2087,6 @@ function renderMonthView() {
   });
 }
 
-function setStoreMode(mode) {
-  document.querySelectorAll('.mode-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.mode === mode);
-  });
-  document.querySelectorAll('.store-mode-panel').forEach(p => {
-    p.style.display = p.id === `store-mode-${mode}` ? '' : 'none';
-  });
-}
-
 // ============ Events ============
 document.querySelectorAll('.filter-pill').forEach(btn => {
   btn.addEventListener('click', () => {
