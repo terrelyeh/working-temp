@@ -23,56 +23,56 @@
     --nice-bg: #DCFCE7;
   }
   * { box-sizing: border-box; }
-  html { font-size: 16px; }
+  html { font-size: 17px; }
   body {
     margin: 0;
     padding: 0;
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-    line-height: 1.75;
+    line-height: 1.8;
     font-feature-settings: "tnum";
   }
   .wrap {
-    max-width: 880px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 48px 32px 96px;
+    padding: 56px 40px 112px;
   }
   header {
     border-bottom: 1px solid var(--border);
-    padding-bottom: 24px;
-    margin-bottom: 32px;
+    padding-bottom: 28px;
+    margin-bottom: 40px;
   }
   h1 {
-    font-size: 32px;
-    margin: 0 0 8px;
+    font-size: 40px;
+    margin: 0 0 10px;
     letter-spacing: -0.02em;
   }
   .subtitle {
     color: var(--text-soft);
-    font-size: 15px;
+    font-size: 17px;
     margin: 0;
   }
   h2 {
-    font-size: 22px;
-    margin: 48px 0 16px;
-    padding-bottom: 8px;
+    font-size: 28px;
+    margin: 56px 0 20px;
+    padding-bottom: 10px;
     border-bottom: 2px solid var(--text);
     letter-spacing: -0.01em;
   }
   h3 {
-    font-size: 17px;
-    margin: 28px 0 12px;
+    font-size: 21px;
+    margin: 32px 0 14px;
   }
-  p, li { font-size: 15px; }
-  ul, ol { padding-left: 22px; }
-  li { margin: 4px 0; }
+  p, li { font-size: 17px; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
   table {
     border-collapse: collapse;
     width: 100%;
-    margin: 16px 0;
+    margin: 20px 0;
     background: var(--card);
-    font-size: 14px;
+    font-size: 16px;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
@@ -80,14 +80,14 @@
   }
   th, td {
     border-bottom: 1px solid var(--border);
-    padding: 10px 12px;
+    padding: 12px 14px;
     text-align: left;
     vertical-align: top;
   }
   th {
     background: #F9FAFB;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 15px;
     letter-spacing: 0.02em;
   }
   tr:last-child td { border-bottom: none; }
@@ -101,9 +101,9 @@
   blockquote p { margin: 4px 0; color: var(--text); }
   .badge {
     display: inline-block;
-    padding: 1px 8px;
+    padding: 2px 10px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     margin-right: 6px;
     vertical-align: middle;
@@ -116,14 +116,14 @@
   .badge-nice { background: var(--nice-bg); color: var(--nice); }
   .legend {
     display: flex;
-    gap: 16px;
+    gap: 18px;
     flex-wrap: wrap;
     background: var(--card);
-    padding: 16px 20px;
+    padding: 18px 22px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    margin: 16px 0 24px;
-    font-size: 13px;
+    margin: 20px 0 28px;
+    font-size: 15px;
   }
   .legend-item { display: flex; align-items: center; gap: 6px; }
   .toc {
@@ -133,8 +133,9 @@
     padding: 20px 24px;
     margin: 24px 0 32px;
   }
-  .toc h3 { margin-top: 0; font-size: 13px; color: var(--text-soft); letter-spacing: 0.05em; text-transform: uppercase; }
-  .toc ol { margin: 0; padding-left: 20px; }
+  .toc h3 { margin-top: 0; font-size: 14px; color: var(--text-soft); letter-spacing: 0.05em; text-transform: uppercase; }
+  .toc ol { margin: 0; padding-left: 24px; }
+  .toc li { font-size: 17px; }
   .toc a { color: var(--accent); text-decoration: none; }
   .toc a:hover { text-decoration: underline; }
   .question-box {
@@ -147,11 +148,12 @@
   .question-box .q-title {
     font-weight: 600;
     color: var(--warn);
-    font-size: 13px;
+    font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
+  .question-box p, .question-box li { font-size: 16px; }
   .footer {
     margin-top: 64px;
     padding-top: 24px;
@@ -471,18 +473,7 @@
   <p>新人入職首週要不要避免排晚班 / 長班日？</p>
 </div>
 
-<h3>8.3 颱風 / 天災停業</h3>
-<ul>
-  <li>該日不計入連續工作天數</li>
-  <li>當月工時目標按比例下修</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>颱風假員工出勤是否額外加給？薪資政策如何？</p>
-</div>
-
-<h3>8.4 國定假日</h3>
+<h3>8.3 國定假日</h3>
 <ul>
   <li>非週一國假：照常營業，正職享加倍薪資</li>
   <li>週一遇國假：仍公休，<strong>不補假</strong></li>
@@ -517,10 +508,9 @@
     <tr><td>Q10</td><td>個人希望休假每月可指定幾天？</td><td>偏好處理</td></tr>
     <tr><td>Q11</td><td>長班日要不要 10h 班版本？</td><td>班表設計</td></tr>
     <tr><td>Q12</td><td>新人入職首週限制？</td><td>新人保護</td></tr>
-    <tr><td>Q13</td><td>颱風假出勤的薪資政策？</td><td>異常處理</td></tr>
-    <tr><td>Q14</td><td>週一遇國假是否補假？</td><td>休假配額</td></tr>
-    <tr><td>Q15</td><td>國假加給 vs. 補休是否讓員工選？</td><td>休假配額</td></tr>
-    <tr><td>Q16</td><td>「個人休假天數配額」公式？</td><td>休假配額</td></tr>
+    <tr><td>Q13</td><td>週一遇國假是否補假？</td><td>休假配額</td></tr>
+    <tr><td>Q14</td><td>國假加給 vs. 補休是否讓員工選？</td><td>休假配額</td></tr>
+    <tr><td>Q15</td><td>「個人休假天數配額」公式？</td><td>休假配額</td></tr>
   </tbody>
 </table>
 
