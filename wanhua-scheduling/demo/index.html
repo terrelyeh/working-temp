@@ -105,6 +105,9 @@
   }
   .filter-pill:hover { color: var(--text); border-color: var(--accent); }
   .filter-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .filter-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-soft); cursor: pointer; user-select: none; }
+  .filter-check input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
+  .filter-check:hover { color: var(--text); }
 
   /* Employee view: stats card */
   .emp-stats {
@@ -590,11 +593,14 @@
     <div class="emp-filter">
       <label style="font-size: 13px; color: var(--text-soft); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">篩選</label>
       <div class="filter-pills">
-        <button class="filter-pill active" data-filter="all">全部</button>
-        <button class="filter-pill" data-filter="scheduled">只有排班</button>
+        <button class="filter-pill" data-filter="all">全部</button>
+        <button class="filter-pill active" data-filter="scheduled">只有排班</button>
         <button class="filter-pill" data-filter="off">只有未排班</button>
-        <button class="filter-pill" data-filter="events">有店內活動</button>
       </div>
+      <label class="filter-check" style="margin-top: 10px;">
+        <input type="checkbox" id="show-events" checked>
+        <span>顯示店內活動資訊</span>
+      </label>
     </div>
   </div>
 
@@ -921,10 +927,10 @@ function renderEmployeeView(name) {
 
   const list = document.getElementById('emp-day-list');
   const filter = document.querySelector('.filter-pill.active')?.dataset.filter || 'all';
+  const showEvents = document.getElementById('show-events')?.checked ?? true;
   let days = findShiftsForEmployee(name);
   if (filter === 'scheduled') days = days.filter(d => d.status === 'work');
   else if (filter === 'off') days = days.filter(d => d.status !== 'work' && d.status !== 'monday');
-  else if (filter === 'events') days = days.filter(d => d.day && (d.day.holiday || d.day.event));
   if (!days.length) { list.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-soft);">沒有符合條件的日期</div>`; return; }
   list.innerHTML = days.map(({ date, day, status, shifts }) => {
     const d = new Date(date);
@@ -941,9 +947,11 @@ function renderEmployeeView(name) {
     else pill = shifts.map(s => `<span class="day-shift-pill ${SHIFT_INFO[s].key}">${SHIFT_INFO[s].label}</span>`).join(' ');
 
     const events = [];
-    if (day.holiday) events.push(`<span class="note-pill holiday-pill">🗓️ ${day.holiday}</span>`);
-    if (day.event) events.push(`<span class="note-pill">📌 ${day.event}</span>`);
-    if (day.notes) day.notes.forEach(n => events.push(`<span class="note-pill">${n.tag || ''} ${n.text}</span>`));
+    if (showEvents) {
+      if (day.holiday) events.push(`<span class="note-pill holiday-pill">🗓️ ${day.holiday}</span>`);
+      if (day.event) events.push(`<span class="note-pill">📌 ${day.event}</span>`);
+      if (day.notes) day.notes.forEach(n => events.push(`<span class="note-pill">${n.tag || ''} ${n.text}</span>`));
+    }
 
     return `
       <div class="${cls.join(' ')}">
@@ -1321,6 +1329,10 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
     const active = document.querySelector('.emp-pill.active');
     if (active) renderEmployeeView(active.dataset.name);
   });
+});
+document.getElementById('show-events').addEventListener('change', () => {
+  const active = document.querySelector('.emp-pill.active');
+  if (active) renderEmployeeView(active.dataset.name);
 });
 
 document.querySelectorAll('.tab').forEach(tab => {
