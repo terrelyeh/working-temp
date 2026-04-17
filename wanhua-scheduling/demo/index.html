@@ -95,6 +95,10 @@
   .emp-pill.active {
     background: var(--text); color: white; border-color: var(--text);
   }
+  .emp-filter { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .filter-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-soft); cursor: pointer; user-select: none; }
+  .filter-check input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
+  .filter-check:hover { color: var(--text); }
 
   /* Employee view: stats card */
   .emp-stats {
@@ -273,6 +277,132 @@
   .legend-item.support { background: var(--support-bg); color: var(--support-fg); }
   .legend-item.off { background: var(--off-bg); color: var(--off-fg); }
 
+  /* Store view mode toggle */
+  .store-mode-toggle {
+    display: inline-flex; background: var(--card); padding: 4px;
+    border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--border);
+    gap: 4px;
+  }
+  .mode-btn {
+    background: transparent; border: none; padding: 8px 16px;
+    border-radius: 6px; font-size: 14px; font-weight: 500;
+    color: var(--text-soft); cursor: pointer; font-family: inherit;
+  }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.active { background: var(--accent-soft); color: var(--accent); }
+
+  /* Week view */
+  .week-nav {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
+  }
+  .week-nav button {
+    background: var(--border-soft); border: none; border-radius: 6px;
+    padding: 8px 14px; cursor: pointer; font-size: 14px;
+    font-family: inherit; color: var(--text);
+  }
+  .week-nav button:hover { background: var(--border); }
+  .week-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .week-nav .current-week { flex: 1; text-align: center; font-size: 16px; font-weight: 600; }
+
+  .week-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+  .week-day {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 10px;
+    display: flex; flex-direction: column; min-height: 240px;
+  }
+  .week-day.monday { background: #F9FAFB; opacity: 0.7; }
+  .week-day.holiday { border-top: 3px solid var(--holiday-fg); }
+  .week-day .wd-head {
+    font-size: 13px; color: var(--text-soft); font-weight: 500; margin-bottom: 2px;
+  }
+  .week-day .wd-date { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .week-day .wd-tag {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    background: var(--holiday-bg); color: var(--holiday-fg);
+    margin-bottom: 6px; display: inline-block; width: fit-content;
+  }
+  .week-day .wd-event {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    background: var(--event-bg); color: var(--event-fg);
+    margin-bottom: 6px; display: inline-block; width: fit-content;
+  }
+  .week-shift {
+    font-size: 11px; padding: 4px 6px; border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .week-shift.early { background: var(--early-bg); color: var(--early-fg); }
+  .week-shift.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .week-shift.late { background: var(--late-bg); color: var(--late-fg); }
+  .week-shift.support { background: var(--support-bg); color: var(--support-fg); }
+  .week-shift .shift-label { font-weight: 600; font-size: 10px; display: block; margin-bottom: 2px; }
+  .week-shift .shift-names { line-height: 1.4; }
+  .week-shift .star { color: #F59E0B; }
+  .week-day .wd-off {
+    margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--border);
+    font-size: 10px; color: var(--text-soft);
+  }
+  .week-day.monday-closed {
+    align-items: center; justify-content: center;
+    color: var(--text-soft); font-size: 13px; text-align: center;
+  }
+
+  /* Month view */
+  .month-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .month-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+  }
+  .month-head-cell {
+    font-size: 12px; color: var(--text-soft); text-align: center;
+    padding: 6px 0; font-weight: 600; letter-spacing: 0.05em;
+  }
+  .month-cell {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; min-height: 90px;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .month-cell:hover { border-color: var(--accent); box-shadow: 0 2px 6px rgba(37,99,235,0.1); }
+  .month-cell.empty { background: transparent; border: none; cursor: default; }
+  .month-cell.empty:hover { box-shadow: none; }
+  .month-cell.monday { background: #F9FAFB; opacity: 0.6; cursor: default; }
+  .month-cell.monday:hover { box-shadow: none; border-color: var(--border); }
+  .month-cell.holiday { border-top: 3px solid var(--holiday-fg); }
+  .month-cell .m-date { font-size: 14px; font-weight: 600; }
+  .month-cell .m-holiday { font-size: 10px; color: var(--holiday-fg); font-weight: 500; }
+  .month-cell .m-event { font-size: 10px; color: var(--event-fg); font-weight: 500; line-height: 1.3; }
+  .month-cell .m-counts {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-top: auto;
+    font-size: 10px;
+  }
+  .m-count-pill {
+    padding: 1px 5px; border-radius: 3px; font-weight: 600;
+  }
+  .m-count-pill.early { background: var(--early-bg); color: var(--early-fg); }
+  .m-count-pill.noon { background: var(--noon-bg); color: var(--noon-fg); }
+  .m-count-pill.late { background: var(--late-bg); color: var(--late-fg); }
+  .m-count-pill.support { background: var(--support-bg); color: var(--support-fg); }
+  .month-cell .m-off {
+    font-size: 10px; color: var(--text-mute); margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .week-grid { grid-template-columns: 1fr; gap: 6px; }
+    .week-day { min-height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px 14px; }
+    .week-day .wd-head, .week-day .wd-date { margin-right: 10px; margin-bottom: 0; }
+    .week-shift { flex: 1; min-width: 120px; }
+    .month-cell { min-height: 70px; padding: 6px 8px; }
+    .month-cell .m-date { font-size: 13px; }
+    .m-count-pill { font-size: 9px; }
+  }
   @media (max-width: 640px) {
     .wrap { padding: 20px 14px; }
     h1 { font-size: 22px; }
@@ -304,6 +434,12 @@
   <div class="emp-selector">
     <label>選擇員工</label>
     <div class="emp-pills" id="emp-pills"></div>
+    <div class="emp-filter">
+      <label class="filter-check">
+        <input type="checkbox" id="only-scheduled">
+        <span>只顯示有排班的日期</span>
+      </label>
+    </div>
   </div>
 
   <div class="emp-stats" id="emp-stats"></div>
@@ -320,13 +456,38 @@
 
 <!-- ============ Store View ============ -->
 <section class="view" id="view-store">
-  <div class="day-nav">
-    <button id="prev-day">‹</button>
-    <div class="current-date" id="current-date">—</div>
-    <input type="date" id="date-picker" min="2026-04-01" max="2026-04-30" value="2026-04-03">
-    <button id="next-day">›</button>
+  <div class="store-mode-toggle">
+    <button class="mode-btn" data-mode="day">📅 日</button>
+    <button class="mode-btn active" data-mode="week">🗓️ 週</button>
+    <button class="mode-btn" data-mode="month">📆 月</button>
   </div>
-  <div id="store-day-card"></div>
+
+  <div class="store-mode-panel" id="store-mode-day" style="display: none;">
+    <div class="day-nav">
+      <button id="prev-day">‹</button>
+      <div class="current-date" id="current-date">—</div>
+      <input type="date" id="date-picker" min="2026-04-01" max="2026-04-30" value="2026-04-03">
+      <button id="next-day">›</button>
+    </div>
+    <div id="store-day-card"></div>
+  </div>
+
+  <div class="store-mode-panel" id="store-mode-week">
+    <div class="week-nav">
+      <button id="prev-week">‹ 上一週</button>
+      <div class="current-week" id="current-week">—</div>
+      <button id="next-week">下一週 ›</button>
+    </div>
+    <div id="week-grid"></div>
+  </div>
+
+  <div class="store-mode-panel" id="store-mode-month" style="display: none;">
+    <div class="month-header">
+      <h2 style="margin: 0; font-size: 20px;">2026 年 4 月</h2>
+      <span style="color: var(--text-soft); font-size: 14px;">點任一天查看詳細</span>
+    </div>
+    <div id="month-grid"></div>
+  </div>
 </section>
 
 <!-- ============ Summary View ============ -->
@@ -612,7 +773,10 @@ function renderEmployeeView(name) {
   }
 
   const list = document.getElementById('emp-day-list');
-  const days = findShiftsForEmployee(name);
+  const onlyScheduled = document.getElementById('only-scheduled').checked;
+  let days = findShiftsForEmployee(name);
+  if (onlyScheduled) days = days.filter(d => d.status === 'work');
+  if (!days.length) { list.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-soft);">此員工本月無排班</div>`; return; }
   list.innerHTML = days.map(({ date, day, status, shifts }) => {
     const d = new Date(date);
     const mdFmt = `${d.getMonth() + 1}/${d.getDate()}`;
@@ -747,7 +911,161 @@ function renderSummary() {
     }).join('');
 }
 
+// ============ Week View ============
+// Week = Monday ~ Sunday. April 2026 weeks:
+// Wk1: 3/30-4/5 (公休-四-五-六-日)... let's start April from its natural weeks
+const WEEKS = [
+  { label: '第 1 週', start: '2026-03-30', days: ['2026-03-30','2026-03-31','2026-04-01','2026-04-02','2026-04-03','2026-04-04','2026-04-05'] },
+  { label: '第 2 週', start: '2026-04-06', days: ['2026-04-06','2026-04-07','2026-04-08','2026-04-09','2026-04-10','2026-04-11','2026-04-12'] },
+  { label: '第 3 週', start: '2026-04-13', days: ['2026-04-13','2026-04-14','2026-04-15','2026-04-16','2026-04-17','2026-04-18','2026-04-19'] },
+  { label: '第 4 週', start: '2026-04-20', days: ['2026-04-20','2026-04-21','2026-04-22','2026-04-23','2026-04-24','2026-04-25','2026-04-26'] },
+  { label: '第 5 週', start: '2026-04-27', days: ['2026-04-27','2026-04-28','2026-04-29','2026-04-30','2026-05-01','2026-05-02','2026-05-03'] },
+];
+let currentWeekIdx = 1; // default to 第 2 週 (4/6–4/12)
+
+function renderWeekView() {
+  const week = WEEKS[currentWeekIdx];
+  const first = week.days[0], last = week.days[6];
+  const fmt = d => { const x = new Date(d); return `${x.getMonth()+1}/${x.getDate()}`; };
+  document.getElementById('current-week').textContent = `${week.label} · ${fmt(first)} – ${fmt(last)}`;
+  document.getElementById('prev-week').disabled = currentWeekIdx === 0;
+  document.getElementById('next-week').disabled = currentWeekIdx === WEEKS.length - 1;
+
+  const grid = document.getElementById('week-grid');
+  const WD_NAMES = ['一','二','三','四','五','六','日'];
+
+  grid.innerHTML = week.days.map((date, i) => {
+    const day = SCHEDULE[date];
+    const d = new Date(date);
+    const mdFmt = `${d.getMonth()+1}/${d.getDate()}`;
+
+    if (!day) {
+      return `<div class="week-day" style="opacity: 0.3;">
+        <div class="wd-head">週${WD_NAMES[i]}</div>
+        <div class="wd-date">${mdFmt}</div>
+        <div style="color: var(--text-mute); font-size: 11px;">月外</div>
+      </div>`;
+    }
+
+    if (day.type === 'monday') {
+      return `<div class="week-day monday monday-closed">
+        <div class="wd-head">週${day.wd}</div>
+        <div class="wd-date">${mdFmt}</div>
+        <div>公休</div>
+      </div>`;
+    }
+
+    const shiftHtml = (key) => {
+      const list = day[key];
+      if (!list || !list.length) return '';
+      const info = SHIFT_INFO[key];
+      const names = list.map(n => isFullTime(n) ? `<span class="star">★</span>${n}` : n).join('、');
+      return `<div class="week-shift ${info.key}">
+        <span class="shift-label">${info.label.replace(/ \d.*/,'')}</span>
+        <span class="shift-names">${names}</span>
+      </div>`;
+    };
+
+    const cls = ['week-day'];
+    if (day.holiday) cls.push('holiday');
+
+    return `<div class="${cls.join(' ')}">
+      <div class="wd-head">週${day.wd}</div>
+      <div class="wd-date">${mdFmt}</div>
+      ${day.holiday ? `<span class="wd-tag">🎉 ${day.holiday}</span>` : ''}
+      ${day.event ? `<span class="wd-event">📌 ${day.event}</span>` : ''}
+      ${shiftHtml('early8')}
+      ${shiftHtml('noon8')}
+      ${shiftHtml('late75')}
+      ${shiftHtml('support')}
+      ${day.off && day.off.length ? `<div class="wd-off">休：${day.off.join('、')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ============ Month View ============
+function renderMonthView() {
+  const grid = document.getElementById('month-grid');
+  // Header row
+  const heads = ['週一','週二','週三','週四','週五','週六','週日']
+    .map(w => `<div class="month-head-cell">${w}</div>`).join('');
+
+  // April 2026: 4/1 is 週三. So first row: Mon=空, Tue=空, Wed=4/1 ...
+  const cells = [];
+  // 2 empty cells (Mon, Tue of pre-April)
+  cells.push(`<div class="month-cell empty"></div>`);
+  cells.push(`<div class="month-cell empty"></div>`);
+
+  for (let d = 1; d <= 30; d++) {
+    const dateStr = `2026-04-${String(d).padStart(2,'0')}`;
+    const day = SCHEDULE[dateStr];
+    if (!day) { cells.push(`<div class="month-cell empty"></div>`); continue; }
+
+    if (day.type === 'monday') {
+      cells.push(`<div class="month-cell monday">
+        <div class="m-date">${d}</div>
+        <div style="font-size: 10px; color: var(--text-mute);">公休</div>
+      </div>`);
+      continue;
+    }
+
+    const counts = [];
+    if (day.early8?.length) counts.push(`<span class="m-count-pill early">早 ${day.early8.length}</span>`);
+    if (day.noon8?.length) counts.push(`<span class="m-count-pill noon">午 ${day.noon8.length}</span>`);
+    if (day.late75?.length) counts.push(`<span class="m-count-pill late">晚 ${day.late75.length}</span>`);
+    if (day.support?.length) counts.push(`<span class="m-count-pill support">支 ${day.support.length}</span>`);
+
+    const offText = day.off && day.off.length ? `休：${day.off.join('、')}` : '';
+
+    const cls = ['month-cell'];
+    if (day.holiday) cls.push('holiday');
+
+    cells.push(`<div class="${cls.join(' ')}" data-date="${dateStr}">
+      <div class="m-date">${d} <span style="font-weight: normal; color: var(--text-soft); font-size: 11px;">週${day.wd}</span></div>
+      ${day.holiday ? `<div class="m-holiday">🎉 ${day.holiday}</div>` : ''}
+      ${day.event ? `<div class="m-event">📌 ${day.event}</div>` : ''}
+      <div class="m-counts">${counts.join('')}</div>
+      ${offText ? `<div class="m-off">${offText}</div>` : ''}
+    </div>`);
+  }
+
+  grid.innerHTML = heads + cells.join('');
+
+  // Click a cell → jump to day view
+  grid.querySelectorAll('.month-cell[data-date]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const date = cell.dataset.date;
+      currentDateIdx = dates.indexOf(date);
+      setStoreMode('day');
+      renderStoreView(date);
+    });
+  });
+}
+
+function setStoreMode(mode) {
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  document.querySelectorAll('.store-mode-panel').forEach(p => {
+    p.style.display = p.id === `store-mode-${mode}` ? '' : 'none';
+  });
+}
+
 // ============ Events ============
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => setStoreMode(btn.dataset.mode));
+});
+document.getElementById('only-scheduled').addEventListener('change', () => {
+  const active = document.querySelector('.emp-pill.active');
+  if (active) renderEmployeeView(active.dataset.name);
+});
+document.getElementById('prev-week').addEventListener('click', () => {
+  if (currentWeekIdx > 0) { currentWeekIdx--; renderWeekView(); }
+});
+document.getElementById('next-week').addEventListener('click', () => {
+  if (currentWeekIdx < WEEKS.length - 1) { currentWeekIdx++; renderWeekView(); }
+});
+
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -783,6 +1101,8 @@ document.getElementById('date-picker').addEventListener('change', (e) => {
 renderEmpPills();
 renderEmployeeView('超威');
 renderStoreView(dates[currentDateIdx]);
+renderWeekView();
+renderMonthView();
 renderSummary();
 </script>
 
