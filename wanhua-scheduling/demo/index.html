@@ -78,23 +78,69 @@
   .view { display: none; }
   .view.active { display: block; }
 
-  /* Employee selector */
-  .emp-selector {
+  /* Employee selector — custom combobox */
+  .emp-selector-wrap { position: relative; margin-bottom: 20px; }
+  .emp-trigger {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; font-family: inherit; color: var(--text);
+    transition: all 0.15s; text-align: left;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .emp-trigger:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(37,99,235,0.1); }
+  .emp-trigger.open { border-color: var(--accent); box-shadow: 0 3px 10px rgba(37,99,235,0.15); }
+  .emp-trigger-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .emp-trigger-label { font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+  .emp-trigger-name { font-size: 22px; font-weight: 600; line-height: 1.25; }
+  .emp-trigger-role {
+    font-size: 13px; color: var(--text-soft);
+    padding: 4px 12px; background: var(--border-soft); border-radius: 20px;
+    font-weight: 500;
+  }
+  .emp-trigger-chevron { font-size: 18px; color: var(--text-soft); transition: transform 0.2s; }
+  .emp-trigger.open .emp-trigger-chevron { transform: rotate(180deg); }
+
+  .emp-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+    border-radius: 12px; padding: 12px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    z-index: 20; display: none;
+    max-height: 460px; overflow-y: auto;
   }
-  .emp-selector label { font-size: 13px; color: var(--text-soft); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .emp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-  .emp-pill {
-    background: var(--border-soft); border: 1px solid transparent;
-    padding: 6px 14px; border-radius: 20px; font-size: 14px;
-    cursor: pointer; transition: all 0.15s;
-    font-family: inherit; color: var(--text);
+  .emp-dropdown.open { display: block; }
+  .emp-search {
+    width: 100%; border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    font-family: inherit; font-size: 15px; color: var(--text);
+    margin-bottom: 10px; background: var(--bg);
   }
-  .emp-pill:hover { border-color: var(--accent); }
-  .emp-pill.active {
-    background: var(--text); color: white; border-color: var(--text);
+  .emp-search:focus { outline: none; border-color: var(--accent); background: white; }
+  .emp-dropdown-list { display: flex; flex-direction: column; gap: 2px; }
+  .emp-group-head {
+    font-size: 11px; color: var(--text-soft);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 10px 4px; font-weight: 600;
   }
+  .emp-option {
+    background: transparent; border: none;
+    padding: 10px 14px; border-radius: 8px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; font-family: inherit; color: var(--text);
+    font-size: 15px; text-align: left;
+  }
+  .emp-option:hover { background: var(--accent-soft); }
+  .emp-option.selected { background: var(--accent); color: white; }
+  .emp-option .opt-name { flex: 1; font-weight: 500; }
+  .emp-option .opt-tag {
+    font-size: 11px; padding: 2px 8px; border-radius: 4px;
+    background: var(--border-soft); color: var(--text-soft); font-weight: 500;
+  }
+  .emp-option.selected .opt-tag { background: rgba(255,255,255,0.2); color: white; }
+  .emp-option .opt-hours { font-size: 12px; color: var(--text-mute); font-variant-numeric: tabular-nums; }
+  .emp-option.selected .opt-hours { color: rgba(255,255,255,0.8); }
+  .emp-empty-state { padding: 20px; text-align: center; color: var(--text-soft); font-size: 14px; }
   .emp-filter { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); }
   .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
   .filter-pill {
@@ -685,9 +731,19 @@
 
 <!-- ============ Employee View ============ -->
 <section class="view active" id="view-employee">
-  <div class="emp-selector">
-    <label>選擇員工</label>
-    <div class="emp-pills" id="emp-pills"></div>
+  <div class="emp-selector-wrap">
+    <button class="emp-trigger" id="emp-trigger" aria-haspopup="listbox">
+      <div class="emp-trigger-main">
+        <span class="emp-trigger-label">目前顯示</span>
+        <span class="emp-trigger-name" id="emp-trigger-name">超威</span>
+      </div>
+      <span class="emp-trigger-role" id="emp-trigger-role">正職</span>
+      <span class="emp-trigger-chevron">▾</span>
+    </button>
+    <div class="emp-dropdown" id="emp-dropdown" role="listbox">
+      <input type="text" class="emp-search" id="emp-search" placeholder="🔍 搜尋員工姓名...">
+      <div class="emp-dropdown-list" id="emp-dropdown-list"></div>
+    </div>
   </div>
 
   <div class="emp-sticky-wrap">
@@ -1006,20 +1062,77 @@ function findShiftsForEmployee(name) {
 }
 
 // ============ Render ============
-function renderEmpPills() {
-  const container = document.getElementById('emp-pills');
-  container.innerHTML = EMPLOYEES
+let currentEmployeeName = '超威';
+
+function renderEmpDropdown() {
+  const list = document.getElementById('emp-dropdown-list');
+  const search = (document.getElementById('emp-search').value || '').toLowerCase().trim();
+
+  const shown = EMPLOYEES
     .filter(e => e.role !== 'admin' || e.name === 'Winnie')
-    .map((e, i) => `
-      <button class="emp-pill ${i === 0 ? 'active' : ''}" data-name="${e.name}">${e.name}</button>
-    `).join('');
-  container.querySelectorAll('.emp-pill').forEach(btn => {
+    .filter(e => !search || e.name.toLowerCase().includes(search));
+
+  const groups = {
+    admin: shown.filter(e => e.role === 'admin'),
+    fulltime: shown.filter(e => e.role === 'fulltime'),
+    pt: shown.filter(e => e.role === 'pt'),
+  };
+
+  let html = '';
+  const addGroup = (label, items) => {
+    if (!items.length) return;
+    html += `<div class="emp-group-head">${label}</div>`;
+    items.forEach(e => {
+      const roleLabel = e.role === 'fulltime' ? '正職' : e.role === 'admin' ? '主管' : 'PT';
+      const hoursText = e.target ? `${e.target}h` : '';
+      const selected = e.name === currentEmployeeName ? 'selected' : '';
+      html += `
+        <button class="emp-option ${selected}" data-name="${e.name}">
+          <span class="opt-name">${e.name}</span>
+          ${hoursText ? `<span class="opt-hours">${hoursText}</span>` : ''}
+          <span class="opt-tag">${roleLabel}</span>
+        </button>
+      `;
+    });
+  };
+  addGroup('主管', groups.admin);
+  addGroup('正職', groups.fulltime);
+  addGroup('PT', groups.pt);
+  if (!html) html = `<div class="emp-empty-state">找不到符合的員工</div>`;
+  list.innerHTML = html;
+
+  list.querySelectorAll('.emp-option').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.emp-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderEmployeeView(btn.dataset.name);
+      selectEmployee(btn.dataset.name);
+      closeEmpDropdown();
     });
   });
+}
+
+function updateEmpTrigger() {
+  const emp = EMPLOYEES.find(e => e.name === currentEmployeeName);
+  if (!emp) return;
+  const roleLabel = emp.role === 'fulltime' ? '正職' : emp.role === 'admin' ? '主管' : 'PT';
+  document.getElementById('emp-trigger-name').textContent = currentEmployeeName;
+  document.getElementById('emp-trigger-role').textContent = roleLabel;
+}
+
+function selectEmployee(name) {
+  currentEmployeeName = name;
+  updateEmpTrigger();
+  renderEmployeeView(name);
+}
+
+function openEmpDropdown() {
+  document.getElementById('emp-dropdown').classList.add('open');
+  document.getElementById('emp-trigger').classList.add('open');
+  renderEmpDropdown();
+  setTimeout(() => document.getElementById('emp-search').focus(), 50);
+}
+function closeEmpDropdown() {
+  document.getElementById('emp-dropdown').classList.remove('open');
+  document.getElementById('emp-trigger').classList.remove('open');
+  document.getElementById('emp-search').value = '';
 }
 
 function renderEmployeeView(name) {
@@ -1587,13 +1700,24 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const active = document.querySelector('.emp-pill.active');
-    if (active) renderEmployeeView(active.dataset.name);
+    renderEmployeeView(currentEmployeeName);
   });
 });
 document.getElementById('show-events').addEventListener('change', () => {
-  const active = document.querySelector('.emp-pill.active');
-  if (active) renderEmployeeView(active.dataset.name);
+  renderEmployeeView(currentEmployeeName);
+});
+
+document.getElementById('emp-trigger').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = document.getElementById('emp-dropdown').classList.contains('open');
+  open ? closeEmpDropdown() : openEmpDropdown();
+});
+document.getElementById('emp-search').addEventListener('input', renderEmpDropdown);
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.emp-selector-wrap')) closeEmpDropdown();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeEmpDropdown();
 });
 
 document.querySelectorAll('.tab').forEach(tab => {
@@ -1610,28 +1734,17 @@ document.getElementById('jump-date').addEventListener('change', (e) => {
 });
 
 function jumpToEmployee(name) {
-  // Switch to employee tab
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'employee'));
-  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-employee'));
-
-  // Select the matching pill
-  const pills = document.querySelectorAll('.emp-pill');
-  let found = false;
-  pills.forEach(p => {
-    const match = p.dataset.name === name;
-    p.classList.toggle('active', match);
-    if (match) found = true;
-  });
-
-  if (!found) {
+  const exists = EMPLOYEES.find(e => e.name === name);
+  if (!exists) {
     alert(`找不到 ${name} 的員工資料（可能尚未加入系統）`);
     return;
   }
-
-  // Reset filter to "all" so user sees the context immediately
+  // Switch to employee tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'employee'));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-employee'));
+  // Reset filter to "all" so user sees full context
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
-
-  renderEmployeeView(name);
+  selectEmployee(name);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1653,8 +1766,8 @@ document.querySelectorAll('#view-cowork .mode-pill').forEach(btn => {
 });
 
 // Init
-renderEmpPills();
-renderEmployeeView('超威');
+updateEmpTrigger();
+renderEmployeeView(currentEmployeeName);
 renderAllDays();
 renderWeekJumper();
 renderSummary();
