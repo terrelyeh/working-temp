@@ -294,7 +294,15 @@
     font-size: 17px; font-weight: 600; color: var(--text);
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     border: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer; user-select: none;
+    transition: all 0.12s ease;
   }
+  .person-chip:hover {
+    border-color: var(--accent); color: var(--accent);
+    box-shadow: 0 2px 6px rgba(37,99,235,0.15);
+    transform: translateY(-1px);
+  }
+  .person-chip:active { transform: translateY(0); }
   .person-chip.fulltime { font-weight: 700; }
   .person-chip.fulltime::before { content: "★ "; color: #F59E0B; font-size: 15px; }
   .tl-content .people { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
@@ -664,6 +672,9 @@ const EMPLOYEES = [
   { name: '子寧', role: 'pt', target: 39, actual: 39, leave: 0, meeting: 0 },
   { name: '莎賓', role: 'pt', target: 38.5, actual: 38.5, leave: 0, meeting: 0 },
   { name: '孟霏', role: 'pt', target: 24, actual: 24, leave: 0, meeting: 0 },
+  { name: '孟學', role: 'pt' },
+  { name: '勲諺', role: 'pt' },
+  { name: '凱柏', role: 'pt' },
 ];
 
 // 4/1 ~ 4/30 schedule data
@@ -999,7 +1010,7 @@ function buildDayCardHtml(date) {
   const timelineHtml = timelineEvents.map(ev => {
     if (ev.type === 'shift') {
       const info = SHIFT_INFO[ev.key];
-      const peopleHtml = ev.people.map(n => `<span class="person-chip ${isFullTime(n) ? 'fulltime' : ''}">${n}</span>`).join('');
+      const peopleHtml = ev.people.map(n => `<span class="person-chip ${isFullTime(n) ? 'fulltime' : ''}" data-emp="${n}" title="點擊查看 ${n} 的個人班表">${n}</span>`).join('');
       return `
         <div class="tl-row">
           <div class="tl-time">${ev.start}<span class="tl-end">至 ${ev.end}</span></div>
@@ -1323,6 +1334,41 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 document.getElementById('jump-date').addEventListener('change', (e) => {
   scrollToDate(e.target.value);
+});
+
+function jumpToEmployee(name) {
+  // Switch to employee tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'employee'));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-employee'));
+
+  // Select the matching pill
+  const pills = document.querySelectorAll('.emp-pill');
+  let found = false;
+  pills.forEach(p => {
+    const match = p.dataset.name === name;
+    p.classList.toggle('active', match);
+    if (match) found = true;
+  });
+
+  if (!found) {
+    alert(`找不到 ${name} 的員工資料（可能尚未加入系統）`);
+    return;
+  }
+
+  // Reset filter to "all" so user sees the context immediately
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
+
+  renderEmployeeView(name);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Click person chip anywhere → jump to that employee's view
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.person-chip[data-emp]');
+  if (chip && chip.closest('#all-days')) {
+    e.preventDefault();
+    jumpToEmployee(chip.dataset.emp);
+  }
 });
 
 // Init
