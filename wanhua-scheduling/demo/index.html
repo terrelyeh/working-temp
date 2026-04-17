@@ -1254,9 +1254,7 @@ function updateEmpTrigger() {
 }
 
 function selectEmployee(name) {
-  currentEmployeeName = name;
-  updateEmpTrigger();
-  renderEmployeeView(name);
+  setRoute('employee', name);
 }
 
 function openEmpDropdown() {
@@ -1479,7 +1477,7 @@ function renderWeekJumper() {
   jumper.querySelectorAll('.week-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.weekIdx);
-      scrollToDate(WEEK_JUMPS[idx].firstDate, false);
+      setRoute('store', WEEK_JUMPS[idx].firstDate);
     });
   });
 }
@@ -1858,17 +1856,58 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeEmpDropdown();
 });
 
+// ============ Hash routing ============
+const VALID_TABS = ['employee', 'store', 'cowork', 'summary'];
+
+function parseHash() {
+  const h = window.location.hash.replace(/^#\/?/, '');
+  if (!h) return { tab: 'employee', param: null };
+  const [tab, ...rest] = h.split('/');
+  return {
+    tab: VALID_TABS.includes(tab) ? tab : 'employee',
+    param: rest.length ? decodeURIComponent(rest.join('/')) : null,
+  };
+}
+
+function setRoute(tab, param) {
+  let h = `#/${tab}`;
+  if (param) h += `/${encodeURIComponent(param)}`;
+  if (window.location.hash === h) {
+    applyRoute();  // ensure DOM matches (e.g. re-scroll to same date)
+    return;
+  }
+  window.location.hash = h;
+}
+
+function applyRoute() {
+  const { tab, param } = parseHash();
+
+  // Switch tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === `view-${tab}`));
+
+  if (tab === 'employee' && param) {
+    if (EMPLOYEES.find(e => e.name === param) && currentEmployeeName !== param) {
+      currentEmployeeName = param;
+      updateEmpTrigger();
+      renderEmployeeView(currentEmployeeName);
+    }
+  } else if (tab === 'store' && param && SCHEDULE[param]) {
+    setTimeout(() => scrollToDate(param, true), 120);
+  }
+}
+
+window.addEventListener('hashchange', applyRoute);
+
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(`view-${tab.dataset.tab}`).classList.add('active');
+    const newTab = tab.dataset.tab;
+    setRoute(newTab, newTab === 'employee' ? currentEmployeeName : null);
   });
 });
 
 document.getElementById('jump-date').addEventListener('change', (e) => {
-  scrollToDate(e.target.value);
+  setRoute('store', e.target.value);
 });
 
 function jumpToEmployee(name) {
@@ -1877,12 +1916,9 @@ function jumpToEmployee(name) {
     alert(`找不到 ${name} 的員工資料（可能尚未加入系統）`);
     return;
   }
-  // Switch to employee tab
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'employee'));
-  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-employee'));
   // Reset filter to "all" so user sees full context
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
-  selectEmployee(name);
+  setRoute('employee', name);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1912,6 +1948,7 @@ renderSummary();
 renderCoworkPills();
 renderCoworkResult();
 setupScrollTracking();
+applyRoute();
 </script>
 
 </div>
