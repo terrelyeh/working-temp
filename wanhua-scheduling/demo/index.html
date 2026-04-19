@@ -1000,8 +1000,8 @@
       <h2 style="margin: 0; font-size: 20px;">2026 年 4 月</h2>
       <span class="toolbar-hint">共 30 天</span>
       <div class="store-mode-toggle">
-        <button class="store-mode-btn active" data-mode="timeline">📋 詳細</button>
-        <button class="store-mode-btn" data-mode="gantt">📊 時間軸</button>
+        <button class="store-mode-btn" data-mode="timeline">📋 詳細</button>
+        <button class="store-mode-btn active" data-mode="gantt">📊 時間軸</button>
       </div>
       <div class="toolbar-right">
         <label for="jump-date" style="font-size: 13px; color: var(--text-soft);">📅</label>
@@ -1011,7 +1011,7 @@
     <div class="week-jumper" id="week-jumper"></div>
   </div>
 
-  <div id="timeline-panel">
+  <div id="timeline-panel" style="display: none;">
     <div class="shift-legend">
       <span class="legend-pill early">早班 09:00–17:00</span>
       <span class="legend-pill noon">午班 11:00–19:00</span>
@@ -1021,7 +1021,7 @@
     <div id="all-days"></div>
   </div>
 
-  <div id="gantt-panel" style="display: none;">
+  <div id="gantt-panel">
     <div class="gantt-container">
       <div id="gantt-body"></div>
     </div>
@@ -1719,7 +1719,7 @@ function renderGantt() {
   });
 }
 
-let currentStoreMode = 'timeline';
+let currentStoreMode = 'gantt';
 function setStoreMode(mode) {
   currentStoreMode = mode;
   document.querySelectorAll('.store-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
