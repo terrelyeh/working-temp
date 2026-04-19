@@ -244,8 +244,14 @@
   .day-shift-pill.support { background: var(--support-bg); color: var(--support-fg); }
   .day-shift-pill.off { background: var(--off-bg); color: var(--off-fg); }
   .day-shift-pill.holiday { background: var(--holiday-bg); color: var(--holiday-fg); }
+  .day-content {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 8px 16px; min-width: 0;
+  }
+  .day-shifts { display: flex; flex-wrap: wrap; gap: 6px; }
   .day-notes {
-    margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px;
+    margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px;
+    justify-content: flex-end;
   }
   .note-pill {
     font-size: 12px; padding: 2px 8px; border-radius: 4px;
@@ -866,6 +872,8 @@
     .day-row { grid-template-columns: 62px 1fr; padding: 10px 12px; gap: 10px; }
     .day-date .md { font-size: 16px; }
     .day-shift-pill { font-size: 13px; padding: 5px 11px; }
+    .day-content { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .day-notes { margin-left: 0; justify-content: flex-start; }
 
     /* Day cards in store view */
     .day-card { padding: 16px 18px; }
@@ -1485,8 +1493,8 @@ function renderEmployeeView(name) {
           <span class="md">${mdFmt}</span>
           <span class="wd">週${day.wd}</span>
         </div>
-        <div>
-          ${pill}
+        <div class="day-content">
+          <div class="day-shifts">${pill}</div>
           ${events.length ? `<div class="day-notes">${events.join('')}</div>` : ''}
         </div>
       </div>
