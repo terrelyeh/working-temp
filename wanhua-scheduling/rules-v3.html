@@ -29,7 +29,7 @@
     --tag-pending-fg: #B45309;
 
     --navbar-h: 72px;
-    --sidebar-w: 240px;
+    --sidebar-w: 220px;
   }
 
   * { box-sizing: border-box; }
@@ -91,10 +91,10 @@
 
   /* ========== Layout ========== */
   .layout {
-    max-width: 1400px; margin: 0 auto;
+    max-width: 1280px; margin: 0 auto;
     display: grid;
-    grid-template-columns: var(--sidebar-w) 1fr;
-    gap: 48px;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    gap: 40px;
     padding: 0 24px;
   }
 
@@ -288,18 +288,25 @@
   .mobile-toc a:hover { color: var(--accent); }
   .mobile-toc a .sb-num { color: var(--muted-foreground); font-size: 11px; min-width: 20px; }
 
-  /* ========== Mobile ========== */
-  @media (max-width: 900px) {
-    :root { --navbar-h: 56px; --sidebar-w: 0px; }
-    .layout { grid-template-columns: 1fr; gap: 0; padding: 0 18px; }
-    .sidebar, .sidebar-backdrop, .sidebar-toggle { display: none !important; }
+  /* ========== Mobile / narrow ========== */
+  @media (max-width: 1100px) {
+    :root { --sidebar-w: 0px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 24px; }
+    .sidebar { display: none !important; }
     .mobile-toc { display: block; }
+  }
+  @media (max-width: 640px) {
+    :root { --navbar-h: 56px; }
+    .layout { padding: 0 16px; }
     .navbar-inner { height: 56px; padding: 0 14px; }
     .navbar-title small { display: none; }
     main { padding: 20px 0 80px; }
     h1 { font-size: 26px; }
     h2 { font-size: 20px; }
     .section { margin: 36px 0; }
+    .card { padding: 16px 18px; }
+    table { font-size: 13px; }
+    th, td { padding: 8px 10px; }
   }
 
   @media print {
