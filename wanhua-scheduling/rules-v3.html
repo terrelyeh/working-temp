@@ -354,9 +354,10 @@
       <a href="#sec11"><span class="sb-num">11</span>月排班流程</a>
       <a href="#sec12"><span class="sb-num">12</span>跨月補時數</a>
       <a href="#sec13"><span class="sb-num">13</span>缺班兜底順序</a>
-      <a href="#sec14"><span class="sb-num">14</span>換班流程</a>
-      <a href="#sec15"><span class="sb-num">15</span>個人特殊協議</a>
-      <a href="#sec16"><span class="sb-num">16</span>待最終確認</a>
+      <a href="#sec14"><span class="sb-num">14</span>活動與動態調整</a>
+      <a href="#sec15"><span class="sb-num">15</span>換班流程</a>
+      <a href="#sec16"><span class="sb-num">16</span>個人特殊協議</a>
+      <a href="#sec17"><span class="sb-num">17</span>待最終確認</a>
     </nav>
   </aside>
   <main>
@@ -380,9 +381,10 @@
         <a href="#sec11"><span class="sb-num">11</span>月流程</a>
         <a href="#sec12"><span class="sb-num">12</span>補時數</a>
         <a href="#sec13"><span class="sb-num">13</span>缺班兜底</a>
-        <a href="#sec14"><span class="sb-num">14</span>換班流程</a>
-        <a href="#sec15"><span class="sb-num">15</span>特殊協議</a>
-        <a href="#sec16"><span class="sb-num">16</span>待確認</a>
+        <a href="#sec14"><span class="sb-num">14</span>活動調整</a>
+        <a href="#sec15"><span class="sb-num">15</span>換班流程</a>
+        <a href="#sec16"><span class="sb-num">16</span>特殊協議</a>
+        <a href="#sec17"><span class="sb-num">17</span>待確認</a>
       </nav>
     </details>
 
@@ -417,16 +419,15 @@
     <section class="section" id="sec2">
       <h2><span class="sec-num">02</span>班次定義</h2>
       <p class="section-lead">
-        排班系統把每天營運切成五種班次，solver 組合這些班次覆蓋營業時段。
+        排班系統把每天營運切成四種班次，solver 組合這些班次覆蓋營業時段。
         時數以<strong>名目時數</strong>計（<code>M8</code> = 8 小時），<strong>已包含約 30 分鐘用餐休息</strong>，
-        實際是否休息視當天忙碌程度。10h 版早班（<code>M10</code>）雖有定義，目前無員工可排。
+        實際是否休息視當天忙碌程度。
       </p>
       <table>
         <thead><tr><th>代碼</th><th>名稱</th><th>時段</th><th>時數</th><th>適用日別</th></tr></thead>
         <tbody>
-          <tr><td><code>M8</code></td><td>早班 8h</td><td>09:00–17:00</td><td>8h</td><td>全部</td></tr>
-          <tr><td><code>M10</code></td><td>早班 10h</td><td>09:00–19:00</td><td>10h</td><td>平日 / 週日（目前無人可排）</td></tr>
-          <tr><td><code>A8</code></td><td>午班 8h</td><td>11:00–19:00</td><td>8h</td><td>全部</td></tr>
+          <tr><td><code>M8</code></td><td>早班</td><td>09:00–17:00</td><td>8h</td><td>全部</td></tr>
+          <tr><td><code>A8</code></td><td>午班</td><td>11:00–19:00</td><td>8h</td><td>全部</td></tr>
           <tr><td><code>S2</code></td><td>支援班</td><td>17:00–19:00</td><td>2h</td><td>平日 / 週日</td></tr>
           <tr><td><code>N7.5</code></td><td>晚班</td><td>17:00–次日 00:30</td><td>7.5h</td><td>長班日</td></tr>
         </tbody>
@@ -440,15 +441,18 @@
         員工依角色分成四類：<strong>高階主管</strong>（以管理為主、人力不足才下去排班）、
         <strong>正職</strong>（店內主力，月目標工時依公式計算）、<strong>PT</strong>（每月 56–100h，靠意願表）、
         <strong>外援</strong>（填補剩餘，達 32h 有「喝酒金」福利）。
-        PT 與外援的排班順序都依當月<strong>給班意願送出先後</strong>決定，越早送出的優先分到時數。
+      </p>
+      <p class="section-lead">
+        <strong>PT 與外援的給班優先序</strong>：一般日子盡量讓所有人工時平均；
+        但<strong>國定假日</strong>因為是<strong>雙倍薪資</strong>、大家都想排，僧多粥少時會以<strong>當月意願表送出先後</strong>為排序依據——越早送出的越有機會排到國假。
       </p>
       <table>
         <thead><tr><th>類別</th><th>月工時</th><th>排班角色</th><th>給班優先序</th><th>成員</th></tr></thead>
         <tbody>
           <tr><td><strong>高階主管</strong></td><td>≤ 40h 軟性</td><td>人力不足才下去排</td><td>—</td><td>Winnie / Fish / 政道</td></tr>
           <tr><td><strong>正職</strong></td><td>每月變動（見 §04）</td><td>主力</td><td>—</td><td>超威 / 思坦 / 蛋頭</td></tr>
-          <tr><td><strong>PT</strong></td><td>56–100h</td><td>依意願表</td><td>優先者先排，多排 1–2 天</td><td>Jessie / 愛因 / 佳佳 / 91 / Sin / 沛慈 / 小黃</td></tr>
-          <tr><td><strong>外援</strong></td><td>達 32h 有喝酒金</td><td>填補剩餘</td><td>同 PT</td><td>莎賓 / 景文 / 凱柏 / 子寧</td></tr>
+          <tr><td><strong>PT</strong></td><td>56–100h</td><td>依意願表</td><td>國假優先，平日大致平均</td><td>Jessie / 愛因 / 佳佳 / 91 / Sin / 沛慈 / 小黃</td></tr>
+          <tr><td><strong>外援</strong></td><td>達 32h 有喝酒金</td><td>填補剩餘</td><td>國假優先，平日大致平均</td><td>莎賓 / 景文 / 凱柏 / 子寧</td></tr>
         </tbody>
       </table>
     </section>
@@ -511,7 +515,7 @@
       <p class="section-lead">
         各日別規定當天需要多少人、以及必須有多少位「正職」擔任（<em>正職下限</em>）。
         <strong>長班日人力最重</strong>（早班 3 位含 2 正職、晚班 3 位含 1 正職），
-        平日與週日各有兩個版本，<code>with_10h</code> 是若有員工可排 10h 班的替代配置，目前未啟用。
+        平日與週日則是早午支援的常規配置。
       </p>
 
       <h3>平日（週二、三、四）</h3>
@@ -560,7 +564,6 @@
           <ul>
             <li>任何混排 ≤ 6 天（週一公休自然限制）</li>
             <li>純 8h 班 ≤ 5 天</li>
-            <li>含 10h 班 ≤ 2 天</li>
           </ul>
         </li>
         <li><strong>H3 · 同日只排一個班</strong>（禁止 split shift）</li>
@@ -588,7 +591,7 @@
           <tr><td>S3</td><td>晚班次數員工間盡量平均</td><td>★★</td></tr>
           <tr><td>S4</td><td>長班日上班次數平均</td><td>★★</td></tr>
           <tr><td>S5</td><td>佳佳優先排早班 / 午班（住較遠）</td><td>★★★</td></tr>
-          <tr><td>S6</td><td>PT / 外援給班順序靠前者優先（多排 1–2 天）</td><td>★★★★</td></tr>
+          <tr><td>S6</td><td>國定假日（雙薪）PT/外援給班順序靠前者優先——一般日子則以工時平均為主</td><td>★★★★</td></tr>
           <tr><td>S7</td><td>3 位正職同日全休 → Winnie + Fish 下去排；form 若註明「禁休」需遵守</td><td>★★★★★</td></tr>
         </tbody>
       </table>
@@ -711,7 +714,98 @@
 
     <!-- ========== 14 ========== -->
     <section class="section" id="sec14">
-      <h2><span class="sec-num">14</span>換班流程</h2>
+      <h2><span class="sec-num">14</span>活動與班表動態調整</h2>
+      <p class="section-lead">
+        店裡常有特殊活動，有些活動<strong>需要加人</strong>、有些只要<strong>指定某位員工必到</strong>、
+        有些只是<strong>提醒</strong>。為了讓排班系統能正確處理，活動分四個層級，每個層級系統的行為不同。
+        理想狀態是：已知活動寫入當月行事曆，solver 排班時就一次納入；
+        排完才出現的臨時活動，才進 post-schedule 手動調整（留 log）。
+      </p>
+
+      <h3>14.1 活動分級</h3>
+      <table>
+        <thead><tr><th>層級</th><th>定義</th><th>對排班的影響</th><th>範例</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>internal</code></td>
+            <td>內部提醒，不影響排班</td>
+            <td>只在班表上標示，不加人</td>
+            <td>店務例會</td>
+          </tr>
+          <tr>
+            <td><code>meeting</code></td>
+            <td>特定人要參與的會議</td>
+            <td>指定人員的會議時數 +X 小時，不影響店內人力</td>
+            <td>財務會議、WIP 會議</td>
+          </tr>
+          <tr>
+            <td><code>event_light</code></td>
+            <td>需要全員知情 / 指定人員必到</td>
+            <td>被指定的員工<strong>強制排那天那個班</strong>，人數不變</td>
+            <td>瀧自慢社長來訪（思坦必到）</td>
+          </tr>
+          <tr>
+            <td><code>event_heavy</code></td>
+            <td>需要加人力</td>
+            <td>當天班次人數 +N，可能指定人員</td>
+            <td>新富有樂市、快閃大廚（蛋頭賣麵）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>14.2 活動資料格式（月行事曆）</h3>
+      <div class="formula">events:
+  - date: "2026-05-05"
+    name: 店務例會
+    level: internal
+
+  - date: "2026-05-12"
+    name: 財務會議
+    level: meeting
+    attendees: [政道, Fish, Winnie]
+    hours: 2
+
+  - date: "2026-05-17"
+    name: 清酒活動：瀧自慢社長來訪
+    level: event_light
+    assigned_to: [思坦]          # 思坦必排這天
+
+  - date: "2026-05-26"
+    name: 新富有樂市
+    level: event_heavy
+    staffing_override: { M8: +1 } # 早班多 1 人
+
+  - date: "2026-05-18"
+    name: 快閃大廚：蛋頭賣麵
+    level: event_heavy
+    assigned_to: [蛋頭]
+    staffing_override: { M8: +1 }</div>
+
+      <h3>14.3 事前 vs 事後調整</h3>
+      <table>
+        <thead><tr><th>時機</th><th>處理方式</th><th>Log</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>事前（月排班前）</td>
+            <td>活動寫進 calendar，solver 自動納入人力計算與指派</td>
+            <td>不需額外記錄（規則內）</td>
+          </tr>
+          <tr>
+            <td>事後（班表公告後）</td>
+            <td>Winnie 在 UI 上手動加人 / 換人，可觸發 solver 重新優化其他日子</td>
+            <td>✅ 必留：時間、操作者、原因、前後異動</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>14.4 累積疲勞防護</h3>
+      <p>活動加班後，solver 在後續日子計算排班時，會考慮該員工「最近累積時數較多」，
+        降低在往後幾天被重複排晚班或長班日的機率。避免因應活動而讓個別員工過度疲勞。</p>
+    </section>
+
+    <!-- ========== 15 ========== -->
+    <section class="section" id="sec15">
+      <h2><span class="sec-num">15</span>換班流程</h2>
       <p class="section-lead">
         班表公告後，員工想換班需經過正式流程：發起人 → 接手人同意 → Winnie 核准 → 系統更新。
         這確保換班紀錄可追溯。通知對象則分兩類：店內臨時改動（如包場）通知全員；
@@ -730,9 +824,9 @@
       </ul>
     </section>
 
-    <!-- ========== 15 ========== -->
-    <section class="section" id="sec15">
-      <h2><span class="sec-num">15</span>個人特殊協議</h2>
+    <!-- ========== 16 ========== -->
+    <section class="section" id="sec16">
+      <h2><span class="sec-num">16</span>個人特殊協議</h2>
       <p class="section-lead">
         部分員工有個人化協議（例如超威「賣漢堡月多休 1 天」），但這些<strong>不是永久設定</strong>，
         而是逐月確認。每月行事曆裡以 <code>special_agreements</code> 欄位登記「本月是否適用」、
@@ -749,9 +843,9 @@
       </div>
     </section>
 
-    <!-- ========== 16 ========== -->
-    <section class="section" id="sec16">
-      <h2><span class="sec-num">16</span>待最終確認 <span class="tag tag-pending">🟡</span></h2>
+    <!-- ========== 17 ========== -->
+    <section class="section" id="sec17">
+      <h2><span class="sec-num">17</span>待最終確認 <span class="tag tag-pending">🟡</span></h2>
       <p class="section-lead">
         經過 Winnie 與相關同仁的確認，大部分規則已拍板。skill 會以合理預設運作，最終答覆後調整常數即可。
       </p>
