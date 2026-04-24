@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2C3345">
+<title>給 Winnie 確認 · 臨時缺席與補時數處理</title>
+<style>
+  :root {
+    --primary: #2C3345;
+    --foreground: #1F2937;
+    --muted-foreground: #6B7280;
+    --muted: #F3F4F6;
+    --background: #FAFAF8;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --border-soft: #F3F4F6;
+    --accent: #2563EB;
+    --accent-soft: #EFF6FF;
+    --priority-high-bg: #FEE2E2;
+    --priority-high-fg: #B91C1C;
+    --priority-mid-bg: #FEF3C7;
+    --priority-mid-fg: #B45309;
+    --priority-low-bg: #DCFCE7;
+    --priority-low-fg: #166534;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--background); color: var(--foreground);
+    font-family: "Inter", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Navbar */
+  .navbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .navbar-inner {
+    max-width: 1400px; margin: 0 auto; padding: 0 24px;
+    height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .navbar-brand { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; font-weight: 600; }
+  .navbar-logo {
+    width: 42px; height: 42px; border-radius: 8px;
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #1F2937; font-weight: 700;
+  }
+  .navbar-title { font-size: 15px; line-height: 1.3; }
+  .navbar-title small { display: block; font-size: 12px; color: rgba(255, 255, 255, 0.6); font-weight: 400; margin-top: 2px; }
+  .navbar-pill {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 5px 12px; border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 40px 24px 96px; }
+  @media (min-width: 640px) { main { padding: 56px 32px 112px; } }
+
+  h1 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.02em; font-weight: 700; }
+  .page-lead { color: var(--muted-foreground); font-size: 15px; margin: 0 0 8px; }
+  .page-meta {
+    font-size: 13px; color: var(--muted-foreground);
+    margin-bottom: 28px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .intro-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin: 24px 0 32px;
+    font-size: 15px;
+  }
+  .intro-card strong { color: var(--foreground); }
+  .intro-card ol { padding-left: 22px; margin: 10px 0 0; }
+  .intro-card li { margin: 4px 0; }
+
+  .summary-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin: 0 0 28px;
+  }
+  .stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; text-align: center;
+  }
+  .stat .num { font-size: 28px; font-weight: 700; }
+  .stat .label {
+    font-size: 11px; color: var(--muted-foreground);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  h2 {
+    font-size: 22px; margin: 40px 0 12px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--primary);
+    font-weight: 700;
+  }
+
+  .question {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 26px; margin: 18px 0;
+  }
+  .question.p-high { border-left: 4px solid var(--priority-high-fg); }
+  .question.p-mid  { border-left: 4px solid var(--priority-mid-fg); }
+  .question.p-low  { border-left: 4px solid var(--priority-low-fg); }
+
+  .q-head {
+    display: flex; align-items: baseline; gap: 12px;
+    flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .q-num {
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    font-weight: 700; color: var(--accent); font-size: 15px;
+  }
+  .q-title { font-size: 18px; font-weight: 600; flex: 1; min-width: 0; }
+  .q-priority {
+    display: inline-block; padding: 2px 10px; border-radius: 4px;
+    font-size: 12px; font-weight: 600;
+  }
+  .p-high .q-priority { background: var(--priority-high-bg); color: var(--priority-high-fg); }
+  .p-mid .q-priority  { background: var(--priority-mid-bg);  color: var(--priority-mid-fg); }
+  .p-low .q-priority  { background: var(--priority-low-bg);  color: var(--priority-low-fg); }
+
+  .q-context {
+    font-size: 14px; color: var(--muted-foreground);
+    margin: 6px 0 10px; line-height: 1.75;
+  }
+
+  .q-options {
+    background: #F9FAFB; border: 1px dashed var(--border);
+    border-radius: 8px; padding: 12px 16px; margin: 8px 0 12px;
+  }
+  .q-options h5 {
+    margin: 0 0 8px; font-size: 11px; color: var(--muted-foreground);
+    text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+  }
+  .q-options ul { padding-left: 20px; margin: 0; }
+  .q-options li { font-size: 14px; margin: 4px 0; }
+  .q-options li strong { color: var(--accent); }
+
+  .q-example {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 10px 0;
+    font-size: 13px; color: var(--foreground); line-height: 1.7;
+  }
+
+  .answer-box {
+    background: #FFFBEB; border: 1px dashed var(--priority-mid-fg);
+    border-radius: 8px; padding: 12px 16px; margin-top: 12px;
+    font-size: 14px; color: var(--priority-mid-fg); font-style: italic;
+  }
+
+  code {
+    background: var(--muted); padding: 2px 7px; border-radius: 4px;
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    font-size: 13px; color: var(--foreground);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 16px; font-size: 13px; color: var(--muted-foreground);
+    text-align: center;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .navbar-inner { height: 56px; padding: 0 14px; }
+    .navbar-logo { width: 36px; height: 36px; font-size: 18px; }
+    .navbar-title small { display: none; }
+    main { padding: 24px 16px 80px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 18px; }
+    .question { padding: 16px 18px; }
+    .q-title { font-size: 16px; }
+    .summary-bar { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media print {
+    .navbar, footer { display: none; }
+    body { background: white; }
+    main { padding: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="navbar-brand" href="#">
+      <div class="navbar-logo">萬</div>
+      <div class="navbar-title">
+        萬華世界下午酒場
+        <small>臨時缺席與補時數 · 確認題</small>
+      </div>
+    </a>
+    <span class="navbar-pill">給 Winnie</span>
+  </div>
+</nav>
+
+<main>
+
+<h1>🟡 給 Winnie 的確認題</h1>
+<p class="page-lead">臨時缺席、病假處理、以及補時數的邊界規則</p>
+<div class="page-meta">產出日期：2026-04-24 ｜ 回覆後會整合進《排班規則 v4》</div>
+
+<div class="intro-card">
+  <strong>為什麼需要這份確認？</strong>
+  <p style="margin: 8px 0;">
+    目前規則已涵蓋「月初就知道的請假」（特休、事假月前告知），但<strong>月中臨時缺席</strong>的處理還沒寫清楚，
+    例如正職感冒住院 3 天、家裡急事請事假、交通事故沒到班 ⋯⋯等突發狀況。
+  </p>
+  <p style="margin: 8px 0;">
+    以下四題會一次決定這些情境的 SOP，solver 以後會依你的答覆自動處理：
+  </p>
+  <ol>
+    <li><strong>Q1</strong>：正職病假計不計入工時達成？</li>
+    <li><strong>Q2</strong>：臨時事假的處理 SOP？</li>
+    <li><strong>Q3</strong>：補時數沒辦法當月補完怎辦？</li>
+    <li><strong>Q4</strong>：長期缺席（住院週以上）的薪資處理？</li>
+  </ol>
+</div>
+
+<div class="summary-bar">
+  <div class="stat"><div class="num" style="color: var(--priority-high-fg);">2</div><div class="label">🔴 高優先</div></div>
+  <div class="stat"><div class="num" style="color: var(--priority-mid-fg);">1</div><div class="label">🟡 中優先</div></div>
+  <div class="stat"><div class="num" style="color: var(--priority-low-fg);">1</div><div class="label">🟢 可延後</div></div>
+</div>
+
+<!-- ============ Q1 ============ -->
+<h2>A. 病假與日常突發</h2>
+
+<div class="question p-high">
+  <div class="q-head">
+    <span class="q-num">Q1</span>
+    <span class="q-title">正職請病假（普通傷病，半薪）算工時達成嗎？</span>
+    <span class="q-priority">🔴 高優先</span>
+  </div>
+  <div class="q-context">
+    <strong>情境</strong>：蛋頭 5 月某週請了 2 天病假（未住院），共 16 小時。按勞基法普通傷病 1 年 30 天額度，
+    雇主給半薪。問題是這 16 小時<strong>算不算在月工時達成裡</strong>？
+  </div>
+  <div class="q-options">
+    <h5>三個選項</h5>
+    <ul>
+      <li><strong>A. 計入達成</strong> — 目前 skill 預設。邏輯：有給薪（雖半薪）= 公司仍認列為貢獻時數</li>
+      <li><strong>B. 不計入</strong> — 與事假同等處理，需走 §12 跨月補時數機制</li>
+      <li><strong>C. 部分計入</strong> — 以給薪比例為準，16h 病假 × 50% = 計入 8h</li>
+    </ul>
+  </div>
+  <div class="q-example">
+    ✏️ 若選 <strong>B</strong>：蛋頭原排班目標 134h、病假 16h，實排僅 118h，不足 16h 次月多排補回。<br>
+    ✏️ 若選 <strong>A</strong>：134h 目標不變，病假時數算在達成內，不用補。
+  </div>
+  <div class="answer-box">回覆：_____________________</div>
+</div>
+
+<div class="question p-high">
+  <div class="q-head">
+    <span class="q-num">Q2</span>
+    <span class="q-title">臨時事假（無薪）的 SOP？</span>
+    <span class="q-priority">🔴 高優先</span>
+  </div>
+  <div class="q-context">
+    <strong>情境</strong>：已公告班表後，正職當月請了 1–2 天事假（家裡急事、婚喪等非勞基法特殊假）。
+    代班需要處理、時數也會短少。
+  </div>
+  <div class="q-options">
+    <h5>需要明確的 3 件事</h5>
+    <ul>
+      <li><strong>代班處理</strong>：<br>
+        (a) 沿用 §13 兜底順序（群組 → Winnie/Fish → 凱柏）<br>
+        (b) 員工自行找代班，再通知 Winnie</li>
+      <li><strong>是否允許當月特休抵</strong>？還是強制走事假（無薪）？</li>
+      <li><strong>短少時數</strong>：如 Q1 一樣走 §12 carryover，次月補回？</li>
+    </ul>
+  </div>
+  <div class="answer-box">回覆：_____________________</div>
+</div>
+
+<!-- ============ Q3 ============ -->
+<h2>B. 補時數上限與跨月處理</h2>
+
+<div class="question p-mid">
+  <div class="q-head">
+    <span class="q-num">Q3</span>
+    <span class="q-title">補時數一個月補不完怎麼辦？</span>
+    <span class="q-priority">🟡 中優先</span>
+  </div>
+  <div class="q-context">
+    <strong>情境</strong>：某正職當月少 40h（7 天缺班等大量短缺），§12 規則「補時數仍維持每週休 1–2 天」，
+    所以次月可能只能補 20h 左右，還剩 20h 怎麼處理？
+  </div>
+  <div class="q-options">
+    <h5>選項</h5>
+    <ul>
+      <li><strong>A. 持續滾到下下月</strong>直到補完</li>
+      <li><strong>B. 超過 X 天仍未補完 → 扣當月本薪</strong>（X = ?）</li>
+      <li><strong>C. Winnie + Fish 個案協商</strong>（跟員工談、特休抵扣、分期）</li>
+      <li><strong>D. 轉發現金</strong>（員工付錢給公司）</li>
+    </ul>
+  </div>
+  <div class="q-example">
+    ✏️ 實務上 C 最彈性但系統難自動化；A 最直覺但可能拖太久。
+    建議先用 C（skill 提醒、由人決定），之後累積案例再改成規則。
+  </div>
+  <div class="answer-box">回覆：_____________________</div>
+</div>
+
+<!-- ============ Q4 ============ -->
+<h2>C. 極端案例</h2>
+
+<div class="question p-low">
+  <div class="q-head">
+    <span class="q-num">Q4</span>
+    <span class="q-title">長期缺席（住院 1 週以上）的薪資處理？</span>
+    <span class="q-priority">🟢 可延後</span>
+  </div>
+  <div class="q-context">
+    <strong>情境</strong>：正職因嚴重傷病住院 7–14 天，病假仍在勞基法 30 天內，公司照法給半薪。
+    但人力結構 / 薪資 / 當月時數都會受影響。
+  </div>
+  <div class="q-options">
+    <h5>需要決定</h5>
+    <ul>
+      <li>當月<strong>本薪</strong>是否按比例扣？（勞基法半薪是基本，公司可給更多）</li>
+      <li>缺席期間<strong>該員工應排班的時段</strong>全部走 §13 兜底？還是另找長期代班員工？</li>
+      <li>恢復上班後，<strong>需不需要補</strong>缺席期間的時數？</li>
+    </ul>
+  </div>
+  <div class="q-example">
+    ✏️ 這題很少發生，可以先擱著、出事時再個案處理。但系統仍需要有「長期缺席」的標記欄位供 solver 讀取。
+  </div>
+  <div class="answer-box">回覆：_____________________</div>
+</div>
+
+<!-- ============ 附錄 ============ -->
+<h2>D. 供參考：目前假設的處理框架</h2>
+
+<div class="intro-card">
+  <p>若 Winnie 暫時沒空逐題回答，以下是 skill 目前預設的邏輯（Q1 = A、Q2 = 特休可抵 + 走 §12、Q3 = C、Q4 = 個案）：</p>
+  <pre style="background: var(--muted); padding: 14px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; overflow-x: auto; font-family: 'JetBrains Mono', monospace;">
+1. 事件發生 → 分類假別
+2. 找代班填補排班缺口（§13 兜底順序）
+3. 計算 shortfall:
+   shortfall = (原排定時數) − (實際上班時數)
+              ± (假別是否計入工時達成)
+4. 處理 shortfall:
+   a. 當月尚有特休餘額 → 優先抵扣
+   b. 無特休 → 記入 carryover、下月補
+   c. Carryover 連續 3 個月未補完 → Winnie+Fish 面談調整
+  </pre>
+  <p style="margin: 8px 0 0;">
+    這份假設可以先跑 skill、實際執行再看要不要調整。Q1–Q4 回覆後會寫進 v4 規則、skill 自動跟著變。
+  </p>
+</div>
+
+</main>
+
+<footer>
+  <div>回覆後請傳給 Terrel ｜ <a href="./排班規則_v3.html">← 返回 排班規則 v3</a></div>
+</footer>
+
+</body>
+</html>
