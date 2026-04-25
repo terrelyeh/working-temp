@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2C3345">
+<title>萬華世界排班系統 · 流程設計文件</title>
+<style>
+  :root {
+    --primary: #2C3345;
+    --foreground: #1F2937;
+    --muted-foreground: #6B7280;
+    --muted: #F3F4F6;
+    --background: #FAFAF8;
+    --card: #FFFFFF;
+    --card-soft: rgba(255, 255, 255, 0.6);
+    --border: #E5E7EB;
+    --border-soft: #F3F4F6;
+    --accent: #2563EB;
+    --accent-soft: #EFF6FF;
+    --tag-warn-bg: #FEF3C7;
+    --tag-warn-fg: #B45309;
+    --tag-done-bg: #DCFCE7;
+    --tag-done-fg: #166534;
+    --tag-future-bg: #DBEAFE;
+    --tag-future-fg: #1E40AF;
+    --tag-private-bg: #FCE7F3;
+    --tag-private-fg: #9D174D;
+    --navbar-h: 72px;
+    --sidebar-w: 220px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--background); color: var(--foreground);
+    font-family: "Inter", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-feature-settings: "tnum"; font-variant-numeric: tabular-nums;
+    line-height: 1.75; font-size: 16px; -webkit-font-smoothing: antialiased;
+  }
+
+  /* Navbar */
+  .navbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .navbar-inner {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px;
+    height: var(--navbar-h);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .navbar-brand { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; font-weight: 600; }
+  .navbar-logo {
+    width: 42px; height: 42px; border-radius: 8px;
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #1F2937; font-weight: 700;
+  }
+  .navbar-title { font-size: 15px; line-height: 1.3; }
+  .navbar-title small { display: block; font-size: 12px; color: rgba(255, 255, 255, 0.6); font-weight: 400; margin-top: 2px; }
+  .navbar-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .navbar-pill {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 5px 12px; border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+  }
+  .navbar-pill.primary { background: var(--accent); color: white; }
+
+  /* Layout */
+  .layout {
+    max-width: 1280px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    gap: 40px; padding: 0 24px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: sticky; top: var(--navbar-h);
+    height: calc(100vh - var(--navbar-h));
+    overflow-y: auto; padding: 28px 0; font-size: 14px;
+  }
+  .sidebar-header {
+    font-size: 11px; color: var(--muted-foreground);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 12px; padding-left: 12px;
+  }
+  .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+  .sidebar a {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 7px 12px; border-radius: 6px;
+    color: var(--muted-foreground); text-decoration: none;
+    transition: all 0.15s; line-height: 1.4;
+  }
+  .sidebar a:hover { background: var(--muted); color: var(--foreground); }
+  .sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .sidebar a.active .sb-num { color: var(--accent); }
+  .sb-num {
+    font-size: 11px; color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums; min-width: 20px;
+  }
+
+  /* Mobile inline TOC */
+  .mobile-toc { display: none; margin: 20px 0 28px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+  .mobile-toc summary { padding: 14px 18px; cursor: pointer; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+  .mobile-toc summary::-webkit-details-marker { display: none; }
+  .mobile-toc summary::after { content: '▾'; color: var(--muted-foreground); transition: transform 0.2s; }
+  .mobile-toc[open] summary::after { transform: rotate(180deg); }
+  .mobile-toc nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; padding: 0 18px 14px; border-top: 1px solid var(--border-soft); padding-top: 14px; }
+  .mobile-toc a { color: var(--foreground); text-decoration: none; font-size: 14px; padding: 6px 0; display: flex; align-items: baseline; gap: 8px; }
+  .mobile-toc a .sb-num { color: var(--muted-foreground); font-size: 11px; min-width: 20px; }
+
+  /* Main */
+  main { padding: 40px 0 96px; min-width: 0; }
+  h1 { font-size: 34px; margin: 0 0 10px; letter-spacing: -0.02em; font-weight: 700; }
+  .page-lead { color: var(--muted-foreground); font-size: 15px; margin: 0 0 28px; }
+
+  .section { margin: 48px 0; scroll-margin-top: calc(var(--navbar-h) + 20px); }
+  .section:first-of-type { margin-top: 32px; }
+
+  h2 {
+    font-size: 26px; margin: 0 0 12px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--primary);
+    letter-spacing: -0.01em; font-weight: 700;
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  h2 .sec-num {
+    color: var(--muted-foreground); font-size: 18px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .section-lead {
+    font-size: 16px; color: var(--muted-foreground);
+    margin: 0 0 16px; line-height: 1.75;
+  }
+  h3 { font-size: 19px; margin: 24px 0 10px; font-weight: 600; }
+  h4 { font-size: 14px; margin: 18px 0 10px; color: var(--muted-foreground); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  p, li { font-size: 15px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 5px 0; }
+  code { background: var(--muted); padding: 2px 7px; border-radius: 4px; font-family: "JetBrains Mono", "SF Mono", Consolas, monospace; font-size: 13px; }
+  pre {
+    background: var(--muted); padding: 16px 20px; border-radius: 8px;
+    overflow-x: auto; font-size: 13px; line-height: 1.65;
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    color: var(--foreground); margin: 14px 0;
+  }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin: 12px 0; }
+
+  table { width: 100%; margin: 12px 0; background: var(--card); border-collapse: collapse; font-size: 14px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  th, td { padding: 10px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-soft); }
+  th { background: #F9FAFB; font-weight: 600; font-size: 13px; letter-spacing: 0.02em; color: var(--muted-foreground); }
+  tr:last-child td { border-bottom: none; }
+
+  .tag {
+    display: inline-block; padding: 2px 9px; border-radius: 4px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    margin-right: 6px; vertical-align: middle;
+  }
+  .tag-done { background: var(--tag-done-bg); color: var(--tag-done-fg); }
+  .tag-future { background: var(--tag-future-bg); color: var(--tag-future-fg); }
+  .tag-warn { background: var(--tag-warn-bg); color: var(--tag-warn-fg); }
+  .tag-private { background: var(--tag-private-bg); color: var(--tag-private-fg); }
+
+  .info { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 18px; margin: 14px 0; font-size: 14px; line-height: 1.7; }
+  .warn { background: var(--tag-warn-bg); border: 1px solid var(--tag-warn-fg); border-radius: 8px; padding: 12px 18px; margin: 14px 0; font-size: 14px; }
+  .private { background: var(--tag-private-bg); border: 1px solid var(--tag-private-fg); border-radius: 8px; padding: 12px 18px; margin: 14px 0; font-size: 14px; }
+  .private strong { color: var(--tag-private-fg); }
+
+  /* Phase card */
+  .phase {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 26px; margin: 16px 0;
+  }
+  .phase.p1 { border-left: 4px solid var(--tag-done-fg); }
+  .phase.p2 { border-left: 4px solid var(--tag-future-fg); }
+  .phase.p3 { border-left: 4px solid var(--tag-warn-fg); }
+  .phase h3 { margin-top: 0; }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border); background: var(--card-soft);
+    padding: 24px 16px; font-size: 13px; color: var(--muted-foreground);
+  }
+  .footer-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .footer-links a { color: var(--accent); text-decoration: none; }
+  .footer-links .sep { color: var(--border); }
+
+  /* Mobile */
+  @media (max-width: 1100px) {
+    :root { --sidebar-w: 0px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 24px; }
+    .sidebar { display: none !important; }
+    .mobile-toc { display: block; }
+  }
+  @media (max-width: 640px) {
+    :root { --navbar-h: 56px; }
+    .layout { padding: 0 16px; }
+    .navbar-inner { height: 56px; padding: 0 14px; }
+    .navbar-title small { display: none; }
+    main { padding: 20px 0 80px; }
+    h1 { font-size: 26px; }
+    h2 { font-size: 20px; }
+    .section { margin: 36px 0; }
+    .card, .phase { padding: 16px 18px; }
+    table { font-size: 13px; }
+    th, td { padding: 8px 10px; }
+    pre { font-size: 12px; padding: 12px; }
+  }
+
+  @media print {
+    .navbar, .sidebar, footer { display: none; }
+    .layout { display: block; padding: 0; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="navbar-brand" href=".">
+      <div class="navbar-logo">萬</div>
+      <div class="navbar-title">
+        萬華世界下午酒場
+        <small>排班流程設計文件</small>
+      </div>
+    </a>
+    <div class="navbar-meta">
+      <span class="navbar-pill primary">v1.0</span>
+      <span class="navbar-pill">2026-04-25</span>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">章節目錄</div>
+    <nav>
+      <a href="#sec1"><span class="sb-num">01</span>現況痛點</a>
+      <a href="#sec2"><span class="sb-num">02</span>三階段演進</a>
+      <a href="#sec3"><span class="sb-num">03</span>流程層優化建議</a>
+      <a href="#sec4"><span class="sb-num">04</span>待決策題目</a>
+      <a href="#sec5"><span class="sb-num">05</span>實作優先順序</a>
+      <a href="#sec6"><span class="sb-num">06</span>技術決策</a>
+      <a href="#sec7"><span class="sb-num">07</span>關鍵資料流</a>
+      <a href="#sec8"><span class="sb-num">08</span>已交付內容</a>
+      <a href="#secA"><span class="sb-num">A</span>進階管理工具</a>
+      <a href="#sec9"><span class="sb-num">09</span>新 session 起手式</a>
+    </nav>
+  </aside>
+
+  <main>
+
+    <h1>排班流程設計文件</h1>
+    <p class="page-lead">未來排班系統開發路線圖：現況痛點、分階段演進、優化建議、技術決策。新 session 開發時請先讀此文件了解整體脈絡。</p>
+
+    <details class="mobile-toc">
+      <summary>📖 章節目錄</summary>
+      <nav>
+        <a href="#sec1"><span class="sb-num">01</span>現況痛點</a>
+        <a href="#sec2"><span class="sb-num">02</span>三階段演進</a>
+        <a href="#sec3"><span class="sb-num">03</span>流程優化</a>
+        <a href="#sec4"><span class="sb-num">04</span>待決策</a>
+        <a href="#sec5"><span class="sb-num">05</span>優先順序</a>
+        <a href="#sec6"><span class="sb-num">06</span>技術決策</a>
+        <a href="#sec7"><span class="sb-num">07</span>資料流</a>
+        <a href="#sec8"><span class="sb-num">08</span>已交付</a>
+        <a href="#secA"><span class="sb-num">A</span>進階工具</a>
+        <a href="#sec9"><span class="sb-num">09</span>起手式</a>
+      </nav>
+    </details>
+
+    <!-- ============ 1 ============ -->
+    <section class="section" id="sec1">
+      <h2><span class="sec-num">01</span>現況痛點</h2>
+      <p class="section-lead">
+        目前每月排班流程是 Winnie 手工跑 Google Form + Google Sheet。<strong>痛點集中在重複的「黑工」</strong>——
+        每月都得重新建 form、人工對帳、手動排班、貼班表。整體耗時約 6–8 小時，且容易出錯。
+      </p>
+      <table>
+        <thead><tr><th>階段</th><th>痛點</th><th>代價</th></tr></thead>
+        <tbody>
+          <tr><td>月底建 form</td><td>Winnie 手動改日期、國假標註、活動備註、每位正職的預計天數說明</td><td>30–60 分鐘/月 重工</td></tr>
+          <tr><td>員工填表</td><td>誤勾、忘勾、姓名格式不一（91 ↔ 91.0）、重複提交</td><td>驗證耗時、LINE 來回</td></tr>
+          <tr><td>彙整資料</td><td>Form CSV 匯出 → 人工對帳年假餘額 → 人工算目標工時</td><td>易算錯</td></tr>
+          <tr><td>排班</td><td>純手動在 Google Sheet 拖班次、試組合</td><td>2–3 天，常晚上排</td></tr>
+          <tr><td>發班表</td><td>貼 Google Sheet 連結到 LINE 群組</td><td>員工查班痛苦（試算表複雜）</td></tr>
+          <tr><td>月中異動</td><td>換班、臨時請假靠 LINE 協調、Winnie 手動改 Sheet</td><td>沒紀錄、漏通知</td></tr>
+          <tr><td>月底對帳</td><td>打卡 vs 排班人眼比對；年假餘額塞備註欄</td><td>欠時數沒追蹤</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section class="section" id="sec2">
+      <h2><span class="sec-num">02</span>三階段演進</h2>
+      <p class="section-lead">
+        每階段可獨立交付、逐步取代現有流程。Phase 1 改動最少、見效最快——員工端仍用 Google Form / LINE，
+        只把 Winnie 的「黑工」搬到 Skill。Phase 2/3 才是真正的 web app 化。
+      </p>
+
+      <div class="phase p1">
+        <h3><span class="tag tag-done">Phase 1</span> Skill 層自動化（最短 2 週）</h3>
+        <p><strong>定位</strong>：員工不變，Winnie 用 Claude Skill 自動化。改動最小、風險低。</p>
+        <pre>月 19 號 ─────────────────────────
+  Winnie 執行：/wanhua-monthly-prep 2026-06
+  → Skill 自動：
+      ① 讀 Google Calendar → 產出下月活動清單
+      ② 算每位正職當月預計目標工時（含特休餘額）
+      ③ 生出 form 題目文字（給 Winnie 複製到 Google Form）
+
+月 20 號 ─────────────────────────
+  Winnie 貼到 Form、發出
+
+月 25 號 ─────────────────────────
+  Form 截止
+  Winnie 執行：/wanhua-leave-validate 2026-06
+  → Skill 驗證、列缺交、標異常 → 產出 markdown 報告 + clean JSON
+
+月 27 號 ─────────────────────────
+  Winnie 執行：/wanhua-schedule 2026-06
+  → Skill 跑 OR-Tools constraint solver → 產出 1–3 個方案
+  → Winnie 在 UI 挑一個、微調
+
+月 28 號 ─────────────────────────
+  Winnie 執行：/wanhua-publish 2026-06
+  → 產員工個人班表（PNG/URL）
+  → 一鍵貼 LINE 群組
+  → 年假結算、補時數記錄寫回</pre>
+        <p><strong>Winnie 月投入：6–8h → 1–2h</strong></p>
+        <h4>需要開發的 Skill</h4>
+        <ul>
+          <li><code>/wanhua-monthly-prep</code> — 月初前置</li>
+          <li><code>/wanhua-leave-validate</code> <span class="tag tag-done">已完成</span></li>
+          <li><code>/wanhua-schedule</code> — solver</li>
+          <li><code>/wanhua-publish</code> — 發布 + 結算</li>
+        </ul>
+      </div>
+
+      <div class="phase p2">
+        <h3><span class="tag tag-future">Phase 2</span> 填表自助化（+ 2 個月）</h3>
+        <p><strong>定位</strong>：自己做 PWA 表單取代 Google Form，填表體驗大升級。</p>
+        <ul>
+          <li><strong>即時檢查</strong>：勾到週一自動帶入；會議日標灰色不可勾</li>
+          <li><strong>年假餘額即時顯示</strong>：填表時看到「超威剩餘 17 天」</li>
+          <li><strong>衝突偵測</strong>：3 位正職同日全休 → 跳紅字</li>
+          <li><strong>填完自動進 DB</strong>：不用再 export CSV</li>
+          <li><strong>手機 PWA</strong>：員工加到主畫面</li>
+        </ul>
+        <p>後端：Supabase + Next.js。</p>
+      </div>
+
+      <div class="phase p3">
+        <h3><span class="tag tag-warn">Phase 3</span> 全平台（+ 2 個月）</h3>
+        <p><strong>定位</strong>：取代 LINE 群組溝通 + Google Sheet 查班。</p>
+        <ul>
+          <li><strong>員工 PWA</strong>：個人班表、換班申請、查班</li>
+          <li><strong>主管後台</strong>：排班拖拉、違規即時提示、月報</li>
+          <li><strong>自動對帳</strong>：打卡（iChef）匯出 × 排班資料比對</li>
+          <li><strong>推播</strong>：LINE Notify 整合</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section class="section" id="sec3">
+      <h2><span class="sec-num">03</span>流程層優化建議</h2>
+      <p class="section-lead">
+        以下五條建議跟系統無關、立即可用。專注在「<strong>讓重複動作消失</strong>」與「<strong>翻轉填表方向</strong>」。
+        每一條都能各自實施、累積複利。
+      </p>
+
+      <h3>① Form 發送前先寄「當月預設答案」給員工</h3>
+      <div class="card">
+        <p><strong>問題</strong>：員工每月自己勾 13–18 個日期，容易誤勾漏勾。</p>
+        <p><strong>做法</strong>：Skill 在 Winnie 發 form 前，先寄個人化預設訊息：</p>
+        <pre>🫰 超威 6 月預設休假（若維持原本不用動）：
+  - 固定休：週一、二 共 8 天
+  - 國定假日：0 天
+  - 特殊協議：🟡 本月是否有賣漢堡？
+  - 預計目標工時：144h
+  - 剩餘年假：17 天
+
+若要調整，只在 form 勾「和預設不同」的部分</pre>
+        <p><strong>好處</strong>：正職多數月份不用動腦；只標「變動」項 → 減少誤勾、Winnie 一眼看出誰有變動。</p>
+      </div>
+
+      <h3>② PT / 外援改填「不可排日」</h3>
+      <div class="card">
+        <p><strong>問題</strong>：PT 每月要勾 15–20 個可上班日 → 耗時。</p>
+        <p><strong>做法</strong>：翻轉語意，改勾 5–8 個「不能上的日子」（其餘預設可排）→ 填表時間少一半。</p>
+      </div>
+
+      <h3>③ 會議時數自動帶入班表</h3>
+      <div class="card">
+        <p>Skill 自動判斷當月第一個週二、為每位正職加 2h 會議時數，不用手填。</p>
+      </div>
+
+      <h3>④ 歷史資料累積後啟用「智慧推薦」</h3>
+      <div class="card">
+        <p>3 個月資料後，Skill 開始學習：</p>
+        <ul>
+          <li>誰常請特休 → 排班時預留彈性</li>
+          <li>誰常上晚班 → solver 公平性提醒</li>
+          <li>哪些日子常缺班 → 提前通知凱柏</li>
+        </ul>
+      </div>
+
+      <h3>⑤ 活動分級自動處理（已納入規則 v3）</h3>
+      <div class="card">
+        <p>在 calendar.yaml 每個 event 標 <code>level</code>（internal / meeting / event_light / event_heavy），solver 自動處理。
+          詳見 <a href="rules-v3.html#sec14">規則 v3 §14</a>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section class="section" id="sec4">
+      <h2><span class="sec-num">04</span>待 Winnie 決策的開放題</h2>
+      <p class="section-lead">這些會影響 Phase 1 的細節，需要 Winnie 拍板。</p>
+      <ul>
+        <li><strong>PT 填表方向</strong>：「可排日」 vs「不可排日」哪個好？</li>
+        <li><strong>正職「預設答案」形式</strong>：要嗎？LINE 私訊？Email？</li>
+        <li><strong>班表公告格式</strong>：LINE 卡片？個人 PNG？月曆 URL？</li>
+        <li><strong>月中異動</strong>：員工自助換班？還是繼續 Winnie 單一入口？</li>
+        <li><strong>活動臨時加人</strong>：post-schedule 手動加可以，re-optimize 其他天要不要自動觸發？</li>
+      </ul>
+    </section>
+
+    <!-- ============ 5 ============ -->
+    <section class="section" id="sec5">
+      <h2><span class="sec-num">05</span>實作優先順序</h2>
+      <p class="section-lead">依「見效快 × 風險低」排序：</p>
+      <ol>
+        <li><code>wanhua-leave-validate</code> <span class="tag tag-done">已完成</span></li>
+        <li><code>wanhua-monthly-prep</code> — 月初 form 前置 — 低風險，省 30–60 分鐘/月</li>
+        <li><code>wanhua-schedule</code> solver 核心 — 最高價值但複雜；建議先做「規則驗證 + 半自動排班」版本</li>
+        <li><code>wanhua-publish</code> — 個人班表 + LINE 卡片</li>
+        <li>Phase 2 PWA 填表 — Phase 1 運作 2–3 個月後評估</li>
+        <li>Phase 3 全平台 — 依實際需要</li>
+      </ol>
+    </section>
+
+    <!-- ============ 6 ============ -->
+    <section class="section" id="sec6">
+      <h2><span class="sec-num">06</span>技術決策</h2>
+      <table>
+        <thead><tr><th>面向</th><th>選擇</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>Solver</td><td>Google OR-Tools CP-SAT (Python)</td><td>業界標準、開源、處理混合 hard/soft constraints</td></tr>
+          <tr><td>Skill 語言</td><td>Python + uv</td><td>符合用戶 CLAUDE.md 全域規範</td></tr>
+          <tr><td>Phase 1 部署</td><td>本機跑 Skill</td><td>無伺服器成本</td></tr>
+          <tr><td>未來 web 前端</td><td>Next.js on Vercel</td><td>Phase 2 才決定</td></tr>
+          <tr><td>未來 web 後端</td><td>Supabase + Python solver service</td><td>Solver 不適合 Vercel（時間/記憶體限制）</td></tr>
+          <tr><td>Solver 部署</td><td>Railway / Fly.io / Cloud Run</td><td>跑 Python long-running</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ 7 ============ -->
+    <section class="section" id="sec7">
+      <h2><span class="sec-num">07</span>關鍵資料流</h2>
+      <p class="section-lead">月排班 pipeline 從靜態設定 → 月度資料 → form 收件 → 驗證 → 排班 → 發布的完整流程：</p>
+      <pre>┌─────────────────────────────────────────────────┐
+│                  月排班 pipeline                  │
+└─────────────────────────────────────────────────┘
+
+[config/employees.yaml]        員工名冊（姓名/角色/固定休）
+[config/rules.yaml]            規則權威來源
+           │
+           ▼
+[data/YYYY-MM/calendar.yaml]   月行事曆（國假、活動 + level）
+[data/YYYY-MM/annual-leave.yaml] 年假餘額（月初快照）
+           │
+           ▼
+      monthly-prep
+           │
+           ▼  (輸出：form 題目給 Winnie 複製)
+    ┌──────────────┐
+    │ Google Form  │ ← 正職 + PT + 外援 填
+    └──────┬───────┘
+           │
+           ▼  (匯出 xlsx)
+[data/YYYY-MM/fulltime-form.xlsx]
+[data/YYYY-MM/pt-form.xlsx]
+           │
+           ▼
+   leave-validate
+           │
+           ▼
+[report/YYYY-MM-validation-report.md]  給 Winnie
+[report/YYYY-MM-clean-leave.json]      給 scheduler
+           │
+           ▼
+      schedule (solver)
+           │
+           ▼
+[report/YYYY-MM-schedule.json]         班表
+[report/YYYY-MM-violations.md]         軟規則違反記錄
+           │
+           ▼
+       publish
+           │
+           ▼
+  - LINE 卡片訊息
+  - 員工個人班表 URL
+  - 年假 / 補時數 更新回寫</pre>
+    </section>
+
+    <!-- ============ 8 ============ -->
+    <section class="section" id="sec8">
+      <h2><span class="sec-num">08</span>已交付內容</h2>
+      <ul>
+        <li><span class="tag tag-done">已完成</span> 排班規則 v3：<a href="rules-v3.html">rules-v3.html</a> + <code>rules.yaml</code></li>
+        <li><span class="tag tag-done">已完成</span> <code>wanhua-leave-validate</code> skill + 5 月驗證報告</li>
+        <li><span class="tag tag-done">已完成</span> UI demo：<a href="demo/">員工版 / 全店版 / 月度統計 / 搭班查詢</a></li>
+        <li><span class="tag tag-warn">待回覆</span> 給 Winnie 的確認題：<a href="ad-hoc-absence-questions.html">臨時缺席與補時數</a></li>
+        <li><span class="tag tag-done">已完成</span> 文件總覽：<a href=".">index.html hub</a></li>
+      </ul>
+    </section>
+
+    <!-- ============ A ============ -->
+    <section class="section" id="secA">
+      <h2><span class="sec-num">A</span>進階管理工具設定 <span class="tag tag-private">主管私人</span></h2>
+      <p class="section-lead">
+        本附錄列出<strong>僅主管可見、可選開啟</strong>的進階功能。這些功能涉及敏感資訊或主觀判斷，
+        <strong>不寫進《排班規則 v3》公開文件</strong>，避免員工誤解或猜測。
+      </p>
+
+      <h3>A.1 員工相容性管理 <span class="tag tag-future">Phase 2–3</span></h3>
+      <div class="card">
+        <p><strong>目的</strong>：解決「特定員工同班導致工作氛圍不協調」的問題（例如兩位個性容易衝突的同事）。</p>
+
+        <h4>設計原則</h4>
+        <ul>
+          <li><strong>預設關閉</strong>，主管要主動開啟</li>
+          <li>資料極度敏感，<strong>不公開、不上 GitHub Pages</strong></li>
+          <li>員工看到的班表只有「結果」，不看到「原因」</li>
+          <li>規則文件不提及此功能，僅在內部主管使用手冊出現</li>
+        </ul>
+
+        <h4>資料格式（私人 config，gitignore）</h4>
+        <pre>incompatible_pairs:
+  - members: [外號A, 外號B]
+    severity: high           # high = 強烈避免；medium = 盡量避免
+    reason: "工作氛圍"        # 主管私人備註，不公開
+    expires: "2026-12-31"     # 可選過期日
+
+preferred_pairs:
+  - members: [外號C, 外號D]
+    severity: medium
+    reason: "默契好"</pre>
+
+        <h4>運作模式（混合：Pre + Post）</h4>
+        <ol>
+          <li><strong>Pre-schedule 階段</strong>：solver 加上<strong>低權重</strong>的 soft constraint
+            <ul>
+              <li>自然降低衝突機率</li>
+              <li>不影響排班可行性（極端缺人時仍可安排）</li>
+            </ul>
+          </li>
+          <li><strong>Post-schedule 階段</strong>：產出檢查報告
+            <pre>本月相容性檢查
+━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ 偵測到 1 對未避免的 incompatible 同班：
+   5/3 早班：A + B（high severity）
+     原因：長班日 PT 候選不足
+     建議：可手動把 A 改排 5/4 早班
+
+✅ 已自動避開 7 對其他衝突</pre>
+          </li>
+          <li>Winnie 可逐項決定是否手動換班</li>
+        </ol>
+
+        <h4>進階設定面板（未來 web 版的 UI）</h4>
+        <ul>
+          <li>☐ 啟用員工相容性軟限制</li>
+          <li>☐ 顯示報告中的 reason 欄位（個人筆記，僅自己看）</li>
+          <li>嚴重度權重調整：high = N、medium = M</li>
+          <li>換班時即時警告（避免員工 A→B 換班反而造成衝突）</li>
+        </ul>
+      </div>
+
+      <h3>A.2 其他未來進階功能（暫定）</h3>
+      <ul>
+        <li><strong>疲勞累積追蹤</strong>：員工連續高強度週後自動降低排班強度</li>
+        <li><strong>節日後恢復期</strong>：大型活動隔天降低工作量</li>
+        <li><strong>員工技能標記</strong>：例如「會煮咖啡」「能獨立帶店」，特定班次需要相關技能</li>
+      </ul>
+
+      <div class="private">
+        <strong>共同設計原則</strong>：主管功能、可選開啟、不公開規則。
+      </div>
+    </section>
+
+    <!-- ============ 9 ============ -->
+    <section class="section" id="sec9">
+      <h2><span class="sec-num">09</span>新 session 繼續的起手式</h2>
+      <p class="section-lead">若要在新 session 實作下一支 skill，建議直接複製以下 prompt：</p>
+      <pre>我要開始實作 wanhua-schedule skill。
+請先讀 docs/workflow_design.md（或 workflow_design.html）了解整體流程，
+再讀 rules-v3.html 和 rules.yaml 拿到規則細節，
+最後參考 skill/wanhua-leave-validate/ 的架構作為基底。
+
+本 skill 的輸入是 clean-leave.json（由 validate skill 產出），
+輸出是 schedule.json。核心是 OR-Tools CP-SAT 排班。</pre>
+      <div class="info">
+        本文件 markdown 版位於 <code>docs/workflow_design.md</code>，給 Claude session 讀取最方便（純文字、cost 低）。
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <span>萬華世界 © 2026</span>
+      <span class="sep">|</span>
+      <a href=".">📚 文件總覽</a>
+      <span class="sep">|</span>
+      <a href="rules-v3.html">📜 排班規則 v3</a>
+      <span class="sep">|</span>
+      <a href="demo/">🗓️ UI Demo</a>
+      <span class="sep">|</span>
+      <a href="ad-hoc-absence-questions.html">🟡 確認題</a>
+    </div>
+    <span style="font-size: 12px; color: rgba(107,114,128,0.7);">最後更新：2026-04-25</span>
+  </div>
+</footer>
+
+<script>
+  const sb = document.getElementById('sidebar');
+  const sections = document.querySelectorAll('section[id]');
+  const links = {};
+  sb.querySelectorAll('a[href^="#sec"]').forEach(a => { links[a.getAttribute('href').slice(1)] = a; });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        Object.values(links).forEach(l => l.classList.remove('active'));
+        links[e.target.id]?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => io.observe(s));
+
+  document.querySelectorAll('.mobile-toc a').forEach(a => {
+    a.addEventListener('click', () => {
+      const det = a.closest('details');
+      if (det) det.open = false;
+    });
+  });
+</script>
+
+</body>
+</html>
