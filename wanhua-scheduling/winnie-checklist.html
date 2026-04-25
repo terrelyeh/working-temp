@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>排班系統 · 待 Winnie 確認清單</title>
+<title>排班系統 · Winnie 第一輪 Q&amp;A（已完整回覆）</title>
 <style>
   :root {
     --text: #2C3345;
@@ -94,6 +94,19 @@
     border-radius: 6px; padding: 10px 14px;
     font-size: 14px; color: var(--warn); font-style: italic;
   }
+  .answer.answered {
+    background: #F0FDF4; border: 1px solid #166534;
+    color: var(--text); font-style: normal;
+    line-height: 1.7;
+  }
+  .answer.answered::before {
+    content: "✅ Winnie 回覆";
+    display: block; font-weight: 600; color: #166534;
+    font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+  .answer.answered a { color: var(--accent); }
+  .answer.answered strong { color: var(--text); }
   .summary-bar {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
     margin: 0 0 28px;
@@ -119,15 +132,15 @@
 <div class="wrap">
 
 <header>
-  <h1>給 Winnie 的確認清單</h1>
-  <p class="subtitle">排班系統 · 待確認議題 ｜ 請依項目逐一回覆</p>
+  <h1>Winnie 第一輪 Q&amp;A 完整紀錄</h1>
+  <p class="subtitle">排班系統設計初期的 24 題確認議題與 Winnie 的完整回覆 · 業務邏輯詳細參考</p>
 </header>
 
-<div class="intro" style="border: 2px solid #B91C1C; background: #FEE2E2;">
-  <p style="color: #B91C1C; font-weight: 700; margin-top: 0;">⚠️ 此份為歷史紀錄，已大部分回覆完成</p>
-  <p style="margin-bottom: 0;">最新規則請以 <a href="rules-v3.html" style="color: #B91C1C; font-weight: 600;">排班規則 v3</a> 為準。<br>
-    如需查看當初設計時問了哪些題、為什麼這樣設計，可以參考此頁。<br>
-    新題目請見 <a href="ad-hoc-absence-questions.html" style="color: #B91C1C; font-weight: 600;">臨時缺席與補時數確認題</a>。</p>
+<div class="intro" style="border: 2px solid #166534; background: #F0FDF4;">
+  <p style="color: #166534; font-weight: 700; margin-top: 0; font-size: 18px;">✅ 第一輪 Q&amp;A 已完整回覆</p>
+  <p style="margin-bottom: 0;">本頁包含 24 題的問題與 Winnie 完整回覆，可以當成<strong>業務邏輯的詳細參考資料</strong>。<br>
+    濃縮版的最終規則請看 <a href="rules-v3.html" style="color: #166534; font-weight: 600;">📜 排班規則 v3</a>。<br>
+    新題目（臨時缺席與補時數）請見 <a href="ad-hoc-absence-questions.html" style="color: #166534; font-weight: 600;">🟡 第二輪確認題</a>。</p>
 </div>
 
 <div class="intro">
@@ -164,7 +177,7 @@
     </div>
     <div class="q-context">目前從 4 月班表看到至少 15+ 位：91、小黃、景文、子寧、愛因、莎賓、佳佳、沛慈、Jessie、Sin、孟霏、孟學……</div>
     <div class="q-hint"><strong>需要欄位</strong>：姓名、類別（正職/PT）、Email / Google 帳號、是否可排 10h 班、目前是否在職</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">已整理在<a href="https://docs.google.com/spreadsheets/d/1X2auHpbNYB6ArKP3itpAillDnqavKMzK/edit?gid=828153660#gid=828153660" target="_blank">人力欄</a>，目前皆無排 10H 班。</div>
   </div>
 
   <div class="question">
@@ -175,7 +188,8 @@
     </div>
     <div class="q-context">一年前的舊規則。現在 PT 是人力 pool，每月填意願表，上下限還用嗎？</div>
     <div class="q-hint"><strong>選項</strong>：(a) 完全取消 / (b) 保留作為警戒線 / (c) 簡化成單一上限（例如 ≤ 100h）</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>PT</strong>：56–100H，依照給班順序安排國定假日排班及排班時數多寡<br>
+<strong>外援（不固定 PT）</strong>：剩下的班排給外援</div>
   </div>
 </div>
 
@@ -199,7 +213,11 @@
       168 − 16 特休 − 2 開會 = <strong>150H</strong>（但實際寫 152H，差 2H）<br><br>
       <strong>問題</strong>：正確公式是什麼？152H 怎麼算出來？
     </div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>月工時總額</strong> = (當月天數 − 固定週休日 − 特殊協議 − 國定假日) × 8H<br><br>
+以 <strong>4 月超威</strong>為例：<br>
+30 天 − 8 天固定休假 − 特殊協議每月 1 天休假 − 國定假日 2 天 = <strong>19 天（上班日）</strong><br>
+上班時數為 19 × 8H = <strong>152 小時</strong><br><br>
+152 小時 − 超威特休 16 小時（2 天）− 固定例會 2 小時 = <strong>實際站班 134 小時</strong>（列入排班時數）</div>
   </div>
 
   <div class="question">
@@ -210,7 +228,7 @@
     </div>
     <div class="q-context">特休是請年假的時數。它在系統裡怎麼表達？</div>
     <div class="q-hint"><strong>我的理解</strong>：特休不上班、但算工時貢獻；會從「排班目標工時」裡扣掉（因為那幾天不用排進班表）。請確認對不對。</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">是的！會從目標工時裡面扣掉！</div>
   </div>
 
   <div class="question">
@@ -221,7 +239,7 @@
     </div>
     <div class="q-context">超威 4 月有 2H 開會。這個時數是怎麼來的？</div>
     <div class="q-hint"><strong>選項</strong>：(a) 主管每月手動輸入每個人的會議時數 / (b) 在系統裡建會議、指定參與者、自動累計 / (c) 其他</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">每個月第一個禮拜二是固定店務例會，例會都會抓 2 個小時的開會時間，會讓大家開會前先打卡做實際時數計算。</div>
   </div>
 
   <div class="question">
@@ -231,7 +249,7 @@
       <span class="priority p-mid">🟡 中優先</span>
     </div>
     <div class="q-context">例如清明節 4/4（週六）落在思坦的非固定休日，他該「多一天休假」嗎？2 月範例國假 6 天全加，4 月範例沒加清明。</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">是按照國定假日幾天，就多給大家幾天休假，無論是否落在固定休假日或是非休假日；補假日不算國定假日。</div>
   </div>
 
   <div class="question">
@@ -242,7 +260,11 @@
     </div>
     <div class="q-context">蛋頭 1 月少 49H，2 月補回 → 2 月休假從 18 天降為 12 天。</div>
     <div class="q-hint"><strong>需要定義</strong>：(a) 少多少才需要補？(b) 補的上限（怕一次補太多）？(c) 超過目標能否下月少上？(d) 誰負責計算？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">蛋頭 1 月算是特例，因為他之前就有說要請假陪先生回去加拿大過新年，故他請假的天數會優先用年假特休處理，不足的時數再次月補回。<br><br>
+(a) 不管少多少都要補<br>
+(b) 補的上限會是盡可能每週至少休到 1–2 天（他原本是週休 3 日）<br>
+(c) 超過目標則使用加班費，不會下個月少排時數<br>
+(d) 主要是我和 Fish 計算討論</div>
   </div>
 </div>
 
@@ -259,7 +281,10 @@
     </div>
     <div class="q-context">我只看到 2 月的文字版。需要看到實際表單（Google Doc / Form / Sheet）才能設計電子版。</div>
     <div class="q-hint"><strong>請提供</strong>：最近一次的休假表連結或截圖</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>5 月正職</strong>（正職填休假日）<br>
+<a href="https://forms.gle/sLs6zfAAdegkPec57" target="_blank">https://forms.gle/sLs6zfAAdegkPec57</a><br><br>
+<strong>5 月 PT & 外援</strong>（PT 與外援填「可排班日」）<br>
+<a href="https://forms.gle/zXuErQZGymxofEtg7" target="_blank">https://forms.gle/zXuErQZGymxofEtg7</a></div>
   </div>
 
   <div class="question">
@@ -270,7 +295,8 @@
     </div>
     <div class="q-context">您提到「月底發排班意願與需求給大家回填」——系統會取代這張表。</div>
     <div class="q-hint"><strong>請提供</strong>：最近一次的意願表連結或截圖，以及填寫欄位的說明</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">如上，正職填休假日，我會在表單裡面說明他們可以休的天數，剩下的就會列入排班。<br><br>
+PT&外援則是給可以排班的日期，我會負責排班，但不是他們有給班我就會全部排上，會綜合評估給班的順序、盡可能調整成 PT 的總時數差不多（但優先給班的人我會多排 1–2 天，除非他給班比較少），再來是外援，外援也會用給班的順序去排時數（優先給班的人多排一點）。</div>
   </div>
 
   <div class="question">
@@ -280,7 +306,10 @@
       <span class="priority p-mid">🟡 中優先</span>
     </div>
     <div class="q-hint"><strong>需要定義</strong>：(a) 每月可請上限？(b) 可以切成半天嗎？(c) 要提前幾天申請？(d) 跨月可否一次請？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">(a) 正職每月底填表單的時候，會註明是否使用年假，<strong>無上限</strong><br>
+(b) 正職特休使用，可以以<strong>半天（4 小時）</strong>為一個單位<br>
+(c) 通常都是在每月月底填下一個月排休表單時候提供；臨時使用的情況目前只有發生在有正職同事臨時請假，最終時數未達目標時數時，才會協議用特休來補<br>
+(d) 可跨月請，但需要<strong>提早一個月說明</strong></div>
   </div>
 
   <div class="question">
@@ -290,7 +319,9 @@
       <span class="priority p-high">🔴 高優先</span>
     </div>
     <div class="q-hint"><strong>需要定義</strong>：(a) 截止日（例：每月 25 號）？(b) 提交後可以改嗎？(c) 沒準時提交怎麼處理？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">(a) 每月約 <strong>20 或 21 號</strong>，我會把表單傳給同事們填寫，<strong>25 或 26 號</strong>關閉表單，<strong>28 號前完成排班</strong><br>
+(b) 提交後可以改，我有設定可以編輯答題內容，或是他們重新填寫，備註以最新一份為主即可；或是同事們直接私訊我，跟我說要更動的內容<br>
+(c) 以往沒準時交都是口頭告誡，從 4 月份開始已經請大家要遵守給班截止日，給 2 個月時間改善，<strong>7 月份開始若還是會遲交，就會扣辛苦金</strong>（但目前還未決定要扣多少）</div>
   </div>
 
   <div class="question">
@@ -310,7 +341,8 @@
       (C) sheet 上的數字是「累計至今的總核配」歷史紀錄，當年可用額度仍照勞基法<br><br>
       <strong>先前被告知依勞基法，但 sheet 看起來像 (A)</strong>。答案影響到 skill 裡怎麼計算可用年假餘額。
     </div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>選 A：累積制</strong>。未休年假自動累計至次年可用。<br><br>
+範例（Winnie 第 3 年）：第 1 年 +3、第 2 年 +7（若第 1 年 3 天未用 → 累計 10）、第 3 年 +10（若仍未用 → 累計 20）。</div>
   </div>
 
   <div class="question">
@@ -321,7 +353,7 @@
     </div>
     <div class="q-context">勞基法允許（a）遞延一年（b）折現發薪。sheet 備註寫「到期未用完可延展一年」。</div>
     <div class="q-hint"><strong>請確認</strong>：全部遞延？還是到上限（例如最多延 2 年）？延展後再未休如何處理？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>只延展一年</strong>。延展後仍未用即作廢。</div>
   </div>
 
   <div class="question">
@@ -339,7 +371,9 @@
       (d) 是否計入「月工時達成」？（例：蛋頭婚假 2 天 × 8h，算在達標裡嗎？）<br>
       (e) 申請流程：要不要預先申請、檢附證明？
     </div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>按台灣勞基法</strong>：<br>
+婚假 8 天 / 喪假 3–8 天（依親等）/ 陪產檢假 10 天 / 產假 56 天 / 病假 30 天（半薪）/ 事假 14 天（無薪）/ 公假依實際。<br><br>
+🟡 病假是否計入正職工時達成 → 需 Winnie 進一步確認（目前 Skill 假設「計入」）。</div>
   </div>
 </div>
 
@@ -356,7 +390,8 @@
     </div>
     <div class="q-context">原規則 N=3。現在只有 3 位正職（Winnie 轉主管後），規則失效（3 全休也不違反）。</div>
     <div class="q-hint"><strong>選項</strong>：(a) 改成 N = 正職總數 − 1（目前等於 2）/ (b) 寫死 N = 2 / (c) 補正職到 4 人，維持 N = 3</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">目前如果 3 位正職同事同時休假，或是給班人員過少，我跟 Fish 會下去排班。<br>
+如果我跟 Fish 都不在，我會在正職的排休表單內註明哪幾天<strong>禁休</strong>或是<strong>最多只能 1 位正職排休</strong>（例如去高知那幾天）。</div>
   </div>
 
   <div class="question">
@@ -366,7 +401,7 @@
       <span class="priority p-mid">🟡 中優先</span>
     </div>
     <div class="q-hint"><strong>選項</strong>：(a) 硬性：超過不給排 / (b) 警戒：超過顯示黃燈但可排</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">主管沒有硬性要排多少時數的班，通常都是人力不足會下去排班。</div>
   </div>
 
   <div class="question">
@@ -376,7 +411,7 @@
       <span class="priority p-high">🔴 高優先</span>
     </div>
     <div class="q-context">影響薪資計算口徑。例如早班 09:00–17:00 寫「8h」，是含 1 小時用餐、實際工時 7h？還是真的 8h？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">8 小時有含休息時間（通常是休 30 分鐘），但同事們很常沒時間休息。</div>
   </div>
 </div>
 
@@ -391,7 +426,9 @@
       <span class="priority p-mid">🟡 中優先</span>
     </div>
     <div class="q-hint"><strong>需要定義</strong>：(a) 什麼情況下需要記錄原因？(b) 要不要通知所有員工？還是只通知被改的人？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">(a) 班表發布後的改動，通常是臨時有活動（包場之類的），或是同事有事情要調班<br>
+(b-1) 同事有事情要調班，都會是他們先自己跟其他同事協調，再通知我改動結果，我再去調整班表<br>
+(b-2) 如果是店內臨時有狀況需要改動班表，我會通知所有人；如果是同事個人有事情要變動，就不會通知</div>
   </div>
 
   <div class="question">
@@ -402,7 +439,7 @@
     </div>
     <div class="q-context">Phase 2 才做，但先想清楚會影響資料模型設計。</div>
     <div class="q-hint"><strong>流程建議</strong>：員工 A 發起 → 指名 B → B 同意 → Winnie 核准 → 班表自動更新</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>同意此流程！</strong></div>
   </div>
 
   <div class="question">
@@ -413,7 +450,10 @@
     </div>
     <div class="q-context">Phase 2 要不要做「排班 vs. 實際出勤」比對？</div>
     <div class="q-hint"><strong>需知道</strong>：(a) 目前用什麼打卡？(b) 能否匯出資料？(c) 打卡時間 vs. 排班時間差多少算正常？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">(a) 打卡系統目前為 <strong>iChef 的內建系統</strong><br>
+(b) 可匯出資料，以下為 4 月份的打卡紀錄下載內容：<br>
+<a href="https://docs.google.com/spreadsheets/d/1wFM7reUUxf9MfDELplbpM0ZoSHFpeyjG/edit?usp=sharing" target="_blank">4 月打卡資料</a><br>
+(c) 目前薪水是以打卡時間做計算，若有非上班日打卡，會再去調查發生什麼事（調班未通知之類的）</div>
   </div>
 
 </div>
@@ -429,7 +469,8 @@
       <span class="priority p-low">🟢 可延後</span>
     </div>
     <div class="q-context">原版寫「雙倍薪資考量」邏輯反向（省成本應該優先 PT）。猜測原意是「正職享國假加倍薪資的權利」。</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered"><strong>Winnie</strong>：正職的福利為國定假日<strong>送一天休假</strong>，若有照樣排班是<strong>雙倍薪資</strong>（本薪計算）。<br><br>
+<strong>Fish 補充</strong>：正職薪資用「本薪 ÷ 30 天」計算，因此國假排正職上班，對公司成本相對較低。同時，正職在國假通常會補一天休假，當天上班 = 拿到「當天薪資 + 補休價值」，整體 <strong>≈ 3× 薪資</strong>的概念。</div>
   </div>
 
   <div class="question">
@@ -439,7 +480,7 @@
       <span class="priority p-low">🟢 可延後</span>
     </div>
     <div class="q-context">平日和週日都有 10h 版本，週末工時最重反而沒有。是刻意還是漏？</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">現在人力比較多、也很忙，就沒有排 10H 的班了。</div>
   </div>
 
   <div class="question">
@@ -448,7 +489,7 @@
       <span class="q-title">國假加給 vs. 補休可否選？</span>
       <span class="priority p-low">🟢 可延後</span>
     </div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">正職是國定假日一定多給假，國定假日的補休日則不計入。</div>
   </div>
 
   <div class="question">
@@ -458,7 +499,7 @@
       <span class="priority p-mid">🟡 中優先</span>
     </div>
     <div class="q-context">規則寫「不補」，請確認。</div>
-    <div class="answer">回覆欄：___</div>
+    <div class="answer answered">例如今年的除夕在週一，就照樣放假，再多給一天假。</div>
   </div>
 </div>
 
