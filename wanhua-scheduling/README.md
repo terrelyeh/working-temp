@@ -18,23 +18,28 @@
 
 ## 目前進度
 
-### ✅ 已完成
+### ✅ Phase 1 已完成（演算法驗證）
 
 - **規則文件 v3** — 17 章節完整規則書，已整合 Winnie + Fish + 政道確認
-- **休假表驗證 skill**（`wanhua-leave-validate`）— 自動檢查月休假表 / PT 意願表，產出報告 + 清理 JSON 給排班用
+- **休假表驗證 skill**（`wanhua-leave-validate`）— 檢查月休假表 / PT 意願表
+- **排班 solver**（`wanhua-schedule`）— OR-Tools CP-SAT，2.5 秒跑出 OPTIMAL，5 月驗算工時對到 Winnie 確認的數字
+- **5 月對比報告** — 我的 solver 跟 Winnie 手排逐日對比，找出 5 個重要 disconnect
 - **排班 UI demo** — 員工版、全店時間軸（Gantt）、月度統計、搭班查詢
-- **Winnie Q&A 完整紀錄** — 第一輪 24 題已全數回覆，作為業務邏輯詳細參考
+- **Winnie Q&A 完整紀錄** — 第一輪 24 題已全數回覆
 
-### 🔜 開發中 / Pending
+### 🔜 Phase 2（1 個月內，給團隊用的第一版）
 
-- 月初 form 前置 skill（`wanhua-monthly-prep`）
-- **自動排班 solver**（`wanhua-schedule`）— 用 Google OR-Tools CP-SAT
-- 班表發布 skill（`wanhua-publish`）— LINE 通知 + 個人班表
+- 規則微調（依 5 月對比結果：S2 拿掉、活動 override 強化、缺人時不強塞）
+- 設計 DB schema（Supabase）
+- Next.js + Supabase web app（主管後台拖拉排班 + 員工 PWA 查班/填表）
+- Python solver service 部署到 Cloud Run
+- Google Login + LINE 通知
 
-### 📅 未來 Phase
+### 📅 Phase 3 未來
 
-- **Phase 2** PWA 填表（取代 Google Form），即時驗證、年假餘額顯示
-- **Phase 3** 全平台（員工 PWA + 主管後台 + iChef 打卡資料整合）
+- iChef 打卡資料整合（排班 vs 實際出勤對比）
+- 員工自助換班流程
+- 進階管理工具（員工相容性軟限制等，見 workflow_design 附錄 A）
 
 ## 技術架構
 
@@ -63,30 +68,29 @@
 ## 快速開始（開發者）
 
 ```bash
-# 進入第一支 skill 資料夾
-cd skill/wanhua-leave-validate
+# 1. 跑 form 驗證（產出 clean-leave.json）
+cd skill/wanhua-leave-validate && uv sync && uv run python validate.py 2026-05
 
-# 安裝相依（uv 自動建 venv）
-uv sync
-
-# 執行月驗證（範例：2026 年 5 月）
-uv run python validate.py 2026-05
+# 2. 跑排班 solver（吃 clean-leave.json，產出 schedule.json）
+cd ../wanhua-schedule && uv sync && uv run python schedule.py 2026-05
 
 # 輸出：
-#   report/2026-05-validation-report.md   ← 給 Winnie 看的驗證報告
-#   report/2026-05-clean-leave.json       ← 清理後資料，餵下一支排班 skill
+#   wanhua-leave-validate/report/2026-05-validation-report.md
+#   wanhua-leave-validate/report/2026-05-clean-leave.json
+#   wanhua-schedule/report/2026-05-schedule.json
+#   wanhua-schedule/report/2026-05-violations.md
 ```
 
 ## 專案目錄
 
 ```
 萬華排班/
-├── docs/                       文件源（HTML / MD）
-├── skill/wanhua-leave-validate/  休假表驗證 skill（已完成）
-│   ├── config/                 員工名冊 + 規則
-│   └── data/YYYY-MM/           每月輸入資料
-├── demo/                       UI demo
-└── .claude/skills/             Claude Skill 註冊
+├── docs/                              文件源（HTML / MD）
+├── skill/
+│   ├── wanhua-leave-validate/        ✅ form 驗證
+│   └── wanhua-schedule/              ✅ OR-Tools 排班 solver
+├── demo/                              UI demo
+└── .claude/skills/                    Claude Skill 註冊
 ```
 
 ## 給新進開發者

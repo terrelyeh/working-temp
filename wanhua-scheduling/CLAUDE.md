@@ -7,8 +7,11 @@
 萬華世界下午酒場（台北餐酒館）的排班系統。取代 Winnie 目前手工跑 Google Form + Google Sheet 的流程，
 透過 Claude Skill + 未來的 web app 自動化排班。產品定位與功能清單見 [README.md](README.md)。
 
-目前進度：Phase 1（Skill 自動化）的第一支 skill `wanhua-leave-validate` 已完成；
-等 Winnie 回覆第二輪確認題後，下一步開始實作 `wanhua-schedule` solver。
+目前進度：Phase 1（演算法驗證，只在開發者本機跑）兩支 skill 已完成：
+- `wanhua-leave-validate`（form 驗證）
+- `wanhua-schedule`（OR-Tools CP-SAT solver）— 已對 2026-05 真實資料跑出 OPTIMAL，工時對得上 Winnie 確認的數字
+
+下一步：根據 5月對比結果調整規則（見 disconnect 清單），再進 Phase 2 web app（1 個月內要交付給團隊）。
 
 ## Tech Stack
 
@@ -35,6 +38,11 @@
 │   ├── config/rules.yaml           規則機器讀版（與 排班規則_v3.html 同步）
 │   ├── data/YYYY-MM/               每月輸入（form xlsx + calendar + annual-leave）
 │   └── report/                     輸出（validation-report.md + clean-leave.json）
+├── skill/wanhua-schedule/          第二支 skill（已完成）— OR-Tools CP-SAT solver
+│   ├── schedule.py                  主程式
+│   ├── config/                      symlink to wanhua-leave-validate/config
+│   ├── data/YYYY-MM/                clean-leave.json + symlinks to calendar/annual-leave
+│   └── report/                      輸出（schedule.json + violations.md + comparison.md）
 ├── demo/index.html                 排班 UI demo（員工版 / 全店時間軸 / 搭班查詢）
 └── .claude/skills/wanhua-leave-validate/SKILL.md   Claude Skill 觸發定義
 ```
@@ -53,12 +61,13 @@ config/employees.yaml + config/rules.yaml          ← 靜態
    → validation-report.md（給 Winnie）
    → clean-leave.json（給下一支 skill）
         ↓
-   wanhua-schedule（TODO，OR-Tools solver）
-   → schedule.json + violations.md
+   wanhua-schedule（已完成）— OR-Tools CP-SAT
+   → schedule.json + violations.md（含 staffing 缺口記錄）
         ↓
-   wanhua-publish（TODO）
-   → LINE 卡片 / 個人班表 URL / 年假與補時數寫回
+   ❌ wanhua-publish（不做了，直接進 Phase 2 web）
 ```
+
+**Phase 2 (web) 對應**：solver 邏輯保留在 `schedule.py`，未來會包成 Python service 跑在 Cloud Run，由 Next.js 透過 API 呼叫。
 
 正職目標工時公式：
 ```
@@ -82,24 +91,33 @@ config/employees.yaml + config/rules.yaml          ← 靜態
 
 功能清單見 [README.md](README.md)。
 
-### 🔜 Next Steps
+### 🔜 Next Steps（重新定位後）
 
-1. **等 Winnie 回覆**第二輪確認題（共 4 題：病假計入工時、臨時事假 SOP、補時數補不完、長期缺席）— [線上連結](https://terrelyeh.github.io/working-temp/wanhua-scheduling/ad-hoc-absence-questions.html)
-2. 實作 `wanhua-monthly-prep` skill — 產 form 題目給 Winnie 複製貼上
-3. **實作 `wanhua-schedule` skill** — 核心，用 OR-Tools CP-SAT
-4. 實作 `wanhua-publish` skill — 個人班表 + LINE 通知
+**Phase 1 = 演算法驗證**（只在我電腦上跑），**Phase 2 = 第一版交付**給團隊，預計 1 個月內。
+
+Phase 1 剩下：
+1. 根據 5月對比結果調整規則 — 詳見 `skill/wanhua-schedule/report/2026-05-comparison.md`
+   - S2 支援班可能要拿掉
+   - 活動 override 強化（允許平日加 N75、打破固定休）
+   - 「寧缺勿濫」flag（不強塞凱柏/莎賓）
+
+Phase 2（直接做，跳過 monthly-prep 和 publish）：
+2. 設計 DB schema (Supabase)
+3. Next.js + Supabase web app（主管後台 + 員工 PWA）
+4. Python solver service 部署 (Cloud Run)
+5. 串接、測試、Winnie 試用
 
 ### 仍 🟡 待 Winnie 拍板的規則
 
 - 正職病假（普通傷病、半薪）是否計入月工時達成（目前 skill 預設「計入」）
+- 第二輪 4 題（臨時缺席與補時數）— 不阻擋 Phase 2，可邊開發邊回覆
 
 ## Deployment
 
 ```bash
-# 跑驗證 skill（範例：2026 年 5 月）
-cd skill/wanhua-leave-validate
-uv run python validate.py 2026-05
-# 輸出：report/2026-05-validation-report.md + report/2026-05-clean-leave.json
+# 月流程（每月一次）
+cd skill/wanhua-leave-validate && uv run python validate.py 2026-05
+cd ../wanhua-schedule && uv run python schedule.py 2026-05
 
 # 推送文件到 GitHub Pages（docs 不在本地 git，須手動同步）
 cp docs/檔名.html /tmp/working-temp-clone/wanhua-scheduling/
@@ -107,6 +125,17 @@ cd /tmp/working-temp-clone
 git add -A && git commit -m "..." && git push origin main
 # 線上：https://terrelyeh.github.io/working-temp/wanhua-scheduling/
 ```
+
+## Phase 2 計畫（1 個月內交付）
+
+| 層級 | 選擇 |
+|---|---|
+| 前端 | Next.js 15 + Tailwind + shadcn/ui (Vercel) |
+| 後端 DB | Supabase (Postgres + Auth) |
+| Solver | Python service (Cloud Run)，包裝 schedule.py 的核心邏輯 |
+| Auth | Google Login (per Winnie 確認) |
+| 範圍 | MVP only：填休假表 + 自動排班 + 發布班表 + 員工查班 |
+| 監控 | Vercel Analytics + Supabase logs |
 
 ## Common Pitfalls
 
@@ -120,11 +149,21 @@ git add -A && git commit -m "..." && git push origin main
 - **規則文件 mobile breakpoint 1100px**：寬度小於此會切換成 inline TOC（不是 900px，避免窄視窗 sidebar + content 互相擠壓）
 - **排班規則 17 章節**：v3 加入 §14 活動與班表動態調整後，原 §14-16 順延成 §15-17
 
+### Solver 特定 (wanhua-schedule)
+
+- **H4 staffing 必須是 soft**：用 slack variable + 高權重 penalty，不能 hard-equal。否則某天人手不足時整個 model infeasible
+- **連續工作天數 H2 暫時關掉**：單月內週一公休天然限制 ≤ 6 天，window-based 約束容易誤判（跨 Monday gap）。跨月時要重啟
+- **凱柏/莎賓沒交 form 視為整月可排**：因為 Winnie 缺班時會問凱柏，沒交不代表完全不能排。這 fallback 寫死在 `schedule.py`
+- **Symlinks 用 relative path**：`config/employees.yaml` symlink 從 `config/` 出發要 `../../wanhua-leave-validate/config/employees.yaml`（兩層 ../）
+- **5 月對比發現 Winnie 不排 S2**：規則跟實務有 gap，Phase 2 要重新檢視 staffing rules
+
 ## 詳細文件
 
 - [docs/排班規則_v3.html](docs/排班規則_v3.html) — 17 章節權威規則書
 - [docs/workflow_design.md](docs/workflow_design.md) — 流程與架構設計（**新 session 必讀**；HTML 版同名）
 - [Winnie_待確認清單.html](Winnie_待確認清單.html) — 24 題完整 Q&A，業務邏輯詳細出處
 - [docs/問題_臨時缺席與補時數.html](docs/問題_臨時缺席與補時數.html) — 第二輪確認題
-- [skill/wanhua-leave-validate/README.md](skill/wanhua-leave-validate/README.md) — 第一支 skill 說明
+- [skill/wanhua-leave-validate/README.md](skill/wanhua-leave-validate/README.md) — leave validation skill
+- [skill/wanhua-schedule/README.md](skill/wanhua-schedule/README.md) — schedule solver skill
+- [skill/wanhua-schedule/report/2026-05-comparison.md](skill/wanhua-schedule/report/2026-05-comparison.md) — Solver vs Winnie 手排對比（重要：規則 vs 實務的 gap）
 - 線上文件 hub：https://terrelyeh.github.io/working-temp/wanhua-scheduling/
