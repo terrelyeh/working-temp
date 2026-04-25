@@ -123,6 +123,13 @@
   <p class="subtitle">排班系統 · 待確認議題 ｜ 請依項目逐一回覆</p>
 </header>
 
+<div class="intro" style="border: 2px solid #B91C1C; background: #FEE2E2;">
+  <p style="color: #B91C1C; font-weight: 700; margin-top: 0;">⚠️ 此份為歷史紀錄，已大部分回覆完成</p>
+  <p style="margin-bottom: 0;">最新規則請以 <a href="rules-v3.html" style="color: #B91C1C; font-weight: 600;">排班規則 v3</a> 為準。<br>
+    如需查看當初設計時問了哪些題、為什麼這樣設計，可以參考此頁。<br>
+    新題目請見 <a href="ad-hoc-absence-questions.html" style="color: #B91C1C; font-weight: 600;">臨時缺席與補時數確認題</a>。</p>
+</div>
+
 <div class="intro">
   <p><strong>背景</strong>：正在開發取代目前 Google Sheet 排班流程的系統。資料模型與核心流程已整理完成，剩下的業務細節需要您確認才能開始動工。</p>
   <p><strong>重要程度</strong>：🔴 決定 Phase 1 能否開始 ｜ 🟡 決定 Phase 1 細節 ｜ 🟢 可延後到 Phase 2 再回覆</p>
@@ -131,7 +138,7 @@
 
 <div class="summary-bar">
   <div class="stat">
-    <div class="num" style="color: var(--priority-high);">9</div>
+    <div class="num" style="color: var(--priority-high);">12</div>
     <div class="label">🔴 高優先</div>
   </div>
   <div class="stat">
@@ -283,6 +290,55 @@
       <span class="priority p-high">🔴 高優先</span>
     </div>
     <div class="q-hint"><strong>需要定義</strong>：(a) 截止日（例：每月 25 號）？(b) 提交後可以改嗎？(c) 沒準時提交怎麼處理？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C5</span>
+      <span class="q-title">年假額度的正確公式 <span style="color: var(--priority-high); font-weight: normal; font-size: 13px;">（有明顯矛盾）</span></span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">
+      對照 <code>年假紀錄</code> 與 <code>年假計算</code> sheet，數字<strong>跟勞基法不吻合</strong>：<br>
+      Winnie 第 3 年勞基法 10 天，sheet 寫 20 天；超威同樣；思坦/蛋頭第 2 年勞基法 7 天，sheet 寫 10 天。
+    </div>
+    <div class="q-hint">
+      <strong>可能解釋</strong>，請幫忙確認哪一個：<br>
+      (A) <strong>未休年假自動累積</strong>：前一年沒用完的年假直接併入當年可用（比勞基法寬鬆）<br>
+      (B) <strong>公司雙倍年假</strong>：每年法定 × 某倍率（但對不上規律）<br>
+      (C) sheet 上的數字是「累計至今的總核配」歷史紀錄，當年可用額度仍照勞基法<br><br>
+      <strong>先前被告知依勞基法，但 sheet 看起來像 (A)</strong>。答案影響到 skill 裡怎麼計算可用年假餘額。
+    </div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C6</span>
+      <span class="q-title">到期未休的年假怎麼處理？</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">勞基法允許（a）遞延一年（b）折現發薪。sheet 備註寫「到期未用完可延展一年」。</div>
+    <div class="q-hint"><strong>請確認</strong>：全部遞延？還是到上限（例如最多延 2 年）？延展後再未休如何處理？</div>
+    <div class="answer">回覆欄：___</div>
+  </div>
+
+  <div class="question">
+    <div class="q-head">
+      <span class="q-num">C7</span>
+      <span class="q-title">特殊假（婚假、喪假、陪產假、病假）管理方式</span>
+      <span class="priority p-high">🔴 高優先</span>
+    </div>
+    <div class="q-context">從 <code>年假紀錄</code> 看到蛋頭「4 月兩天帶薪婚假，不計入特休」這種例外。系統需要一併管理。</div>
+    <div class="q-hint">
+      <strong>需要定義</strong>：<br>
+      (a) 公司支援哪些假別？（婚假、喪假、陪產假、產檢、病假、事假…）<br>
+      (b) 各假別天數上限？（法定或公司自訂？）<br>
+      (c) 是否扣薪？<br>
+      (d) 是否計入「月工時達成」？（例：蛋頭婚假 2 天 × 8h，算在達標裡嗎？）<br>
+      (e) 申請流程：要不要預先申請、檢附證明？
+    </div>
     <div class="answer">回覆欄：___</div>
   </div>
 </div>

@@ -2,678 +2,243 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>公司排班規則（討論版）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2C3345">
+<title>萬華世界排班系統 · 文件總覽</title>
 <style>
   :root {
-    --text: #2C3345;
-    --text-soft: #5A6478;
-    --bg: #FAFAF8;
+    --primary: #2C3345;
+    --foreground: #1F2937;
+    --muted-foreground: #6B7280;
+    --muted: #F3F4F6;
+    --background: #FAFAF8;
     --card: #FFFFFF;
     --border: #E5E7EB;
     --accent: #2563EB;
-    --warn: #B45309;
-    --warn-bg: #FEF3C7;
-    --change: #B91C1C;
-    --change-bg: #FEE2E2;
-    --must: #7C2D12;
-    --must-bg: #FED7AA;
-    --should: #1E40AF;
-    --should-bg: #DBEAFE;
-    --nice: #166534;
-    --nice-bg: #DCFCE7;
-    --info-bg: #EFF6FF;
+    --accent-soft: #EFF6FF;
+    --tag-current-bg: #DCFCE7;
+    --tag-current-fg: #166534;
+    --tag-spec-bg: #DBEAFE;
+    --tag-spec-fg: #1E40AF;
+    --tag-pending-bg: #FEF3C7;
+    --tag-pending-fg: #B45309;
+    --tag-history-bg: #F3F4F6;
+    --tag-history-fg: #6B7280;
   }
   * { box-sizing: border-box; }
-  html { font-size: 17px; }
   body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-    line-height: 1.8;
-    font-feature-settings: "tnum";
+    margin: 0; background: var(--background); color: var(--foreground);
+    font-family: "Inter", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-feature-settings: "tnum"; line-height: 1.75; font-size: 16px;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 56px 40px 112px;
+
+  .navbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 28px;
-    margin-bottom: 40px;
+  .navbar-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    height: 72px; display: flex; align-items: center; gap: 16px;
   }
-  h1 {
-    font-size: 40px;
-    margin: 0 0 10px;
-    letter-spacing: -0.02em;
+  .navbar-brand {
+    display: flex; align-items: center; gap: 12px;
+    color: white; text-decoration: none; font-weight: 600;
   }
-  .subtitle {
-    color: var(--text-soft);
-    font-size: 17px;
-    margin: 0;
+  .navbar-logo {
+    width: 42px; height: 42px; border-radius: 8px;
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #1F2937; font-weight: 700;
   }
+  .navbar-title { font-size: 15px; line-height: 1.3; }
+  .navbar-title small {
+    display: block; font-size: 12px; color: rgba(255, 255, 255, 0.6);
+    font-weight: 400; margin-top: 2px;
+  }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 96px; }
+  @media (max-width: 640px) { main { padding: 28px 18px 80px; } .navbar-inner { height: 56px; padding: 0 14px; } .navbar-title small { display: none; } }
+
+  h1 { font-size: 36px; margin: 0 0 8px; letter-spacing: -0.02em; font-weight: 700; }
+  .lead { color: var(--muted-foreground); font-size: 16px; margin: 0 0 32px; }
+
   h2 {
-    font-size: 28px;
-    margin: 56px 0 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--text);
-    letter-spacing: -0.01em;
+    font-size: 22px; margin: 40px 0 16px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--primary);
+    font-weight: 700;
   }
-  h3 {
-    font-size: 21px;
-    margin: 32px 0 14px;
+
+  .card-grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
-  p, li { font-size: 17px; }
-  ul, ol { padding-left: 24px; }
-  li { margin: 6px 0; }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 20px 0;
-    background: var(--card);
-    font-size: 16px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    font-variant-numeric: tabular-nums;
+  .doc-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px;
+    transition: all 0.15s;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 10px;
   }
-  th, td {
-    border-bottom: 1px solid var(--border);
-    padding: 12px 14px;
-    text-align: left;
-    vertical-align: top;
+  .doc-card:hover {
+    border-color: var(--accent); transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
   }
-  th {
-    background: #F9FAFB;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.02em;
+  .doc-card .icon { font-size: 26px; }
+  .doc-card h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .doc-card p { margin: 0; font-size: 14px; color: var(--muted-foreground); line-height: 1.6; }
+  .doc-card .audience {
+    margin-top: auto; font-size: 12px; color: var(--accent);
+    padding-top: 8px; border-top: 1px dashed var(--border);
   }
-  tr:last-child td { border-bottom: none; }
-  blockquote {
-    border-left: 3px solid var(--warn);
-    background: var(--warn-bg);
-    margin: 16px 0;
-    padding: 12px 18px;
-    border-radius: 0 6px 6px 0;
-  }
-  blockquote p { margin: 4px 0; color: var(--text); }
-  .badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    margin-right: 6px;
-    vertical-align: middle;
-    letter-spacing: 0.02em;
-  }
-  .badge-todo { background: var(--warn-bg); color: var(--warn); }
-  .badge-change { background: var(--change-bg); color: var(--change); }
-  .badge-must { background: var(--must-bg); color: var(--must); }
-  .badge-should { background: var(--should-bg); color: var(--should); }
-  .badge-nice { background: var(--nice-bg); color: var(--nice); }
-  .legend {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
-    background: var(--card);
-    padding: 18px 22px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    margin: 20px 0 28px;
-    font-size: 15px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .toc {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 24px;
-    margin: 24px 0 32px;
-  }
-  .toc h3 { margin-top: 0; font-size: 14px; color: var(--text-soft); letter-spacing: 0.05em; text-transform: uppercase; }
-  .toc ol { margin: 0; padding-left: 24px; }
-  .toc li { font-size: 17px; }
-  .toc a { color: var(--accent); text-decoration: none; }
-  .toc a:hover { text-decoration: underline; }
-  .question-box {
-    background: var(--card);
-    border: 1px solid var(--warn);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin: 16px 0;
-  }
-  .question-box .q-title {
-    font-weight: 600;
-    color: var(--warn);
-    font-size: 14px;
+
+  .tag {
+    display: inline-block; padding: 2px 9px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 10px;
   }
-  .question-box p, .question-box li { font-size: 16px; }
-  .info-box {
-    background: var(--info-bg);
-    border-left: 3px solid var(--accent);
-    padding: 14px 18px;
-    border-radius: 0 6px 6px 0;
-    margin: 16px 0;
-    font-size: 16px;
+  .tag-current { background: var(--tag-current-bg); color: var(--tag-current-fg); }
+  .tag-spec { background: var(--tag-spec-bg); color: var(--tag-spec-fg); }
+  .tag-pending { background: var(--tag-pending-bg); color: var(--tag-pending-fg); }
+  .tag-history { background: var(--tag-history-bg); color: var(--tag-history-fg); }
+
+  .status-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .summary-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 32px;
   }
-  .info-box strong { color: var(--text); }
-  .formula {
-    background: #F3F4F6;
-    border-radius: 6px;
-    padding: 12px 16px;
-    font-family: "SF Mono", Consolas, monospace;
-    font-size: 15px;
-    color: var(--text);
-    margin: 12px 0;
-    line-height: 1.7;
+  @media (max-width: 640px) { .summary-bar { grid-template-columns: 1fr 1fr; } }
+  .summary-stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; text-align: center;
   }
-  .footer {
-    margin-top: 64px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    color: var(--text-soft);
-    font-size: 13px;
-    text-align: center;
+  .summary-stat .num { font-size: 24px; font-weight: 700; }
+  .summary-stat .label { font-size: 12px; color: var(--muted-foreground); }
+
+  footer {
+    margin-top: 64px; padding: 24px 16px; border-top: 1px solid var(--border);
+    text-align: center; font-size: 13px; color: var(--muted-foreground);
   }
-  @media print {
-    body { background: white; }
-    .wrap { padding: 0; max-width: none; }
-    table { box-shadow: none; }
+
+  .intro-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 22px; margin-bottom: 32px;
+    font-size: 15px; line-height: 1.75;
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<header>
-  <h1>公司排班規則（討論版）</h1>
-  <p class="subtitle">內部溝通用 ｜ 基於原版「公司排班大規則 0630」整理與補齊</p>
-</header>
-
-<div class="legend">
-  <div class="legend-item"><span class="badge badge-must">必須遵守</span>絕對不可違反</div>
-  <div class="legend-item"><span class="badge badge-should">應該達成</span>盡量做到，例外需理由</div>
-  <div class="legend-item"><span class="badge badge-nice">個人偏好</span>盡量配合</div>
-  <div class="legend-item"><span class="badge badge-todo">🟡 待討論</span>請大家給意見</div>
-  <div class="legend-item"><span class="badge badge-change">🔴 與原版不同</span></div>
-</div>
-
-<nav class="toc">
-  <h3>目錄</h3>
-  <ol>
-    <li><a href="#sec1">營業時間與班次定義</a></li>
-    <li><a href="#sec2">員工分類與個人設定</a></li>
-    <li><a href="#sec3">月排班前流程（休假填表 → 工時目標）</a></li>
-    <li><a href="#sec4">必須遵守的規則</a></li>
-    <li><a href="#sec5">應該達成的目標</a></li>
-    <li><a href="#sec6">個人偏好的處理</a></li>
-    <li><a href="#sec7">每日標準班表</a></li>
-    <li><a href="#sec8">排班的優先順序</a></li>
-    <li><a href="#sec9">特殊情況的處理</a></li>
-    <li><a href="#sec10">需要大家一起決定的事</a></li>
-  </ol>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="navbar-brand" href=".">
+      <div class="navbar-logo">萬</div>
+      <div class="navbar-title">
+        萬華世界下午酒場
+        <small>排班系統 · 文件總覽</small>
+      </div>
+    </a>
+  </div>
 </nav>
 
-<!-- ============= 1 ============= -->
-<h2 id="sec1">1. 營業時間與班次定義</h2>
+<main>
 
-<h3>1.1 每週營業時間</h3>
-<table>
-  <thead><tr><th>日別</th><th>狀態</th><th>營業時間</th><th>備註</th></tr></thead>
-  <tbody>
-    <tr><td>週一</td><td>公休</td><td>—</td><td>全體休假；國定假日落在週一仍公休（不補）</td></tr>
-    <tr><td>週二、三、四</td><td>平日</td><td>09:00–19:00</td><td></td></tr>
-    <tr><td>週五、六</td><td>長班日 <span class="badge badge-change">🔴</span></td><td>09:00–次日 00:30</td><td>原稱「週末」，因週日另有規則，更名避免混淆</td></tr>
-    <tr><td>週日</td><td>週日</td><td>09:00–19:00</td><td></td></tr>
-  </tbody>
-</table>
+<h1>📚 文件總覽</h1>
+<p class="lead">萬華世界排班系統的所有文件、demo、與 skill 的索引頁。依用途分組。</p>
 
-<h3>1.2 班次種類</h3>
-<table>
-  <thead><tr><th>班次</th><th>時段</th><th>時數</th><th>適用日</th></tr></thead>
-  <tbody>
-    <tr><td>早班 8 小時</td><td>09:00–17:00</td><td>8h</td><td>全部</td></tr>
-    <tr><td>早班 10 小時</td><td>09:00–19:00</td><td>10h</td><td>平日 / 週日</td></tr>
-    <tr><td>午班 8 小時</td><td>11:00–19:00</td><td>8h</td><td>全部</td></tr>
-    <tr><td>支援班</td><td>17:00–19:00</td><td>2h</td><td>平日 / 週日</td></tr>
-    <tr><td>晚班</td><td>17:00–次日 00:30</td><td>7.5h</td><td>長班日</td></tr>
-  </tbody>
-</table>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>班次時數是否含 1 小時用餐休息？這會影響薪資計算與工時統計。</li>
-    <li>2 小時的支援班可以排給正職嗎？還是只給 PT？</li>
-    <li>單一班次是否設最低時數（例如 PT 一班至少 4 小時，避免太碎）？</li>
-  </ul>
+<div class="summary-bar">
+  <div class="summary-stat"><div class="num" style="color: var(--tag-current-fg);">3</div><div class="label">✅ 現役</div></div>
+  <div class="summary-stat"><div class="num" style="color: var(--tag-spec-fg);">2</div><div class="label">📐 規格</div></div>
+  <div class="summary-stat"><div class="num" style="color: var(--tag-pending-fg);">1</div><div class="label">🟡 待回覆</div></div>
+  <div class="summary-stat"><div class="num" style="color: var(--tag-history-fg);">1</div><div class="label">📦 歷史</div></div>
 </div>
 
-<!-- ============= 2 ============= -->
-<h2 id="sec2">2. 員工分類與個人設定</h2>
-
-<h3>2.1 員工類別</h3>
-<table>
-  <thead><tr><th>類別</th><th>月工時下限</th><th>月工時上限</th><th>預警 / 警戒</th><th>主要角色</th></tr></thead>
-  <tbody>
-    <tr>
-      <td><strong>主管</strong></td>
-      <td>—</td>
-      <td>40h <span class="badge badge-change">🔴</span></td>
-      <td>—</td>
-      <td>填補人力缺口、具備 10h 班能力。<br><strong>不替代正職應上的班</strong>。</td>
-    </tr>
-    <tr>
-      <td><strong>正職</strong></td>
-      <td colspan="2">依休假表推算（見第 3 章）<span class="badge badge-change">🔴</span></td>
-      <td>—</td>
-      <td>排班絕對主力，工時達標最優先。</td>
-    </tr>
-    <tr>
-      <td><strong>固定 PT</strong></td>
-      <td>56h</td>
-      <td>90h</td>
-      <td>70h 預警 ／ 80h 警戒</td>
-      <td>穩定排班來源。</td>
-    </tr>
-    <tr>
-      <td><strong>不固定 PT</strong></td>
-      <td>無</td>
-      <td>36h</td>
-      <td>—</td>
-      <td>填補剩餘人力需求。</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3>2.2 目前在職人員 <span class="badge badge-change">🔴 新增</span></h3>
-<table>
-  <thead><tr><th>姓名</th><th>類別</th><th>固定週休日</th><th>特殊協議</th></tr></thead>
-  <tbody>
-    <tr><td>Winnie</td><td>主管</td><td>—</td><td>—</td></tr>
-    <tr><td>超威</td><td>正職</td><td>週一、二</td><td>每月額外多 1 天休假（賣漢堡；逐月確認）</td></tr>
-    <tr><td>蛋頭</td><td>正職</td><td>週日、一、二</td><td>—</td></tr>
-    <tr><td>思坦</td><td>正職</td><td>週一、三、四</td><td>—</td></tr>
-  </tbody>
-</table>
-
-<div class="info-box">
-  <strong>固定週休調整：</strong>可因個人需求變更，但不是每月都能改，須事前協調。
+<div class="intro-card">
+  <strong>👋 第一次來看？</strong> 建議按以下順序：<br>
+  ① <a href="rules-v3.html">排班規則 v3</a> 了解業務邏輯 →
+  ② <a href="demo/">UI Demo</a> 體驗未來介面 →
+  ③ <a href="workflow-design.md">流程設計文件</a> 看開發路線圖
 </div>
 
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>目前只有 3 位正職，第 4.3 條「同日最多 3 位正職休假」的硬規則會失效（3 位全休也不違反）。是否要補正職？或改成「同時休假人數 ≤ 正職總數 − 1」？</li>
-    <li>PT 是否也需要登記固定休假日？還是逐月自由填？</li>
-    <li>主管 40h 是硬性還是警戒？</li>
-  </ul>
-</div>
+<!-- ============ 規則類 ============ -->
+<h2>規則文件（給全員）</h2>
+<div class="card-grid">
 
-<!-- ============= 3 ============= -->
-<h2 id="sec3">3. 月排班前流程 <span class="badge badge-change">🔴 新增章節</span></h2>
-
-<h3>3.1 流程概覽</h3>
-<p>每月排班前，依序完成以下步驟：</p>
-<ol>
-  <li>公告下月行事曆（國定假日、補班日）</li>
-  <li>正職填寫休假表（固定週休 + 額外休假 + 特殊協議）</li>
-  <li>推算每位正職的上班天數與目標工時</li>
-  <li>確認關鍵限制（同日休假人數、是否有補時數需求）</li>
-  <li>開始排班</li>
-</ol>
-
-<h3>3.2 工時目標計算</h3>
-
-<div class="formula">
-上班天數 = 當月總日數 − 固定週休天數 − 特殊協議天數 − 國定假日天數 (± 補/欠時數調整)<br>
-目標工時 = 上班天數 × 8h
-</div>
-
-<p><strong>2026 年 4 月範例</strong>（30 天、4 個週一）：</p>
-<table>
-  <thead><tr><th>正職</th><th>固定週休</th><th>特殊協議</th><th>休假合計</th><th>上班天數</th><th>目標工時</th></tr></thead>
-  <tbody>
-    <tr><td>超威</td><td>8 天（週一二 × 4）</td><td>+1 天</td><td>9 天</td><td>21 天</td><td>168h</td></tr>
-    <tr><td>蛋頭</td><td>12 天（週日一二 × 4）</td><td>—</td><td>12 天</td><td>18 天</td><td>144h</td></tr>
-    <tr><td>思坦</td><td>14 天（週一 × 4、週三 × 5、週四 × 5）</td><td>—</td><td>14 天</td><td>16 天</td><td>128h</td></tr>
-  </tbody>
-</table>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>2026/4/4 清明節（週六）是否算「多 1 天休假」？2 月範例把國假 6 天全加進去，但 4 月範例沒加清明。</li>
-    <li>如果國定假日剛好落在某人的固定週休日，要不要「多補 1 天」？</li>
-  </ul>
-</div>
-
-<h3>3.3 休假衝突處理</h3>
-<ul>
-  <li><span class="badge badge-must">必須遵守</span> 除週一公休外，其他日<strong>同日休假正職人數上限</strong>（見第 4.3 條）</li>
-  <li>衝突時：<strong>早填早優先</strong></li>
-</ul>
-
-<h3>3.4 跨月補時數機制</h3>
-<p>若某正職上月實排工時未達目標 → 下月須補回。</p>
-<p><strong>範例（蛋頭 2 月）</strong>：1 月少 49h，故 2 月休假從 18 天降為 12 天，上班 16 天 = 129h（含補 49h）。</p>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>補時數的觸發條件？少於目標多少才需要補？（少 5h 也補？還是超過一定幅度才補？）</li>
-    <li>補時數上限？一次全補，還是分多月攤提？</li>
-    <li>如果上月超過目標工時，下月能不能反向少上（欠公司 vs. 公司欠）？</li>
-    <li>是由誰計算？是主管還是員工自行算？</li>
-  </ul>
-</div>
-
-<h3>3.5 年假制度 <span class="badge badge-change">🔴 新增</span></h3>
-<p>每位正職有年度年假天數，剩餘天數於年度到期（依個人入職日計算），到期未用可延展一年。</p>
-<p><strong>範例</strong>（2 月休假表記錄）：</p>
-<ul>
-  <li>超威：剩餘 6 天，2026/4/30 到期</li>
-  <li>思坦：剩餘 5 天，2026/7/31 到期</li>
-  <li>蛋頭：剩餘 0 天（2026/1 月份用畢）</li>
-  <li>Winnie（當時正職）：剩餘 10 天（含上年度 1 天併入），2026/11/30 到期</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>年假天數怎麼計算？依勞基法還是公司另定？</li>
-    <li>請年假算在「當月休假天數」裡嗎？（= 不計入目標工時）</li>
-    <li>年假可否切碎到不同月份？每月可請多少天？</li>
-    <li>到期延展一年後，再到期如何處理？</li>
-  </ul>
-</div>
-
-<h3>3.6 休假表提交</h3>
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>每月休假表的提交截止日？（月底前？月中？）</li>
-    <li>提交後還可以改嗎？改的規則？</li>
-    <li>如果某位正職沒有準時提交，怎麼處理？</li>
-  </ul>
-</div>
-
-<!-- ============= 4 ============= -->
-<h2 id="sec4">4. 必須遵守的規則 <span class="badge badge-must">必須遵守</span></h2>
-
-<h3>4.1 工時上限</h3>
-<ul>
-  <li>固定 PT 月工時 ≤ 90 小時</li>
-  <li>不固定 PT 月工時 ≤ 36 小時</li>
-  <li>主管月支援工時 ≤ 40 小時</li>
-  <li>正職月工時 ≤ 目標工時（依休假表推算）</li>
-</ul>
-
-<h3>4.2 兩班之間的休息 <span class="badge badge-change">🔴 補強</span></h3>
-<ul>
-  <li>同一員工兩班之間休息時間 ≥ <strong>11 小時</strong>（依勞基法）</li>
-  <li>實際影響：晚班 00:30 下班後，下次最早 11:30 才能上班 → <strong>不能排隔日早班（09:00），也不能排午班（11:00）</strong></li>
-</ul>
-
-<h3>4.3 同日休假正職人數 <span class="badge badge-change">🔴 新增</span></h3>
-<ul>
-  <li>除週一公休外，其他日同日休假的正職人數 ≤ <strong>N − 1</strong>（N = 正職總人數）</li>
-  <li>原規則為「同日最多 3 位休假」（即 4 位正職不能同時休）</li>
-  <li>目前僅 3 位正職，需重新定義此硬規則（見 2.2 問題）</li>
-</ul>
-
-<h3>4.4 連續工作天數 <span class="badge badge-change">🔴 補齊</span></h3>
-<ul>
-  <li>連續工作天數 ≤ 6 天（週一公休天然限制）</li>
-  <li>純 8 小時班連續 ≤ 5 天</li>
-  <li>含 10 小時班的連續工作 ≤ 2 天</li>
-  <li><strong>跨月連續</strong>：例如 12/30、12/31、1/1、1/2 視為連續</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>原版沒寫「8h+10h 混排」的算法。建議：只要連續日子裡有任何一天是 10h 班，當天就觸發 2 天上限。大家覺得合理嗎？</p>
-</div>
-
-<h3>4.5 關鍵時段最低人力</h3>
-<ul>
-  <li>平日：每個班至少 1 位正職</li>
-  <li>長班日：早班至少 2 位正職、晚班至少 1 位正職</li>
-  <li>週日：早班至少 1 位正職、午班至少 1 位正職</li>
-  <li>國定假日（非週一）：依當天日別規則 + 至少 1 位正職</li>
-</ul>
-
-<h3>4.6 同日多班 <span class="badge badge-change">🔴 新增</span></h3>
-<ul>
-  <li>同一員工同一日只能排一個班次（禁止「早班 + 晚班」這種拆開排）</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>是否要保留例外？例如員工自願、或人力極度緊急時。</p>
-</div>
-
-<h3>4.7 主管的角色限制</h3>
-<ul>
-  <li>主管不可佔據「該日仍有正職可排」的班次</li>
-  <li>「所有正職都無法排」明確定義為：<strong>當天可排班的正職都已排滿、休假、或請假</strong> <span class="badge badge-change">🔴 釐清原版歧義</span></li>
-</ul>
-
-<!-- ============= 5 ============= -->
-<h2 id="sec5">5. 應該達成的目標 <span class="badge badge-should">應該達成</span></h2>
-
-<h3>5.1 工時目標</h3>
-<ul>
-  <li>正職達到當月工時目標（依休假表推算）</li>
-  <li>固定 PT 達到 56 小時最低工時</li>
-  <li>固定 PT 不超過 70 小時（預警線；超過需記錄理由）</li>
-  <li>固定 PT 不超過 80 小時（警戒線；超過需主管核准）</li>
-</ul>
-
-<h3>5.2 公平性 <span class="badge badge-change">🔴 新增</span></h3>
-<p>原版章節有「公平性原則」標題但沒有實際規則，補上：</p>
-<ul>
-  <li>員工之間「晚班次數」應盡量平均</li>
-  <li>員工之間「長班日上班次數」應盡量平均</li>
-  <li>不應該讓某個員工連續好幾週都被排到不喜歡的班</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>「平均」要平均到什麼程度？例如允許正負幾班的差距？這會直接影響排班彈性。</p>
-</div>
-
-<h3>5.3 班次配置原則</h3>
-<ul>
-  <li>有 10h 班能力的正職，優先排 10h 班（達標效率高）</li>
-  <li>國定假日優先安排正職（基於正職享國假加倍薪資的權利）<span class="badge badge-change">🔴</span></li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 原版邏輯確認</div>
-  <p>原版寫「優先安排正職（基於雙倍薪資考量）」，但雙倍薪資是成本因素，按理應該優先 PT 才對。我猜原意是「正職有領國假加倍薪的權利，所以優先排給他們」。請確認是否正確。</p>
-</div>
-
-<!-- ============= 6 ============= -->
-<h2 id="sec6">6. 個人偏好的處理 <span class="badge badge-nice">個人偏好</span></h2>
-
-<p>員工可登記三類偏好：</p>
-<ul>
-  <li><strong>不可上的班次</strong>：例如不能上晚班（需接小孩）、不能上週末</li>
-  <li><strong>偏好的班次</strong>：早班 / 午班 / 晚班</li>
-  <li><strong>希望休假的日期</strong>：即每月休假表中填寫的額外休假</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>「不可上的班次」應該視為硬性限制（強制不排）還是強烈偏好（盡量不排）？</li>
-    <li>PT 是否也能填偏好？</li>
-  </ul>
-</div>
-
-<!-- ============= 7 ============= -->
-<h2 id="sec7">7. 每日標準班表</h2>
-
-<h3>7.1 平日（週二、三、四）</h3>
-<p><strong>標準版</strong>：</p>
-<table>
-  <thead><tr><th>班次</th><th>需求人數</th></tr></thead>
-  <tbody>
-    <tr><td>早班 09:00–17:00</td><td>2</td></tr>
-    <tr><td>午班 11:00–19:00</td><td>2</td></tr>
-    <tr><td>支援 17:00–19:00</td><td>1</td></tr>
-  </tbody>
-</table>
-<p><strong>10h 版</strong>（有員工可排 10h 時）：</p>
-<table>
-  <thead><tr><th>班次</th><th>需求人數</th></tr></thead>
-  <tbody>
-    <tr><td>早班 09:00–19:00（10h）</td><td>1</td></tr>
-    <tr><td>早班 09:00–17:00</td><td>1</td></tr>
-    <tr><td>午班 11:00–19:00</td><td>2</td></tr>
-  </tbody>
-</table>
-
-<h3>7.2 長班日（週五、六）</h3>
-<table>
-  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
-  <tbody>
-    <tr><td>早班 09:00–17:00</td><td>3</td><td>至少 2 位正職</td></tr>
-    <tr><td>午班 11:00–19:00</td><td>2</td><td></td></tr>
-    <tr><td>晚班 17:00–次日 00:30</td><td>3</td><td>至少 1 位正職</td></tr>
-  </tbody>
-</table>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>長班日要不要設計 10h 班版本？目前原版沒有，但長班日工時最重，理論上最該用 10h 班來提升效率。</p>
-</div>
-
-<h3>7.3 週日</h3>
-<p><strong>標準版</strong>：</p>
-<table>
-  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
-  <tbody>
-    <tr><td>早班 09:00–17:00</td><td>2</td><td>至少 1 位正職</td></tr>
-    <tr><td>午班 11:00–19:00</td><td>3</td><td>至少 1 位正職</td></tr>
-    <tr><td>支援 17:00–19:00</td><td>1</td><td></td></tr>
-  </tbody>
-</table>
-<p><strong>10h 版</strong>：</p>
-<table>
-  <thead><tr><th>班次</th><th>需求人數</th><th>限制</th></tr></thead>
-  <tbody>
-    <tr><td>早班 09:00–19:00（10h）</td><td>1</td><td><strong>必須是正職</strong></td></tr>
-    <tr><td>早班 09:00–17:00</td><td>1</td><td></td></tr>
-    <tr><td>午班 11:00–19:00</td><td>3</td><td>至少 1 位正職</td></tr>
-  </tbody>
-</table>
-
-<!-- ============= 8 ============= -->
-<h2 id="sec8">8. 排班的優先順序</h2>
-
-<p>當資源有限或衝突時，依以下順序處理：</p>
-<ol>
-  <li><strong>正職達到工時目標</strong>（含 10h 班、關鍵時段）</li>
-  <li><strong>關鍵時段人力到位</strong>（每日最少正職人數）</li>
-  <li><strong>固定 PT 達到 56 小時最低工時</strong></li>
-  <li><strong>不固定 PT 填補剩餘缺口</strong>（不超過 36h）</li>
-  <li><strong>主管支援</strong>（不超過 40h）</li>
-</ol>
-
-<!-- ============= 9 ============= -->
-<h2 id="sec9">9. 特殊情況的處理 <span class="badge badge-change">🔴 補齊</span></h2>
-
-<h3>9.1 臨時請假</h3>
-<ol>
-  <li>該員工該日標記為不可排</li>
-  <li>檢查當天關鍵時段人力是否仍達標</li>
-  <li>不達標時，依以下順序找代班：
-    <ol>
-      <li>同類別、當日休假且月工時未滿的員工</li>
-      <li>不固定 PT（若未達 36h 上限）</li>
-      <li>主管支援</li>
-    </ol>
-  </li>
-</ol>
-
-<h3>9.2 月中入職 / 離職</h3>
-<ul>
-  <li>工時目標按比例調整：<strong>調整後目標 = 原目標 × (在職天數 ÷ 當月總天數)</strong></li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <p>新人入職首週要不要避免排晚班 / 長班日？</p>
-</div>
-
-<h3>9.3 國定假日</h3>
-<ul>
-  <li>非週一國假：照常營業，正職享加倍薪資</li>
-  <li>週一遇國假：仍公休，<strong>不補假</strong></li>
-  <li>國假計入正職的當月休假天數配額</li>
-</ul>
-
-<div class="question-box">
-  <div class="q-title">🟡 待討論</div>
-  <ul>
-    <li>週一遇國假確實不補假？</li>
-    <li>國定假日是否讓員工選「加給」或「補休」？</li>
-  </ul>
-</div>
-
-<!-- ============= 10 ============= -->
-<h2 id="sec10">10. 需要大家一起決定的事 <span class="badge badge-todo">🟡</span></h2>
-
-<p>這份規則裡所有 🟡 標記，整理如下，方便會議逐項討論：</p>
-
-<table>
-  <thead><tr><th style="width: 60px;">編號</th><th>議題</th><th>影響</th></tr></thead>
-  <tbody>
-    <tr><td colspan="3" style="background: #F9FAFB; font-weight: 600;">班次定義</td></tr>
-    <tr><td>Q1</td><td>班次時數是否含 1 小時用餐休息？</td><td>薪資、工時統計</td></tr>
-    <tr><td>Q2</td><td>2 小時支援班可否排給正職？</td><td>排班彈性</td></tr>
-    <tr><td>Q3</td><td>單一班次最低時數？</td><td>PT 排班碎片化</td></tr>
-
-    <tr><td colspan="3" style="background: #F9FAFB; font-weight: 600;">員工與編制</td></tr>
-    <tr><td>Q4</td><td>Winnie 轉主管後是否補正職？「同日最多 3 位休假」規則如何重新定義？</td><td>人力結構</td></tr>
-    <tr><td>Q5</td><td>PT 是否也登記固定休假日？</td><td>PT 管理</td></tr>
-    <tr><td>Q6</td><td>主管 40h 是硬性還是警戒？</td><td>主管使用</td></tr>
-
-    <tr><td colspan="3" style="background: #F9FAFB; font-weight: 600;">休假與工時</td></tr>
-    <tr><td>Q7</td><td>國假落在固定週休日，是否多補 1 天休假？</td><td>工時目標</td></tr>
-    <tr><td>Q8</td><td>休假表提交截止日？提交後可否修改？</td><td>月流程</td></tr>
-    <tr><td>Q9</td><td>跨月補時數觸發條件與上限？</td><td>工時補班</td></tr>
-    <tr><td>Q10</td><td>超過目標工時，下月能否反向少上？</td><td>工時補班</td></tr>
-    <tr><td>Q11</td><td>年假計算方式？每月可請幾天？</td><td>年假管理</td></tr>
-
-    <tr><td colspan="3" style="background: #F9FAFB; font-weight: 600;">排班規則</td></tr>
-    <tr><td>Q12</td><td>8h+10h 混排的連續天數怎麼算？</td><td>連續工作限制</td></tr>
-    <tr><td>Q13</td><td>是否禁止同日多班（split shift）？例外？</td><td>員工負荷</td></tr>
-    <tr><td>Q14</td><td>公平性「平均」的容許差距？</td><td>排班彈性</td></tr>
-    <tr><td>Q15</td><td>國假優先正職的真正理由是什麼？</td><td>排班邏輯</td></tr>
-    <tr><td>Q16</td><td>個人「不可上」是強制還是強烈偏好？</td><td>偏好處理</td></tr>
-    <tr><td>Q17</td><td>長班日要不要 10h 班版本？</td><td>班表設計</td></tr>
-
-    <tr><td colspan="3" style="background: #F9FAFB; font-weight: 600;">特殊情況</td></tr>
-    <tr><td>Q18</td><td>新人入職首週限制？</td><td>新人保護</td></tr>
-    <tr><td>Q19</td><td>週一遇國假是否補假？</td><td>休假配額</td></tr>
-    <tr><td>Q20</td><td>國假加給 vs. 補休是否讓員工選？</td><td>休假配額</td></tr>
-  </tbody>
-</table>
-
-<div class="footer">
-  公司排班規則 · 討論版 ｜ 內部溝通用
-</div>
+  <a class="doc-card" href="rules-v3.html">
+    <div class="status-row"><span class="icon">📜</span><span class="tag tag-current">現役</span></div>
+    <h3>排班規則 v3</h3>
+    <p>17 章節權威規則書：營業時間、班次、工時公式、國假補償、活動分級、休假管理、跨月補時數等。已取代「討論版 v1」與「規則 v2」。</p>
+    <div class="audience">👥 全員 · Winnie / Fish / 政道 / 員工</div>
+  </a>
 
 </div>
+
+<!-- ============ 待回覆 ============ -->
+<h2>待 Winnie 確認</h2>
+<div class="card-grid">
+
+  <a class="doc-card" href="ad-hoc-absence-questions.html">
+    <div class="status-row"><span class="icon">🟡</span><span class="tag tag-pending">待回覆</span></div>
+    <h3>臨時缺席與補時數 · 確認題</h3>
+    <p>4 題集中處理月中突發狀況：正職病假是否計入工時、臨時事假 SOP、補時數補不完怎辦、長期缺席薪資處理。</p>
+    <div class="audience">🎯 Winnie · 回覆後整合進規則 v4</div>
+  </a>
+
+</div>
+
+<!-- ============ Demo ============ -->
+<h2>UI Demo</h2>
+<div class="card-grid">
+
+  <a class="doc-card" href="demo/">
+    <div class="status-row"><span class="icon">🗓️</span><span class="tag tag-current">現役</span></div>
+    <h3>排班系統 UI Demo</h3>
+    <p>未來介面概念展示：員工版（個人班表）、全店版（時間軸 Gantt）、月度統計、搭班查詢。含 hash routing，可分享單一視圖 URL。</p>
+    <div class="audience">👥 全員預覽 · 含 4 月實際資料</div>
+  </a>
+
+</div>
+
+<!-- ============ 開發 ============ -->
+<h2>開發 / 設計文件</h2>
+<div class="card-grid">
+
+  <a class="doc-card" href="workflow-design.md">
+    <div class="status-row"><span class="icon">🏗️</span><span class="tag tag-spec">規格</span></div>
+    <h3>流程設計文件</h3>
+    <p>未來開發路線圖：現況痛點、Phase 1/2/3 演進、流程優化建議、開放問題、實作優先順序、資料流、附錄 A 進階管理工具設定（員工相容性等）。</p>
+    <div class="audience">🛠️ 開發者 · 新 session 起手必讀</div>
+  </a>
+
+  <a class="doc-card" href="https://github.com/terrelyeh/working-temp/tree/main/wanhua-scheduling">
+    <div class="status-row"><span class="icon">📦</span><span class="tag tag-spec">原始碼</span></div>
+    <h3>GitHub 原始碼</h3>
+    <p>所有文件、HTML、yaml 的源頭。Skill 程式碼在 <code>skill/wanhua-leave-validate/</code>（私人 repo，不在這個 Pages 專案）。</p>
+    <div class="audience">🛠️ 開發者</div>
+  </a>
+
+</div>
+
+<!-- ============ 歷史 ============ -->
+<h2>歷史紀錄（僅供參考）</h2>
+<div class="card-grid">
+
+  <a class="doc-card" href="winnie-checklist.html">
+    <div class="status-row"><span class="icon">📦</span><span class="tag tag-history">歷史</span></div>
+    <h3>Winnie 第一輪確認題</h3>
+    <p>系統設計初期問 Winnie 的題目（已大部分回覆完成）。當初為什麼這樣設計、問了什麼，可以看這裡。</p>
+    <div class="audience">📦 歷史 · 最新請看 rules-v3</div>
+  </a>
+
+</div>
+
+<footer>
+  萬華世界 © 2026 · 排班系統文件總覽 · 最後更新 2026-04-25
+</footer>
+
+</main>
+
 </body>
 </html>
