@@ -221,6 +221,70 @@
 - ✅ UI demo（員工 / 全店 / 月度統計 / 搭班查詢）：https://terrelyeh.github.io/working-temp/wanhua-scheduling/demo/
 - ✅ 給 Winnie 的確認題（臨時缺席）：https://terrelyeh.github.io/working-temp/wanhua-scheduling/ad-hoc-absence-questions.html
 
+## 附錄 A — 進階管理工具設定（主管私人功能，不在公開規則）
+
+這一節列出**僅主管可見、可選開啟**的進階功能。這些功能涉及敏感資訊或主觀判斷，
+**不寫進 `排班規則 v3` 公開文件**，避免員工誤解或猜測。
+
+### A.1 員工相容性管理（Phase 2–3 實作）
+
+**目的**：解決「特定員工同班導致工作氛圍不協調」的問題（例如兩位個性容易衝突的同事）。
+
+**設計原則**
+- **預設關閉**，主管要主動開啟
+- 資料極度敏感，**不公開、不上 GitHub Pages**
+- 員工看到的班表只有「結果」，不看到「原因」
+- 規則文件不提及此功能，僅在內部主管使用手冊出現
+
+**資料格式**（私人 config，gitignore）
+```yaml
+# config/compatibility.yaml
+incompatible_pairs:
+  - members: [外號A, 外號B]
+    severity: high           # high = 強烈避免；medium = 盡量避免
+    reason: "工作氛圍"        # 主管私人備註，不公開
+    expires: "2026-12-31"     # 可選過期日
+
+preferred_pairs:
+  - members: [外號C, 外號D]
+    severity: medium
+    reason: "默契好"
+```
+
+**運作模式（混合：Pre + Post）**
+
+1. **Pre-schedule 階段**：solver 加上**低權重**的 soft constraint
+   - 自然降低衝突機率
+   - 不影響排班可行性（極端缺人時仍可安排）
+2. **Post-schedule 階段**：產出檢查報告
+   ```
+   本月相容性檢查
+   ━━━━━━━━━━━━━━━━━━━━━━━━
+   ⚠️ 偵測到 1 對未避免的 incompatible 同班：
+      5/3 早班：A + B（high severity）
+        原因：長班日 PT 候選不足
+        建議：可手動把 A 改排 5/4 早班
+
+   ✅ 已自動避開 7 對其他衝突
+   ```
+3. Winnie 可逐項決定是否手動換班
+
+**進階設定面板**（未來 web 版的 UI）
+- [ ] 啟用員工相容性軟限制
+- [ ] 顯示報告中的 reason 欄位（個人筆記，僅自己看）
+- 嚴重度權重調整：high = N、medium = M
+- 換班時即時警告（避免員工 A→B 換班反而造成衝突）
+
+### A.2 其他未來進階功能（暫定）
+
+- **疲勞累積追蹤**：員工連續高強度週後自動降低排班強度
+- **節日後恢復期**：大型活動隔天降低工作量
+- **員工技能標記**：例如「會煮咖啡」「能獨立帶店」，特定班次需要相關技能
+
+這些都遵循同樣的設計原則：**主管功能、可選開啟、不公開規則**。
+
+---
+
 ## 9. 新 session 繼續的起手式
 
 若要在新 session 實作下一支 skill，建議開場：
