@@ -229,6 +229,29 @@
   </p>
 </div>
 
+<!-- ======== 班次代碼說明 ======== -->
+<div class="intro-card" style="background: #F0F9FF; border-color: #2563EB;">
+  <strong>📖 班次代碼說明</strong>
+  <p style="margin: 8px 0; font-size: 14px;">下面題目會出現這些代號，先對齊用詞避免誤會：</p>
+  <table>
+    <thead>
+      <tr><th>代碼</th><th>名稱</th><th>時段</th><th>時數</th><th>適用日</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>M8</code></td><td>早班</td><td>09:00–17:00</td><td>8h</td><td>全部日別</td></tr>
+      <tr><td><code>A8</code></td><td>午班</td><td>11:00–19:00</td><td>8h</td><td>全部日別</td></tr>
+      <tr><td><code>S2</code></td><td>支援班</td><td>17:00–19:00</td><td>2h</td><td>平日 / 週日</td></tr>
+      <tr><td><code>N75</code></td><td>晚班</td><td>17:00–次日 00:30</td><td>7.5h</td><td>長班日（週五、六）</td></tr>
+    </tbody>
+  </table>
+  <p style="margin: 10px 0 4px; font-size: 13px; color: var(--muted-foreground);">
+    <strong>命名邏輯</strong>：英文字母 = 開始時段（M=Morning 早 / A=Afternoon 午 / S=Support 支援 / N=Night 晚），數字 = 時數。例：<code>N75</code> = Night 晚班 7.5 小時。
+  </p>
+  <p style="margin: 4px 0; font-size: 13px; color: var(--muted-foreground);">
+    <strong>日別</strong>：平日（週二、三、四）／ 長班日（週五、六，含晚班到次日 00:30）／ 週日。
+  </p>
+</div>
+
 <div class="summary-bar">
   <div class="stat"><div class="num" style="color: var(--priority-high-fg);">3</div><div class="label">🔴 高優先</div></div>
   <div class="stat"><div class="num" style="color: var(--priority-mid-fg);">2</div><div class="label">🟡 中優先</div></div>
