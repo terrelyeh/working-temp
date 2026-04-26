@@ -1,6 +1,6 @@
 # CLAUDE.md — 萬華世界排班系統
 
-> Last updated: 2026-04-25
+> Last updated: 2026-04-26
 
 ## Project Overview
 
@@ -95,22 +95,23 @@ config/employees.yaml + config/rules.yaml          ← 靜態
 
 **Phase 1 = 演算法驗證**（只在我電腦上跑），**Phase 2 = 第一版交付**給團隊，預計 1 個月內。
 
-Phase 1 剩下：
-1. 根據 5月對比結果調整規則 — 詳見 `skill/wanhua-schedule/report/2026-05-comparison.md`
-   - S2 支援班可能要拿掉
-   - 活動 override 強化（允許平日加 N75、打破固定休）
-   - 「寧缺勿濫」flag（不強塞凱柏/莎賓）
+Phase 1 已完成。剩下要等 Winnie 回 6 題（線上：[may-solver-comparison-questions.html](https://terrelyeh.github.io/working-temp/wanhua-scheduling/may-solver-comparison-questions.html)），然後依答案調整 rules.yaml：
+- Q2 長班日 M8/A8 比例（規則 3+2 vs 實務 4+1）
+- Q3 S2 支援班是否拿掉
+- Q4-Q5 活動 override 處理（5/26 蛋頭 N75、5/11 Winnie 自上 A8）
 
-Phase 2（直接做，跳過 monthly-prep 和 publish）：
-2. 設計 DB schema (Supabase)
-3. Next.js + Supabase web app（主管後台 + 員工 PWA）
-4. Python solver service 部署 (Cloud Run)
+Phase 2（並行設計可開始）：
+1. 設計 DB schema（Supabase Postgres）
+2. Next.js + Supabase web app（主管後台拖拉 + 員工 PWA 查/填）
+3. Python solver service 包裝 schedule.py 邏輯，部署 Cloud Run
+4. Google Login + LINE 通知
 5. 串接、測試、Winnie 試用
 
 ### 仍 🟡 待 Winnie 拍板的規則
 
-- 正職病假（普通傷病、半薪）是否計入月工時達成（目前 skill 預設「計入」）
-- 第二輪 4 題（臨時缺席與補時數）— 不阻擋 Phase 2，可邊開發邊回覆
+- 正職病假是否計入月工時達成（目前 skill 預設「計入」）
+- 5 月 solver 對比 6 題（含病假、長班日比例、S2、活動例外）
+- 第二輪 4 題（臨時缺席與補時數）— 不阻擋 Phase 2 開發
 
 ## Deployment
 
@@ -153,16 +154,18 @@ git add -A && git commit -m "..." && git push origin main
 
 - **H4 staffing 必須是 soft**：用 slack variable + 高權重 penalty，不能 hard-equal。否則某天人手不足時整個 model infeasible
 - **連續工作天數 H2 暫時關掉**：單月內週一公休天然限制 ≤ 6 天，window-based 約束容易誤判（跨 Monday gap）。跨月時要重啟
-- **凱柏/莎賓沒交 form 視為整月可排**：因為 Winnie 缺班時會問凱柏，沒交不代表完全不能排。這 fallback 寫死在 `schedule.py`
+- **PT/外援沒交 form = 整月不可排**（不是 fallback 為「整月可排」！這曾是 bug）。Winnie 缺班會人工問凱柏，但那是事後決定、不是 solver 預設
+- **shift_prefs 兩階段求解**：Pass 1 把所有偏好（含 'prefer'）當 HARD constraint（直接 prune var）；INFEASIBLE 才自動降為 Pass 2 SOFT mode（penalty）。預設行為：完全尊重員工備註
 - **Symlinks 用 relative path**：`config/employees.yaml` symlink 從 `config/` 出發要 `../../wanhua-leave-validate/config/employees.yaml`（兩層 ../）
-- **5 月對比發現 Winnie 不排 S2**：規則跟實務有 gap，Phase 2 要重新檢視 staffing rules
+- **5 月對比發現 disconnects**：S2 完全不排、長班日 M8:4+A8:1 vs 規則 M8:3+A8:2、5/26 蛋頭 N75（活動例外）。已整理成 `may-solver-comparison-questions.html` 給 Winnie 確認
 
 ## 詳細文件
 
 - [docs/排班規則_v3.html](docs/排班規則_v3.html) — 17 章節權威規則書
 - [docs/workflow_design.md](docs/workflow_design.md) — 流程與架構設計（**新 session 必讀**；HTML 版同名）
 - [Winnie_待確認清單.html](Winnie_待確認清單.html) — 24 題完整 Q&A，業務邏輯詳細出處
-- [docs/問題_臨時缺席與補時數.html](docs/問題_臨時缺席與補時數.html) — 第二輪確認題
+- [docs/問題_臨時缺席與補時數.html](docs/問題_臨時缺席與補時數.html) — 第二輪確認題（4 題）
+- [docs/問題_5月solver對比.html](docs/問題_5月solver對比.html) — 第三輪確認題（6 題從 5 月 solver 對比發現）
 - [skill/wanhua-leave-validate/README.md](skill/wanhua-leave-validate/README.md) — leave validation skill
 - [skill/wanhua-schedule/README.md](skill/wanhua-schedule/README.md) — schedule solver skill
 - [skill/wanhua-schedule/report/2026-05-comparison.md](skill/wanhua-schedule/report/2026-05-comparison.md) — Solver vs Winnie 手排對比（重要：規則 vs 實務的 gap）

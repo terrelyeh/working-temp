@@ -22,10 +22,10 @@
 
 - **規則文件 v3** — 17 章節完整規則書，已整合 Winnie + Fish + 政道確認
 - **休假表驗證 skill**（`wanhua-leave-validate`）— 檢查月休假表 / PT 意願表
-- **排班 solver**（`wanhua-schedule`）— OR-Tools CP-SAT，2.5 秒跑出 OPTIMAL，5 月驗算工時對到 Winnie 確認的數字
-- **5 月對比報告** — 我的 solver 跟 Winnie 手排逐日對比，找出 5 個重要 disconnect
+- **排班 solver**（`wanhua-schedule`）— OR-Tools CP-SAT，2 秒跑出 OPTIMAL；兩階段求解：Pass 1 完全尊重員工偏好（HARD constraint），INFEASIBLE 才降為 Pass 2 加 penalty
+- **5 月對比報告** — 跟 Winnie 手排逐日比對，找出 5 個 disconnect 整理成確認題
 - **排班 UI demo** — 員工版、全店時間軸（Gantt）、月度統計、搭班查詢
-- **Winnie Q&A 完整紀錄** — 第一輪 24 題已全數回覆
+- **Winnie Q&A 紀錄** — 第一輪 24 題已全數回覆 + 第二輪 4 題 + 第三輪 6 題待回
 
 ### 🔜 Phase 2（1 個月內，給團隊用的第一版）
 
