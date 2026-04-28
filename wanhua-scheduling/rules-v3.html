@@ -364,7 +364,7 @@
   <main>
 
     <h1>排班規則 v4.2</h1>
-    <p class="page-lead">整合 Winnie 4/28 全套回覆 + 從 4-5 月實際班表 reverse-engineer 校準後的權威規則 · 供內部團隊審閱</p>
+    <p class="page-lead">整合 Winnie 4/28 全套回覆 + 從 4-5 月實際班表反推校準後的權威規則 · 供內部團隊審閱</p>
     <p class="page-lead" style="font-size: 13px; color: var(--muted-foreground);">v3 (2026-04-24) → v4.0 全面校準 → v4.1 微調 → v4.2 (2026-04-29) 修正長班日 N75 為 4 人。詳見頁尾 changelog。</p>
 
     <details class="mobile-toc">
@@ -417,7 +417,7 @@
         </tbody>
       </table>
       <div class="info">
-        <strong>例外營業</strong>（拍攝包場 / 大型活動等）可由主管在月行事曆寫 <code>day_overrides[date].open: true</code> 覆寫週一公休（例：5/11 拍攝包場 Winnie 自上 12h）。
+        <strong>例外營業</strong>（拍攝包場 / 大型活動等）由主管在月排班時直接標註該週一例外開店，並指定誰來顧店、上多少小時。例：5/11 因拍攝包場由 Winnie 自上 12 小時。
       </div>
     </section>
 
@@ -425,8 +425,8 @@
     <section class="section" id="sec2">
       <h2><span class="sec-num">02</span>班次定義</h2>
       <p class="section-lead">
-        排班系統的班次模型本質是 <strong>(起始時間, 時長)</strong> 的 tuple，下表的代碼只是預設標籤。
-        實際上每個月的班次組合 = <em>每週 staffing 模板</em> × <em>班次模板</em> + <em>當月 day_overrides 覆寫</em>。
+        班次本質是「<strong>幾點開始 + 上幾小時</strong>」的組合，下表的代碼只是常用班次的速寫名稱。
+        每個月實際出現的班次組合 = <em>該週幾的標準配置</em> + <em>當月遇到的特殊調整</em>（活動、半天營業、拍攝包場等）。
         時數以<strong>名目時數</strong>計（<code>M8</code> = 8 小時），<strong>已包含約 30 分鐘用餐休息</strong>，
         實際是否休息視當天忙碌程度。
       </p>
@@ -442,11 +442,11 @@
       <div class="info">
         <strong>v4 重點變更</strong>：
         <ul>
-          <li><strong>S2 不再列入預設 staffing</strong>（Winnie 4/28 確認為 optional）</li>
-          <li><strong>10h 班整套移除</strong>（Winnie：「現在沒在排了」）</li>
-          <li>原 v3 說的「<code>A8 11:00–19:00</code>」校準後正確（無 15:00 起的午班）</li>
-          <li>個案非標準班（5/9 子寧 6.5h@18、5/11 Winnie 12h@10）由 <code>day_overrides.custom_shifts</code> 處理，不寫進預設</li>
-          <li>正職 <strong>0.5h 微調</strong>機制：solver 結果若超目標 0.5h 自動將最後 M8 縮為 7.5h（5/26 蛋頭、5/28 思坦案例）</li>
+          <li><strong>支援班 (S2) 不再列入每日標準配置</strong>，只在搭新人或收班正職有外務時手動安排（Winnie 4/28 確認）</li>
+          <li><strong>10 小時班整套移除</strong>（Winnie：「現在沒在排了」）</li>
+          <li>「午班 11:00–19:00」校準後正確（沒有 15:00 才開始的午班）</li>
+          <li>個案非標準班（如 5/9 子寧晚 1 小時到、5/11 Winnie 拍攝包場 12 小時顧店）視為單日特例，不寫進每日標準配置</li>
+          <li><strong>正職工時微調</strong>機制：自動排班結果若比目標多 0.5 小時，會把最後一個早班從 8 小時縮為 7.5 小時，讓工時剛好對齊（5/26 蛋頭、5/28 思坦案例）</li>
         </ul>
       </div>
     </section>
@@ -476,16 +476,8 @@
       <h3>3.1 新人 / 教學班</h3>
       <p>
         新進外援的前幾班屬於「<strong>教學班</strong>」——讓新人試著上班幾次，確認他可以勝任、且願意未來再來。
-        教學班<strong>沒有特殊規則</strong>，只是個備註。新人通常還不會收到排班的調查表，所以教學班一定是<strong>主管手動安排</strong>。
+        教學班<strong>沒有特殊規則</strong>，只是個備註。新人通常還不會收到排班意願表，所以教學班一定是<strong>主管手動安排</strong>，由 Winnie 直接指定哪幾天上什麼班。
       </p>
-      <div class="info">
-        <strong>系統處理方式</strong>：
-        <ul>
-          <li>員工檔加 <code>note: "新人 / 教學班"</code> 欄位（如 PYY 5/6 起）</li>
-          <li>月行事曆 <code>pre_assignments</code> 區段由主管直接指派班次（員工、日期、班別）</li>
-          <li>solver 會跳過「沒交 form 整月不可排」的限制並強制排上 pre_assignments 列出的班次</li>
-        </ul>
-      </div>
     </section>
 
     <!-- ========== 4 ========== -->
@@ -544,16 +536,16 @@
     <section class="section" id="sec6">
       <h2><span class="sec-num">06</span>每日班次配置</h2>
       <p class="section-lead">
-        v4 從原本「平日 / 長班日 / 週日」三組改為<strong>每週幾獨立</strong>的 staffing 設定，因為週二有特殊 pattern（清冰箱 + 進貨集中）。
-        每日的真正配置 = <strong>baseline（下表）</strong> + <strong>當月 day_overrides 覆寫</strong>。
-        舉例：5/23 因宜蘭開幕人力被抽調 → day_overrides 覆寫成「半天營業 18:00 打烊 + M8:2 + A8:3」。
+        v4 從原本「平日 / 長班日 / 週日」三組改為<strong>每週幾獨立的人力配置</strong>，因為週二有特殊狀況（清冰箱 + 進貨集中）。
+        每日的真正配置 = <strong>下方表格的標準人力</strong> + <strong>當月遇到的特殊調整</strong>（半天營業、活動加人等）。
+        舉例：5/23 因宜蘭開幕、人力被抽調，當天改半天營業 18:00 打烊、人力縮編為早 2 + 午 3、不開晚班。
       </p>
 
-      <h3>6.1 每週 baseline（v4.2 從 4-5 月實際班表 reverse-engineer）</h3>
+      <h3>6.1 每週標準人力配置（v4.2 從 4-5 月實際班表校準）</h3>
       <table>
         <thead><tr><th>週幾</th><th>早班 M8</th><th>午班 A8</th><th>晚班 N75</th><th>總人</th><th>備註</th></tr></thead>
         <tbody>
-          <tr><td>週一</td><td colspan="3" style="text-align:center; color: var(--muted-foreground);">公休（<code>day_overrides.open=true</code> 可覆寫）</td><td>—</td><td></td></tr>
+          <tr><td>週一</td><td colspan="3" style="text-align:center; color: var(--muted-foreground);">公休（遇拍攝包場等特殊狀況可由主管例外開店）</td><td>—</td><td></td></tr>
           <tr><td>週二</td><td>3（含 1 正職）</td><td>2</td><td>—</td><td>5</td><td><strong>新試行</strong>：清冰箱 + 進貨多在週二</td></tr>
           <tr><td>週三</td><td>2（含 1 正職）</td><td>2</td><td>—</td><td>4</td><td>遇教學班可臨時調 3</td></tr>
           <tr><td>週四</td><td>2（含 1 正職）</td><td>2</td><td>—</td><td>4</td><td>遇教學班可臨時調 3</td></tr>
@@ -563,7 +555,7 @@
         </tbody>
       </table>
 
-      <h3>6.2 6 月起試行（待確認後切換 baseline）</h3>
+      <h3>6.2 6 月起試行（待確認後切換為標準配置）</h3>
       <p>
         Winnie 4/28：「有同事回饋週五六晚上的客流比早班少」→ 6 月試行<strong>長班日改為 4+2+3</strong>（午班 +1、晚班 −1）：
       </p>
@@ -575,22 +567,25 @@
         </tbody>
       </table>
       <div class="pending">
-        試行 1–2 個月後評估是否切為新 baseline。其餘週幾不變。
+        試行 1–2 個月後評估是否切為新的標準配置。其餘週幾不變。
       </div>
 
-      <h3>6.3 國假 staffing</h3>
-      <div class="info">套用當天 weekday baseline + <strong>至少 1 位正職</strong>。國假落週一 → 全店公休。</div>
+      <h3>6.3 國假人力配置</h3>
+      <div class="info">套用當天的標準人力 + <strong>至少 1 位正職</strong>。國假落週一 → 全店公休、多放一天假。</div>
 
-      <h3>6.4 day_overrides 機制</h3>
+      <h3>6.4 單日特殊調整</h3>
       <p>
-        當月特殊狀況（半天營業、活動加人、拍攝包場…）由月行事曆的 <code>day_overrides[YYYY-MM-DD]</code> 區段處理。Override 採<strong>完全取代</strong>策略——若有 override，當日 staffing 整個用 override 寫的，不混搭 baseline：
+        當月遇到特殊狀況時，主管可為單一日子做以下調整。一旦設定特殊調整，該日就<strong>完全用調整後的設定</strong>，不再套用該週幾的標準配置：
       </p>
-      <ul>
-        <li><code>open: true / false</code> 覆寫週一公休或非週一停業</li>
-        <li><code>closing_time</code> 覆寫當日打烊時間（5/23 半天案例）</li>
-        <li><code>staffing</code> 覆寫該日 M8/A8/N75 人數</li>
-        <li><code>custom_shifts</code> 完全取代 staffing，列出特定員工 + 起訖時間（5/11 Winnie 12h@10:00）</li>
-      </ul>
+      <table>
+        <thead><tr><th>狀況</th><th>調整內容</th><th>5 月案例</th></tr></thead>
+        <tbody>
+          <tr><td>例外開店 / 例外停業</td><td>覆寫該日是否營業</td><td>5/11 拍攝包場 → 週一例外開店</td></tr>
+          <tr><td>縮短營業時間</td><td>指定當日打烊時間</td><td>5/23 → 18:00 打烊（宜蘭開幕人力抽調）</td></tr>
+          <tr><td>調整人力配置</td><td>覆寫該日各班次人數</td><td>5/23 → 早 2 + 午 3（不開晚班）</td></tr>
+          <tr><td>非標準班次</td><td>指定特定員工的非常規上下班時間</td><td>5/11 → Winnie 10:00–22:00 共 12h 顧店</td></tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- ========== 7 ========== -->
@@ -813,16 +808,11 @@
     level: event_light
     assigned_to: [思坦]          # 思坦必排這天
 
-  - date: "2026-05-26"
-    name: 新富有樂市
-    level: event_heavy
-    staffing_override: { M8: +1 } # 早班多 1 人
-
   - date: "2026-05-18"
     name: 快閃大廚：蛋頭賣麵
     level: event_heavy
     assigned_to: [蛋頭]
-    staffing_override: { M8: +1 }</div>
+    staffing_override: { M8: +1 } # 早班多 1 人</div>
 
       <h3>14.3 事前 vs 事後調整</h3>
       <table>
@@ -910,45 +900,43 @@
       </ol>
     </section>
 
-    <!-- ========== 18 v4 機制概覽 ========== -->
+    <!-- ========== 18 系統如何處理特殊狀況 ========== -->
     <section class="section" id="sec18">
-      <h2><span class="sec-num">18</span>v4 系統機制概覽</h2>
+      <h2><span class="sec-num">18</span>系統如何處理特殊狀況</h2>
       <p class="section-lead">
-        v4 引入三個機制處理「規則無法用單一 baseline 涵蓋的個別狀況」。這些機制不改變業務規則，只是把<strong>規則的特例</strong>有結構地存進月行事曆。
+        現實中常有「規則沒涵蓋的特殊狀況」，例如員工晚交意願表、新人教學班、活動加人等。系統用三種方式處理，
+        共同原則是：<strong>規則本身不動，特殊情況用個案紀錄補上去</strong>。
       </p>
 
-      <h3>18.1 day_overrides — 單日特殊安排</h3>
-      <p>用於：半天營業、拍攝包場、活動 staffing override、週一例外開店等。寫在 <code>data/YYYY-MM/calendar.yaml</code>。</p>
-      <table>
-        <thead><tr><th>欄位</th><th>用途</th><th>範例</th></tr></thead>
-        <tbody>
-          <tr><td><code>open</code></td><td>覆寫該日開 / 關店</td><td>5/11 拍攝包場 → <code>open: true</code></td></tr>
-          <tr><td><code>closing_time</code></td><td>覆寫打烊時間</td><td>5/23 → <code>closing_time: "18:00"</code></td></tr>
-          <tr><td><code>staffing</code></td><td>取代 baseline 人數</td><td>5/23 → <code>{M8: 2, A8: 3}</code></td></tr>
-          <tr><td><code>custom_shifts</code></td><td>非標準班次（含起訖時間 + 指派人）</td><td>5/11 → Winnie 10:00–22:00 12h</td></tr>
-        </tbody>
-      </table>
+      <h3>18.1 單日特殊安排</h3>
+      <p>
+        針對<strong>當月某一天</strong>的特殊狀況，主管可指定：例外開店 / 縮短營業時間 / 改變人力配置 / 非標準班次。
+        詳見 §6.4 表格。<br>
+        典型用途：半天營業、拍攝包場、活動加人。
+      </p>
 
-      <h3>18.2 pre_assignments — 主管硬指派</h3>
-      <p>用於：教學班（新人）、特殊情況的主管直接指派。Solver 不會推翻這些指派。</p>
-      <div class="formula">pre_assignments:
-  - employee: PYY
-    date: 2026-05-06
-    shift: A8
-    note: "教學班 day 1"</div>
+      <h3>18.2 主管手動指派（教學班 / 硬指派）</h3>
+      <p>
+        某些班次主管會<strong>直接指定誰來上</strong>，自動排班不能推翻。最常見就是教學班——新人通常還不會收到意願表，
+        由 Winnie 直接指定 PYY 5/6, 5/7, 5/8 各上一個午班。<br>
+        典型用途：新人教學、特殊情況的主管直接指派。
+      </p>
 
-      <h3>18.3 post_form_updates — Form 截止後補登</h3>
-      <p>用於：員工晚交 form、form 截止後的個別調整（換班 / 加特休 / 修偏好）。</p>
+      <h3>18.3 意願表截止後的補登</h3>
+      <p>
+        意願表截止後，仍可能有員工<strong>追加修改</strong>（要請特休、改偏好、晚交意願表等）。這些都會被記錄下來，
+        排班時自動套用，並保留異動紀錄方便事後追溯。
+      </p>
       <table>
-        <thead><tr><th>type</th><th>作用</th><th>範例</th></tr></thead>
+        <thead><tr><th>狀況</th><th>系統處理</th><th>5 月案例</th></tr></thead>
         <tbody>
-          <tr><td><code>shift_preference</code></td><td>加單日偏好</td><td>5/2 佳佳 → 只能早班</td></tr>
-          <tr><td><code>leave</code></td><td>加休假日</td><td>5/6 超威 → 用特休</td></tr>
-          <tr><td><code>late_form_submission</code></td><td>整套補交 form 內容</td><td>莎賓 8 個可排日 + N75 偏好</td></tr>
+          <tr><td>追加單日偏好</td><td>合併進該員工的偏好設定</td><td>5/2 佳佳 → 只能早班</td></tr>
+          <tr><td>追加休假 / 特休</td><td>加進該員工的休假日清單</td><td>5/6 超威 → 用特休</td></tr>
+          <tr><td>晚交意願表</td><td>視同正常意願表處理</td><td>莎賓晚交 8 個可排日 + 偏好</td></tr>
         </tbody>
       </table>
       <div class="info">
-        Phase 2 web app 上線後，<code>post_form_updates</code> 會變成 form 截止後的 audit log；此處先用 yaml 暫存。
+        這些異動目前由開發者在月行事曆檔案手動登記；未來 Phase 2 web app 上線後，員工可直接在系統裡操作，所有異動會自動有紀錄。
       </div>
     </section>
 
@@ -958,7 +946,7 @@
         <li><strong>v4.2（2026-04-29）</strong> Solver 5月實測通過 + Winnie review 微調
           <ul>
             <li>長班日 N75 由 3 修正為 4（5月 baseline 應為 4，6月起試行降為 3）</li>
-            <li>新增 §18 v4 系統機制章節（day_overrides / pre_assignments / post_form_updates）</li>
+            <li>新增 §18「系統如何處理特殊狀況」章節（單日特殊安排 / 主管手動指派 / 意願表截止後補登）</li>
             <li>§3 加教學班 / 新人說明（PYY 案例）</li>
           </ul>
         </li>
