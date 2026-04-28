@@ -149,6 +149,30 @@
     font-size: 13px; color: var(--foreground); line-height: 1.7;
   }
 
+  .answer-given {
+    background: #F0FDF4; border-left: 4px solid var(--priority-low-fg);
+    border-radius: 0 8px 8px 0; padding: 14px 16px 14px 18px;
+    margin-top: 14px; font-size: 14px; color: var(--foreground);
+    line-height: 1.7; white-space: pre-wrap;
+  }
+  .answer-given::before {
+    content: "✅ Winnie 回覆";
+    display: inline-block; margin-right: 8px;
+    font-weight: 600; color: var(--priority-low-fg);
+    font-size: 13px;
+  }
+  .answer-given .followup {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px dashed #D1FAE5;
+    font-size: 13px; color: var(--muted-foreground); font-style: italic;
+  }
+  .answer-given .followup::before { content: "→ "; font-weight: 600; }
+  .status-banner {
+    background: #F0FDF4; border: 1px solid #86EFAC;
+    border-radius: 10px; padding: 14px 18px; margin: 16px 0 24px;
+    font-size: 14px; color: #166534;
+  }
+  .status-banner strong { color: #14532D; }
   .answer-box {
     background: #FFFBEB; border: 1px dashed var(--priority-mid-fg);
     border-radius: 8px; padding: 12px 16px; margin-top: 12px;
@@ -204,9 +228,13 @@
 
 <main>
 
-<h1>🟡 給 Winnie 的確認題</h1>
+<h1>✅ Winnie 已回覆 — 臨時缺席與補時數</h1>
 <p class="page-lead">臨時缺席、病假處理、以及補時數的邊界規則</p>
-<div class="page-meta">產出日期：2026-04-24 ｜ 回覆後會整合進《排班規則 v4》</div>
+<div class="page-meta">產出日期：2026-04-24 ｜ 回覆日期：2026-04-28 ｜ 規則已整合進 v4.2</div>
+
+<div class="status-banner">
+  <strong>狀態：4 題全部回覆。</strong>Q1 / Q2（病假 + 事假 SOP）已寫進 rules.yaml；Q3 / Q4（大量短缺、長期缺席）為極端案例，Winnie 註明需與政道+Fish 進一步討論，已記在 roadmap 的「待 Winnie 拍板」清單。
+</div>
 
 <div class="intro-card">
   <strong>為什麼需要這份確認？</strong>
@@ -256,7 +284,18 @@
     ✏️ 若選 <strong>B</strong>：蛋頭原排班目標 134h、病假 16h，實排僅 118h，不足 16h 次月多排補回。<br>
     ✏️ 若選 <strong>A</strong>：134h 目標不變，病假時數算在達成內，不用補。
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given"><strong>📍 正職臨時請病假</strong>
+前一晚告知病假，先問同事們能否代班；若無人代班，由我和 Fish 下去頂班。當天上班前告知病假，由我和 Fish 直接下去頂班。
+
+請病假的同仁，會優先安排代班者其他上班日是否能換班；若無法換班，會先詢問是否要先用特休年假（因不會扣薪）；若特休年假也都用完，才會再安排下個月補時數。
+
+也就是正職臨時請病假，處理方式為：
+跟其他人換班（包含 Winnie 和 Fish）→ 使用特休年假 → 下個月補時數。
+
+選 <strong>(a) 計入達成</strong>。
+
+<strong>📍 PT 和外援臨時請病假</strong>
+同上代班順序。若無法換班，會確認目標工時是否有達（PT 56 小時、外援 32 小時），若有到目標工時，當作少上一天班；目前沒有討論過 PT 或外援若臨時請病假、且未達目標工時的處置，需再與政道和 Fish 討論。<div class="followup">病假計入工時達成已寫進 rules.yaml v4.2；PT/外援未達工時 + 病假的 edge case 列入 roadmap 待討論清單。</div></div>
 </div>
 
 <div class="question p-high">
@@ -279,7 +318,7 @@
       <li><strong>短少時數</strong>：如 Q1 一樣走 §12 carryover，次月補回？</li>
     </ul>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">同病假邏輯；基本上我們會以「<strong>不扣薪</strong>」做方案的討論和處理。<div class="followup">事假處理對齊 Q1 病假流程：找代班 → 特休 → 下月補時數，避免扣薪。</div></div>
 </div>
 
 <!-- ============ Q3 ============ -->
@@ -308,7 +347,9 @@
     ✏️ 實務上 C 最彈性但系統難自動化；A 最直覺但可能拖太久。
     建議先用 C（skill 提醒、由人決定），之後累積案例再改成規則。
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">若使用特休年假、次月補時數，還是有大量短缺的時數無法消化完，我認為這是特殊情況，會先理解是當事人發生什麼狀況。
+
+目前主管群沒有討論過這個情境，需再與政道和 Fish 討論（我個人意見：因病假緣故，超過 2 天以上～30 天內無法上班，照勞基法給半薪，超過 30 天則啟動留職停薪；若因事假/旅遊規劃，可啟動留職停薪一個月，若超過 2 個月以上，則建議先辦離職申請，之後若要復職，先安排作為外援身份，再進行評估）。<div class="followup">屬極端情境，採選項 C（個案協商）；具體閾值待主管群討論後再定。</div></div>
 </div>
 
 <!-- ============ Q4 ============ -->
@@ -335,7 +376,7 @@
   <div class="q-example">
     ✏️ 這題很少發生，可以先擱著、出事時再個案處理。但系統仍需要有「長期缺席」的標記欄位供 solver 讀取。
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">同上題，由於目前主管群沒有討論過這個情境，需再與政道和 Fish 討論（我個人意見：因病假緣故，超過 2 天以上～30 天內無法上班，照勞基法給半薪，超過 30 天則啟動留職停薪）。<div class="followup">屬極端情境，目前先擱置；schema 仍預留長期缺席標記欄位以便未來實作。</div></div>
 </div>
 
 <!-- ============ 附錄 ============ -->

@@ -154,6 +154,32 @@
     border-radius: 8px; padding: 12px 16px; margin-top: 12px;
     font-size: 14px; color: var(--priority-mid-fg); font-style: italic;
   }
+  .answer-given {
+    background: #F0FDF4; border-left: 4px solid var(--priority-low-fg);
+    border-radius: 0 8px 8px 0; padding: 14px 16px 14px 18px;
+    margin-top: 14px; font-size: 14px; color: var(--foreground);
+    line-height: 1.7; white-space: pre-wrap;
+  }
+  .answer-given::before {
+    content: "✅ Winnie 回覆";
+    display: inline-block; margin-right: 8px;
+    font-weight: 600; color: var(--priority-low-fg);
+    font-size: 13px;
+  }
+  .answer-given .followup {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px dashed #D1FAE5;
+    font-size: 13px; color: var(--muted-foreground); font-style: italic;
+  }
+  .answer-given .followup::before {
+    content: "→ "; font-weight: 600;
+  }
+  .status-banner {
+    background: #F0FDF4; border: 1px solid #86EFAC;
+    border-radius: 10px; padding: 14px 18px; margin: 16px 0 24px;
+    font-size: 14px; color: #166534;
+  }
+  .status-banner strong { color: #14532D; }
 
   code {
     background: var(--muted); padding: 2px 7px; border-radius: 4px;
@@ -215,9 +241,13 @@
 
 <main>
 
-<h1>🟡 給 Winnie 的確認題</h1>
-<p class="page-lead">5 月排班用自動演算法（OR-Tools solver）跑了一次，跟你手排對比後找到 5 個需要釐清的點</p>
-<div class="page-meta">產出日期：2026-04-26 ｜ 回覆後會調整 solver 規則</div>
+<h1>✅ Winnie 已回覆 — 5 月 Solver 對比</h1>
+<p class="page-lead">5 月排班用自動演算法（OR-Tools solver）跑了一次，跟手排對比後找到 5 個需要釐清的點，Winnie 4/28 全部回覆。</p>
+<div class="page-meta">產出日期：2026-04-26 ｜ 回覆日期：2026-04-28 ｜ 規則已更新至 v4.2</div>
+
+<div class="status-banner">
+  <strong>狀態：已全部回覆，規則已落地。</strong> 所有答覆已整合進 <a href="rules-v3.html">排班規則 v4.2</a> + solver；5 月 solver 重跑結果跟手排 16/27 天完全相符（剩餘差距全為「主管下海補班」或「個案非標準班」，非 bug）。詳見 <code>skill/wanhua-schedule/report/2026-05-comparison.md</code>。
+</div>
 
 <div class="intro-card">
   <strong>背景</strong>：第一支「自動排班 solver」已完成，用 5 月實際資料跑了一次（含三位正職的休假表 + 8 位 PT/外援的可排日表）。
@@ -255,7 +285,7 @@
 <div class="summary-bar">
   <div class="stat"><div class="num" style="color: var(--priority-high-fg);">3</div><div class="label">🔴 高優先</div></div>
   <div class="stat"><div class="num" style="color: var(--priority-mid-fg);">2</div><div class="label">🟡 中優先</div></div>
-  <div class="stat"><div class="num" style="color: var(--priority-low-fg);">1</div><div class="label">🟢 之前殘留</div></div>
+  <div class="stat"><div class="num" style="color: var(--priority-low-fg);">2</div><div class="label">🟢 補充 / 殘留</div></div>
 </div>
 
 <!-- ======== Q1 ======== -->
@@ -283,7 +313,10 @@
       <li><strong>(c)</strong> 月中會用群組徵班、Winnie/Fish 下排補上</li>
     </ul>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">5/8（週五長班日）→ <strong>(c)</strong> 給班人力不足（我與 Fish 排休），還需要再問同事能否給班。
+5/16（週六長班日）→ <strong>(a)</strong> 莎賓給班後已補滿。
+5/23（週六長班日）→ 因為宜蘭開幕，部分同事要去宜蘭，跟政道和 Fish 討論後，5/23 酒場改為營業半天（18:00 打烊）。
+5/29（週五）+ 5/30（週六）→ <strong>(a)</strong> 給班人力不足，我跟 Fish 下去排班。<div class="followup">5/23 半天營業已寫進 calendar.yaml 的 day_overrides；其餘缺口透過主管下海處理。</div></div>
 </div>
 
 <div class="question p-high">
@@ -310,7 +343,9 @@
     </ul>
     <p style="font-size: 13px; margin-top: 8px;"><strong>差別</strong>：09:00 開店初期人力是 3 人（規則）vs 4 人（你實務）。如果是後者，演算法應該要排 4 人到早班。</p>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">週五六因為客流量大，故早班改為排 4 人上班、午班 1 人、晚班 4 人。
+
+不過有同事回饋週五六晚上的客流比早班少，我應該會排在 6 月份試行看看：早班 4 人、午班 2 人、晚班 3 人。<div class="followup">5 月 baseline 改為 M8:4 + A8:1 + N75:4；6 月起切換至 M8:4 + A8:2 + N75:3（記在 weekday_staffing_proposed_2026_06）。</div></div>
 </div>
 
 <div class="question p-high">
@@ -334,7 +369,7 @@
       <li><strong>(c)</strong> 還會排，5 月剛好都沒排 → 規則保留</li>
     </ul>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given"><strong>(b) 偶爾才排</strong>：視情況安排 2H 支援班，例如搭配新人或是當天收班的正職有額外任務需要外出或是會議等等。<div class="followup">S2 從預設 staffing 拿掉，仍保留 shift_template 供主管手動安排。</div></div>
 </div>
 
 <!-- ======== Q4-Q5 ======== -->
@@ -361,7 +396,9 @@
     </ul>
     <p style="font-size: 13px; margin-top: 8px;">影響：演算法是否該允許「活動日 = 加非標準班 + 排到固定休的人」？</p>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given"><strong>更正：5/26 沒有新富有樂市，蛋頭我是排早班</strong>（不是 N75 晚班）。
+
+目前試行看看週二早班排 3 人、午班排 2 人，主要是因為星期二早上會需要清潔已經除霜的冰箱，還有比較多的送貨也是安排在週二。<div class="followup">原問題基於我（Claude）讀錯 xlsx 欄位的誤判；實際是早班 7.5h 不是 N75。週二新 staffing pattern (3+2) 已寫進 weekday_staffing.Tue。</div></div>
 </div>
 
 <div class="question p-mid">
@@ -383,7 +420,7 @@
     </ul>
     <p style="font-size: 13px; margin-top: 8px;">影響：演算法該不該允許週一在某些活動日排班？</p>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given"><strong>(a)</strong> 因為 5/11 當天有接一組拍攝，故我排我自己去顧店。<div class="followup">週一公休維持 hard rule；個別例外用 calendar.yaml 的 day_overrides 處理（含 open: true + custom_shifts）。</div></div>
 </div>
 
 <!-- ======== Q6 ======== -->
@@ -406,13 +443,33 @@
       <li><strong>(c)</strong> 部分計入 — 以給薪比例為準（病假半薪 → 計入 50%）</li>
     </ul>
   </div>
-  <div class="answer-box">回覆：_____________________</div>
+  <div class="answer-given">正職臨時請病假，處理方式為：跟其他人換班（其他人包含 Winnie 和 Fish）→ 使用特休年假 → 下個月補時數。
+
+故仍為維持 <strong>(a) 時數計入</strong>。<div class="followup">病假計入工時達成已寫進 rules.yaml v4.2 的 special_leaves 區塊。</div></div>
+</div>
+
+<!-- ======== Bonus：對比過程中冒出來的新概念 ======== -->
+<h2>D. 對比過程中發現的新概念（4/28 補充）</h2>
+
+<div class="question p-low">
+  <div class="q-head">
+    <span class="q-num">D1</span>
+    <span class="q-title">新人 / 教學班</span>
+    <span class="q-priority">🟢 系統概念</span>
+  </div>
+  <div class="q-context">
+    重整 5 月排班資料時發現有一位 <strong>PYY</strong> 出現在 5/6, 5/7, 5/8 各一個 8h 午班，但她不在原本員工試算表上。
+    Winnie 說明：「新來的我們都會叫<strong>教學班</strong>，讓他先試著上班幾次，確保他是可以勝任而且是願意未來再來的。」
+  </div>
+  <div class="answer-given"><strong>教學班只是一個備註</strong>，意思是「這位來上班的同仁是新人」，沒有什麼特殊的規則。
+
+新人可能還不會收到排班的調查表，所以教學班一定是 Winnie 手動安排。<div class="followup">系統處理：employees.yaml 加 note 欄位（如「新人 / 教學班」）；calendar.yaml 加 pre_assignments 區塊讓 Winnie 手動指派新人特定班別，solver 會跳過「沒交 form 整月不可排」的限制並強制排上。已在 5 月 calendar 套用：PYY 5/6, 5/7, 5/8 各 1 個 A8。</div></div>
 </div>
 
 </main>
 
 <footer>
-  <div>回覆後請傳給 Terrel ｜ <a href="rules-v3.html">← 排班規則 v3</a> ｜ <a href="ad-hoc-absence-questions.html">第二輪確認題</a></div>
+  <div>已全部回覆 ｜ 文件 hub ↑ <a href="index.html">回首頁</a> ｜ <a href="rules-v3.html">排班規則 v4.2</a> ｜ <a href="ad-hoc-absence-questions.html">臨時缺席與補時數</a></div>
 </footer>
 
 </body>
