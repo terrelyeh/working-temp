@@ -445,7 +445,7 @@
           <li><strong>支援班 (S2) 不再列入每日標準配置</strong>，只在搭新人或收班正職有外務時手動安排（Winnie 4/28 確認）</li>
           <li><strong>10 小時班整套移除</strong>（Winnie：「現在沒在排了」）</li>
           <li>「午班 11:00–19:00」校準後正確（沒有 15:00 才開始的午班）</li>
-          <li>個案非標準班（如 5/9 子寧晚 1 小時到、5/11 Winnie 拍攝包場 12 小時顧店）視為單日特例，不寫進每日標準配置</li>
+          <li>個案非標準班（如 5/9 子寧晚 1 小時到、5/11 Winnie 拍攝包場 12 小時顧店）視為單日特例，不寫進每日標準配置。<strong>晚到 / 早走 / 加班</strong>這類單日工時微調，主管可在「排班管理」點該班直接調整當日上 / 下班時間（30 分為單位、可增可減），工時自動重算並反映到員工班表與工時統計</li>
           <li><strong>正職工時微調</strong>機制：自動排班結果若比目標多 0.5 小時，會把最後一個早班從 8 小時縮為 7.5 小時，讓工時剛好對齊（5/26 蛋頭、5/28 思坦案例）</li>
         </ul>
       </div>
@@ -484,7 +484,7 @@
     <section class="section" id="sec4">
       <h2><span class="sec-num">04</span>正職工時計算</h2>
       <p class="section-lead">
-        正職是月薪制，每月的目標工時不是固定值，而是依<strong>當月總天數、每人固定週休、特殊協議、國假與會議</strong>計算。
+        正職是月薪制，每月的目標工時不是固定值，而是依<strong>當月總天數、每人週休天數、特殊協議、國假與會議</strong>計算。
         公式把這幾項先扣除得出「月工時總額」，再把當月實際使用的特休與會議時數扣掉，就是真正要 solver 排進班表的「<strong>排班目標工時</strong>」。
       </p>
 
@@ -495,13 +495,17 @@
 
 會議時數     = 2h（每月第一個週二店務例會，固定每位正職）</div>
 
+      <div class="info">
+        <strong>週休天數模型</strong>：每位正職固定「<strong>週休 N 日／週（含週一公休）</strong>」。週一全店公休是固定的；其餘休假日由員工每月在休假表<strong>自選</strong>湊滿天數 —— <strong>不再指定固定休哪幾個星期幾</strong>。N 因人而異（如超威 2 日、思坦／蛋頭 3 日）。公式中的「固定週休天數」即為此 N 乘上當月週數。
+      </div>
+
       <h3>2026 年 5 月實算範例</h3>
       <table>
-        <thead><tr><th>正職</th><th>固定週休</th><th>上班天數</th><th>月工時總額</th><th>特休</th><th>會議</th><th>排班目標</th></tr></thead>
+        <thead><tr><th>正職</th><th>週休天數/週</th><th>上班天數</th><th>月工時總額</th><th>特休</th><th>會議</th><th>排班目標</th></tr></thead>
         <tbody>
-          <tr><td>超威</td><td>週一、二 (+1 賣漢堡)</td><td>21</td><td>168h</td><td>16h</td><td>2h</td><td><strong>150h</strong></td></tr>
-          <tr><td>思坦</td><td>週一、三、四</td><td>18</td><td>144h</td><td>0</td><td>2h</td><td><strong>142h</strong></td></tr>
-          <tr><td>蛋頭</td><td>週日、一、二</td><td>17</td><td>136h</td><td>0</td><td>2h</td><td><strong>134h</strong></td></tr>
+          <tr><td>超威</td><td>2 日（含週一）+1 賣漢堡</td><td>21</td><td>168h</td><td>16h</td><td>2h</td><td><strong>150h</strong></td></tr>
+          <tr><td>思坦</td><td>3 日（含週一）</td><td>18</td><td>144h</td><td>0</td><td>2h</td><td><strong>142h</strong></td></tr>
+          <tr><td>蛋頭</td><td>3 日（含週一）</td><td>17</td><td>136h</td><td>0</td><td>2h</td><td><strong>134h</strong></td></tr>
         </tbody>
       </table>
 
@@ -639,9 +643,8 @@
     <section class="section" id="sec9">
       <h2><span class="sec-num">09</span>個人偏好處理 <span class="tag tag-nice">偏好</span></h2>
       <p class="section-lead">
-        員工在 form 備註欄常寫「5/22 只能上早班」「日只能早」這類時段偏好。
-        系統會根據關鍵字自動解析：「<code>只能</code>」視為硬性（其他班次排除），
-        「<code>希望</code>」或「<code>偏好</code>」視為軟性（盡量滿足）。時間限制如「18:00 後」會當作硬性最早開始時間。
+        員工在填表時可用<strong>結構化「班別偏好」</strong>指定某天某班別的意願：<code>只能上</code>（硬性，其他班次排除）、<code>傾向</code>（軟性，盡量滿足）、<code>不能上</code>（硬性排除）—— solver 會直接吃這份結構化資料（比備註欄精準）。
+        備註欄仍保留給文字補充（如「5/22 只能上早班」「日只能早」「18:00 後才能上」）；排班程式不讀備註，主管看了再手動處理或代填進結構化偏好。
       </p>
       <table>
         <thead><tr><th>關鍵字</th><th>處理方式</th><th>範例</th></tr></thead>
