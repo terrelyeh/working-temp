@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2C3345">
-<title>萬華世界 · 排班規則 v4.2</title>
+<title>萬華世界 · 排班規則 v4.3</title>
 <style>
   :root {
     --primary: #2C3345;
@@ -326,12 +326,12 @@
       <div class="navbar-logo">萬</div>
       <div class="navbar-title">
         萬華世界下午酒場
-        <small>排班規則 · v4.2</small>
+        <small>排班規則 · v4.3</small>
       </div>
     </a>
     <div class="navbar-meta">
-      <span class="navbar-pill primary">v4.2</span>
-      <span class="navbar-pill">2026-04-29</span>
+      <span class="navbar-pill primary">v4.3</span>
+      <span class="navbar-pill">2026-06-21</span>
     </div>
   </div>
 </nav>
@@ -363,9 +363,9 @@
   </aside>
   <main>
 
-    <h1>排班規則 v4.2</h1>
+    <h1>排班規則 v4.3</h1>
     <p class="page-lead">整合 Winnie 4/28 全套回覆 + 從 4-5 月實際班表反推校準後的權威規則 · 供內部團隊審閱</p>
-    <p class="page-lead" style="font-size: 13px; color: var(--muted-foreground);">v3 (2026-04-24) → v4.0 全面校準 → v4.1 微調 → v4.2 (2026-04-29) 修正長班日 N75 為 4 人。詳見頁尾 changelog。</p>
+    <p class="page-lead" style="font-size: 13px; color: var(--muted-foreground);">v3 (2026-04-24) → v4.0 全面校準 → v4.1 微調 → v4.2 (2026-04-29) 修正長班日 N75 為 4 人 → v4.3 (2026-06-21) 正職固定休改回數星期幾。詳見頁尾 changelog。</p>
 
     <details class="mobile-toc">
       <summary>📖 章節目錄</summary>
@@ -484,7 +484,7 @@
     <section class="section" id="sec4">
       <h2><span class="sec-num">04</span>正職工時計算</h2>
       <p class="section-lead">
-        正職是月薪制，每月的目標工時不是固定值，而是依<strong>當月總天數、每人週休天數、特殊協議、國假與會議</strong>計算。
+        正職是月薪制，每月的目標工時不是固定值，而是依<strong>當月總天數、每人固定休星期、特殊協議、國假與會議</strong>計算。
         公式把這幾項先扣除得出「月工時總額」，再把當月實際使用的特休與會議時數扣掉，就是真正要 solver 排進班表的「<strong>排班目標工時</strong>」。
       </p>
 
@@ -496,18 +496,22 @@
 會議時數     = 2h（每月第一個週二店務例會，固定每位正職）</div>
 
       <div class="info">
-        <strong>週休天數模型</strong>：每位正職固定「<strong>週休 N 日／週（含週一公休）</strong>」。週一全店公休是固定的；其餘休假日由員工每月在休假表<strong>自選</strong>湊滿天數 —— <strong>不再指定固定休哪幾個星期幾</strong>。N 因人而異（如超威 2 日、思坦／蛋頭 3 日）。公式中的「固定週休天數」即為此 N 乘上當月週數。
+        <strong>固定休星期模型</strong>：每位正職有固定休的<strong>星期幾</strong>（含週一全店公休）。公式中的「固定週休天數」＝<strong>數當月這些星期幾各出現幾天、加總</strong>，<strong>不是</strong>用「N 乘當月週數」近似（那會在跨月的半週多算一天，例：思坦 7 月會算成 15 而非正確的 14）。週一店休固定不可動；其餘星期（例：思坦的週三、週四）員工每月可在休假表<strong>自由調整實際哪幾天休</strong>，但<strong>總天數固定</strong>。各人固定休：<strong>超威</strong>＝週一、週二（另每月 +1 天賣漢堡，逐月確認）；<strong>思坦</strong>＝週一、週三、週四；<strong>蛋頭</strong>＝週日、週一、週二。
       </div>
 
-      <h3>2026 年 5 月實算範例</h3>
+      <h3>2026 年 7 月實算範例（新公式：數固定休星期）</h3>
       <table>
-        <thead><tr><th>正職</th><th>週休天數/週</th><th>上班天數</th><th>月工時總額</th><th>特休</th><th>會議</th><th>排班目標</th></tr></thead>
+        <thead><tr><th>正職</th><th>固定休星期</th><th>固定休天數</th><th>上班天數</th><th>月工時總額</th><th>特休</th><th>會議</th><th>排班目標</th></tr></thead>
         <tbody>
-          <tr><td>超威</td><td>2 日（含週一）+1 賣漢堡</td><td>21</td><td>168h</td><td>16h</td><td>2h</td><td><strong>150h</strong></td></tr>
-          <tr><td>思坦</td><td>3 日（含週一）</td><td>18</td><td>144h</td><td>0</td><td>2h</td><td><strong>142h</strong></td></tr>
-          <tr><td>蛋頭</td><td>3 日（含週一）</td><td>17</td><td>136h</td><td>0</td><td>2h</td><td><strong>134h</strong></td></tr>
+          <tr><td>超威</td><td>一、二（+1 賣漢堡）</td><td>8 + 1</td><td>22</td><td>176h</td><td>0</td><td>2h</td><td><strong>174h</strong></td></tr>
+          <tr><td>思坦</td><td>一、三、四</td><td>14</td><td>17</td><td>136h</td><td>0</td><td>2h</td><td><strong>134h</strong></td></tr>
+          <tr><td>蛋頭</td><td>日、一、二</td><td>12</td><td>19</td><td>152h</td><td>0</td><td>2h</td><td><strong>150h</strong></td></tr>
         </tbody>
       </table>
+      <div class="info">
+        7 月共 31 天、無國定假日。固定休天數＝數當月那些星期幾出現幾天：思坦 週一4＋週三5＋週四5＝<strong>14</strong>；蛋頭 週日4＋週一4＋週二4＝<strong>12</strong>；超威 週一4＋週二4＝8，再加賣漢堡 1＝<strong>9</strong>。
+        本例特休以 0 計（員工只休固定休、沒多請）；若當月再多請特休，會從排班目標再往下扣。
+      </div>
 
       <div class="info">
         <strong>排班目標工時</strong>是 solver 實際要排進班表的時數；<strong>月工時總額</strong>則是員工當月對公司的總時數貢獻（含特休與會議的基準）。
@@ -946,6 +950,13 @@
     <div class="changelog">
       <h3>Changelog</h3>
       <ul>
+        <li><strong>v4.3（2026-06-21）</strong> 正職固定休計算修正
+          <ul>
+            <li>§04 固定休改回「<strong>數當月固定休星期幾</strong>」模型，取代中途的「週休 N 日 × 當月週數」近似 —— 後者在跨月的半週會多算一天（例：思坦 7 月算成 15，正確為 14）</li>
+            <li>休假表上方說明區改為顯示<strong>每人自己的固定休星期</strong>與當月天數拆解（如「週一4＋週三5＋週四5＝14」）</li>
+            <li>三邊同步：休假表建議天數、正職目標工時、solver baseline</li>
+          </ul>
+        </li>
         <li><strong>v4.2（2026-04-29）</strong> Solver 5月實測通過 + Winnie review 微調
           <ul>
             <li>長班日晚班從 3 人修正為 4 人（5 月實際標準配置應為 4 人，6 月起試行降為 3）</li>
@@ -990,7 +1001,7 @@
       <span class="sep">|</span>
       <a href="../winnie-checklist.html">📋 Winnie 確認清單</a>
     </div>
-    <span style="font-size: 12px; color: rgba(107,114,128,0.7);">最後更新：2026-04-29 (v4.2)</span>
+    <span style="font-size: 12px; color: rgba(107,114,128,0.7);">最後更新：2026-06-21 (v4.3)</span>
   </div>
 </footer>
 
