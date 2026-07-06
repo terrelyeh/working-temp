@@ -127,6 +127,20 @@
   .model p{margin:0; font-size:var(--s1); line-height:1.5; font-weight:600; color:var(--ink); max-width:none}
   .model .sub{font-size:.95rem; font-weight:400; color:var(--muted); margin-top:.55rem}
 
+  /* copy-paste steps card */
+  .steps{margin:1.3rem 0; border:1px solid var(--line-strong); border-radius:9px; overflow:hidden; background:var(--surface)}
+  .steps .cap{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); background:var(--surface-2); padding:.55rem .9rem; border-bottom:1px solid var(--line)}
+  .steps ol{list-style:none; margin:0; padding:.4rem 0; counter-reset:step}
+  .steps li{display:grid; grid-template-columns:2.1rem 1fr; gap:.7rem; align-items:start;
+    margin:0; padding:.75rem .95rem; line-height:1.5}
+  .steps li+li{border-top:1px solid var(--line)}
+  .steps li::before{counter-increment:step; content:counter(step); font-family:var(--mono); font-weight:700;
+    font-size:.85rem; color:var(--accent); background:var(--accent-soft); width:1.75rem; height:1.75rem;
+    display:grid; place-items:center; border-radius:50%}
+  .steps li b{color:var(--ink)}
+  .steps li .opt{font-family:var(--mono); font-size:.68rem; color:var(--faint); text-transform:uppercase; letter-spacing:.1em}
+
   footer{border-top:1px solid var(--line); padding:2rem 0 4rem; color:var(--faint);
     font-family:var(--mono); font-size:var(--s-1)}
 
@@ -153,7 +167,7 @@
       <span class="chip">參照專案 <b>marketing-os</b></span>
       <span class="chip">v<b>1.1.0</b></span>
       <span class="chip">更新 <b>2026-07</b></span>
-      <span class="chip">14 章 · 含決策速查表</span>
+      <span class="chip">15 章 · 含安裝說明</span>
     </div>
   </header>
   <hr class="rule">
@@ -176,6 +190,7 @@
         <li><a href="#s12"><span class="n">12</span><span>維護與最佳實務</span></a></li>
         <li><a href="#s13"><span class="n">13</span><span>安全性</span></a></li>
         <li><a href="#s14"><span class="n">14</span><span>決策速查表</span></a></li>
+        <li><a href="#s15"><span class="n">15</span><span>三句話安裝說明</span></a></li>
       </ol>
     </nav>
 
@@ -436,6 +451,25 @@ git add . &amp;&amp; git commit -m "feat(skill): &lt;名&gt;" &amp;&amp; git pus
             <tr><td>跨 session 記住進度</td><td>用 <strong>CLAUDE.md + MEMORY.md</strong>（狀態外置、記憶隔離）</td></tr>
           </tbody>
         </table></div>
+      </section>
+
+      <section class="doc" id="s15">
+        <span class="snum">15</span>
+        <h2>給同事的三句話安裝說明</h2>
+        <p>可直接貼進群組。把 <code>&lt;你的帳號&gt;</code> 換成實際 GitHub 帳號。</p>
+        <div class="steps">
+          <div class="cap">貼給同事 · 桌面／網頁版</div>
+          <ol>
+            <li><span><b>安裝</b>：到 Claude → <b>Customize → Plugins → Add → Add marketplace → Add from a repository</b>，貼上 <code>https://github.com/&lt;你的帳號&gt;/marketing-os</code>，在清單找到 <b>marketing-os</b> 按 Install。</span></li>
+            <li><span><b>開工</b>：打開任一工作資料夾，輸入 <code>/marketing-os:begin-marketing</code> 鋪好標準結構；之後用自然語言使喚技能（「寫三則 IG」「做這週週報」），要記事就說「記一下…」。</span></li>
+            <li><span><span class="opt">選用</span> <b>接數據</b>：想讓競品分析即時爬網頁，先到 firecrawl.dev 申請 API key，設成環境變數 <code>FIRECRAWL_API_KEY</code>；沒設也能用，只是競品/數據改用你提供的資料。</span></li>
+          </ol>
+        </div>
+        <h3>CLI 版（習慣終端機的同事）</h3>
+<pre><code>/plugin marketplace add &lt;你的帳號&gt;/marketing-os
+/plugin install marketing-os@marketing-os-marketplace
+<span class="cmt"># 開工同上：/marketing-os:begin-marketing</span></code></pre>
+        <div class="call warn"><span class="k">private repo</span><p>若 repo 設為 private，同事的 GitHub 帳號需有讀取權限（或設一次 git 憑證）才裝得起來。</p></div>
       </section>
 
       <footer>本文件隨 repo 版本控管，可自由增修 · marketing-os/docs</footer>

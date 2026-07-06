@@ -19,6 +19,7 @@
 12. [維護、版本與最佳實務](#12-維護與最佳實務)
 13. [安全性](#13-安全性)
 14. [決策速查表](#14-決策速查表)
+15. [給同事的三句話安裝說明](#15-給同事的三句話安裝說明)
 
 ---
 
@@ -274,6 +275,25 @@ git add . && git commit -m "feat(skill): <名>" && git push
 | 要接廣告/CRM/爬蟲數據 | 打包 **MCP**（`.mcp.json`）佈線；憑證走 env；同事各自授權 |
 | 桌面/網頁要接數據 | 走 **Connectors** 設定頁，各自登入（`.mcp.json` 不適用） |
 | 跨 session 記住進度 | 用 **CLAUDE.md + MEMORY.md**（狀態外置、記憶隔離） |
+
+---
+
+## 15. 給同事的三句話安裝說明
+
+貼進群組即可用。把 `<你的帳號>` 換成實際 GitHub 帳號。
+
+> **① 安裝**：到 Claude → **Customize → Plugins → Add → Add marketplace → Add from a repository**，貼上 `https://github.com/<你的帳號>/marketing-os`，在清單找到 **marketing-os** 按 Install。
+> **② 開工**：打開任一工作資料夾，輸入 `/marketing-os:begin-marketing` 鋪好標準結構；之後用自然語言使喚技能（「寫三則 IG」「做這週週報」），要記事就說「記一下…」。
+> **③ 接數據（選）**：想讓競品分析即時爬網頁，先到 firecrawl.dev 申請 API key，設成環境變數 `FIRECRAWL_API_KEY`；沒設也能用，只是競品/數據改用你提供的資料。
+
+**CLI 版（同事習慣終端機的話）**
+```bash
+/plugin marketplace add <你的帳號>/marketing-os
+/plugin install marketing-os@marketing-os-marketplace
+# 開工同上：/marketing-os:begin-marketing
+```
+
+> 提醒：若 repo 設為 private，同事的 GitHub 帳號需有讀取權限（或設一次 git 憑證）才裝得起來。
 
 ---
 
