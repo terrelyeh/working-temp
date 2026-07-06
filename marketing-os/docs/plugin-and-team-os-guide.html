@@ -1,0 +1,464 @@
+<style>
+  :root{
+    --paper:#f4f7f6; --surface:#ffffff; --surface-2:#eef2f1;
+    --ink:#14201e; --muted:#56635f; --faint:#7d8884;
+    --line:#dde4e1; --line-strong:#c7d1cd;
+    --accent:#0f766e; --accent-soft:#d8ebe7; --accent-ink:#0b544e;
+    --warn:#a8590a; --warn-soft:#f5e8d5; --warn-ink:#7a4208;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"Helvetica Neue",Arial,"PingFang TC","Microsoft JhengHei",sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,"Cascadia Code","Roboto Mono",monospace;
+    --measure:70ch;
+    --s-1:.82rem; --s0:1rem; --s1:1.18rem; --s2:1.5rem; --s3:2rem; --s4:2.7rem;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0d1413; --surface:#141d1b; --surface-2:#182220;
+      --ink:#e6ede9; --muted:#9aa8a3; --faint:#6e7c77;
+      --line:#25302d; --line-strong:#35433f;
+      --accent:#2dd4bf; --accent-soft:#123330; --accent-ink:#7ff0e2;
+      --warn:#e0a45c; --warn-soft:#271d11; --warn-ink:#f0c58a;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#f4f7f6; --surface:#ffffff; --surface-2:#eef2f1;
+    --ink:#14201e; --muted:#56635f; --faint:#7d8884;
+    --line:#dde4e1; --line-strong:#c7d1cd;
+    --accent:#0f766e; --accent-soft:#d8ebe7; --accent-ink:#0b544e;
+    --warn:#a8590a; --warn-soft:#f5e8d5; --warn-ink:#7a4208;
+  }
+  :root[data-theme="dark"]{
+    --paper:#0d1413; --surface:#141d1b; --surface-2:#182220;
+    --ink:#e6ede9; --muted:#9aa8a3; --faint:#6e7c77;
+    --line:#25302d; --line-strong:#35433f;
+    --accent:#2dd4bf; --accent-soft:#123330; --accent-ink:#7ff0e2;
+    --warn:#e0a45c; --warn-soft:#271d11; --warn-ink:#f0c58a;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:16.5px; line-height:1.66;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--accent-soft); color:var(--accent-ink)}
+
+  .wrap{max-width:1160px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.6rem)}
+
+  /* Masthead */
+  header.mast{padding:clamp(2.6rem,7vw,4.8rem) 0 1.8rem}
+  .eyebrow{font-family:var(--mono); font-size:var(--s-1); letter-spacing:.22em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 1rem}
+  h1.title{font-size:clamp(2rem,5.5vw,var(--s4)); line-height:1.06; margin:0;
+    font-weight:800; letter-spacing:-.02em; text-wrap:balance; max-width:16ch}
+  .lede{margin:1.1rem 0 0; max-width:60ch; font-size:var(--s1); color:var(--muted); line-height:1.55}
+  .meta{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.6rem}
+  .chip{font-family:var(--mono); font-size:var(--s-1); color:var(--muted);
+    border:1px solid var(--line-strong); border-radius:2px; padding:.2rem .55rem; background:var(--surface)}
+  .chip b{color:var(--ink); font-weight:600}
+
+  .rule{height:1px; background:var(--line); border:0; margin:0}
+
+  /* Layout */
+  .grid{display:grid; grid-template-columns:230px minmax(0,1fr); gap:clamp(2rem,5vw,4rem);
+    align-items:start; padding:2.6rem 0 5rem}
+  nav.toc{position:sticky; top:1.4rem; font-size:.9rem}
+  nav.toc .tlabel{font-family:var(--mono); font-size:var(--s-1); letter-spacing:.18em;
+    text-transform:uppercase; color:var(--faint); margin:0 0 .9rem; padding-left:.1rem}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.08rem}
+  nav.toc a{display:grid; grid-template-columns:1.9em 1fr; gap:.3rem; text-decoration:none;
+    color:var(--muted); padding:.34rem .5rem; border-radius:4px; line-height:1.3; border-left:2px solid transparent}
+  nav.toc a .n{font-family:var(--mono); font-size:.78rem; color:var(--faint)}
+  nav.toc a:hover{background:var(--surface-2); color:var(--ink)}
+  nav.toc a.active{color:var(--ink); background:var(--accent-soft); border-left-color:var(--accent)}
+  nav.toc a.active .n{color:var(--accent)}
+
+  main{min-width:0; max-width:var(--measure)}
+
+  section.doc{padding-top:2.4rem; margin-top:2.4rem; border-top:1px solid var(--line)}
+  section.doc:first-child{border-top:0; margin-top:0; padding-top:0}
+  .snum{font-family:var(--mono); font-size:var(--s-1); color:var(--accent); letter-spacing:.1em; font-weight:600}
+  h2{font-size:var(--s3); line-height:1.12; margin:.5rem 0 0; font-weight:750;
+    letter-spacing:-.015em; text-wrap:balance}
+  h3{font-size:var(--s1); margin:2rem 0 .3rem; font-weight:700; letter-spacing:-.01em}
+  p{margin:.85rem 0; max-width:var(--measure)}
+  main a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px; text-decoration-thickness:1px}
+  strong{font-weight:700}
+  ul{margin:.7rem 0; padding-left:1.15rem}
+  li{margin:.32rem 0}
+  li::marker{color:var(--accent)}
+
+  /* inline + block code */
+  code{font-family:var(--mono); font-size:.86em; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:3px; padding:.08em .36em; color:var(--ink)}
+  pre{margin:1rem 0; background:var(--surface); border:1px solid var(--line-strong);
+    border-radius:7px; padding:1rem 1.15rem; overflow-x:auto; line-height:1.5}
+  pre code{background:none; border:0; padding:0; font-size:.82rem; color:var(--ink)}
+  .cmt{color:var(--faint)}
+
+  /* tables */
+  .scroll{overflow-x:auto; margin:1.1rem 0; border:1px solid var(--line-strong); border-radius:7px}
+  table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:34rem}
+  th,td{text-align:left; padding:.62rem .85rem; border-bottom:1px solid var(--line); vertical-align:top}
+  thead th{font-family:var(--mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); background:var(--surface-2); border-bottom:1px solid var(--line-strong); white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  tbody td:first-child{font-weight:600; color:var(--ink)}
+  td code{font-size:.82em}
+  .yes{color:var(--accent-ink); font-weight:700}
+  .no{color:var(--warn-ink); font-weight:700}
+
+  /* callouts */
+  .call{margin:1.3rem 0; padding:1rem 1.15rem; border-radius:7px; border:1px solid var(--line-strong);
+    background:var(--surface); display:grid; grid-template-columns:auto 1fr; gap:.8rem; align-items:start}
+  .call .k{font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+    padding:.2rem .45rem; border-radius:3px; white-space:nowrap; margin-top:.1rem}
+  .call p{margin:0}
+  .call.note{background:var(--accent-soft); border-color:transparent}
+  .call.note .k{background:var(--accent); color:var(--paper)}
+  .call.note p{color:var(--accent-ink)}
+  .call.warn{background:var(--warn-soft); border-color:transparent}
+  .call.warn .k{background:var(--warn); color:var(--paper)}
+  .call.warn p{color:var(--warn-ink)}
+
+  /* mental-model pullquote */
+  .model{margin:1.5rem 0; padding:1.4rem 1.5rem; border-left:3px solid var(--accent);
+    background:var(--surface); border-radius:0 7px 7px 0}
+  .model p{margin:0; font-size:var(--s1); line-height:1.5; font-weight:600; color:var(--ink); max-width:none}
+  .model .sub{font-size:.95rem; font-weight:400; color:var(--muted); margin-top:.55rem}
+
+  footer{border-top:1px solid var(--line); padding:2rem 0 4rem; color:var(--faint);
+    font-family:var(--mono); font-size:var(--s-1)}
+
+  @media (max-width:860px){
+    .grid{grid-template-columns:1fr; gap:0; padding-top:1.5rem}
+    nav.toc{position:static; margin-bottom:2rem; padding-bottom:1.6rem; border-bottom:1px solid var(--line)}
+    nav.toc ol{display:grid; grid-template-columns:1fr 1fr; gap:.1rem}
+    main{max-width:none}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    html{scroll-behavior:smooth}
+    section.doc{animation:rise .5s both}
+    @keyframes rise{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+  }
+  section.doc{scroll-margin-top:1.4rem}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <p class="eyebrow">內部知識手冊 · Claude 平台</p>
+    <h1 class="title">外掛與團隊 OS</h1>
+    <p class="lede">從單一技能到可分享、可版本控管、能自動更新的部門作業系統——一份把 Skill、Plugin、Marketplace 講清楚的實作參考。</p>
+    <div class="meta">
+      <span class="chip">參照專案 <b>marketing-os</b></span>
+      <span class="chip">v<b>1.1.0</b></span>
+      <span class="chip">更新 <b>2026-07</b></span>
+      <span class="chip">14 章 · 含決策速查表</span>
+    </div>
+  </header>
+  <hr class="rule">
+
+  <div class="grid">
+    <nav class="toc" aria-label="目錄">
+      <p class="tlabel">目錄</p>
+      <ol>
+        <li><a href="#s1"><span class="n">01</span><span>核心概念</span></a></li>
+        <li><a href="#s2"><span class="n">02</span><span>Plugin 能打包什麼</span></a></li>
+        <li><a href="#s3"><span class="n">03</span><span>檔案結構</span></a></li>
+        <li><a href="#s4"><span class="n">04</span><span>安裝方式</span></a></li>
+        <li><a href="#s5"><span class="n">05</span><span>更新機制</span></a></li>
+        <li><a href="#s6"><span class="n">06</span><span>關鍵心智模型</span></a></li>
+        <li><a href="#s7"><span class="n">07</span><span>團隊 OS 概念</span></a></li>
+        <li><a href="#s8"><span class="n">08</span><span>建資料夾</span></a></li>
+        <li><a href="#s9"><span class="n">09</span><span>Onboarding 設計</span></a></li>
+        <li><a href="#s10"><span class="n">10</span><span>接真實數據</span></a></li>
+        <li><a href="#s11"><span class="n">11</span><span>擴充：B vs C</span></a></li>
+        <li><a href="#s12"><span class="n">12</span><span>維護與最佳實務</span></a></li>
+        <li><a href="#s13"><span class="n">13</span><span>安全性</span></a></li>
+        <li><a href="#s14"><span class="n">14</span><span>決策速查表</span></a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <section class="doc" id="s1">
+        <span class="snum">01</span>
+        <h2>核心概念：Skill、Plugin、Marketplace</h2>
+        <p>三個名詞，層層包起來：</p>
+        <div class="scroll"><table>
+          <thead><tr><th>名詞</th><th>是什麼</th><th>比喻</th></tr></thead>
+          <tbody>
+            <tr><td>Skill 技能</td><td>單一能力：一個 <code>SKILL.md</code>，寫「遇到某類任務怎麼做」。Claude 需要時才載入。</td><td>一份食譜</td></tr>
+            <tr><td>Plugin 外掛</td><td>打包單位：把 skills／指令／子代理／hooks／MCP 包成一份，方便分享、版本控管、自動更新。</td><td>一整盒料理包</td></tr>
+            <tr><td>Marketplace 市集</td><td>一個 git repo，列出「有哪些 plugin」，負責發現、版本追蹤與更新。</td><td>架上的目錄</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>Plugin ≠ Skill。</strong>所有 skill 都能放進 plugin，但 plugin 不只是 skill；你也可以只用單獨的 skill。Plugin 的價值在<strong>打包 + 分享 + 一鍵安裝 + 自動更新</strong>。</p>
+        <h3>Command 對比 Skill（改東西前必懂）</h3>
+        <div class="scroll"><table>
+          <thead><tr><th></th><th>Command 指令</th><th>Skill 技能</th></tr></thead>
+          <tbody>
+            <tr><td>誰觸發</td><td><strong>人</strong>：手動打 <code>/指令</code></td><td><strong>Claude</strong>：讀對話自動判斷</td></tr>
+            <tr><td>description 作用</td><td>選單說明文字</td><td><strong>就是觸發器</strong>——決定會不會被叫到</td></tr>
+            <tr><td>適合</td><td>一次性、儀式性、想主動叫出的流程</td><td>一句話就該發生的反射動作</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="doc" id="s2">
+        <span class="snum">02</span>
+        <h2>Plugin 能打包什麼</h2>
+        <p>一個 plugin 可同時含以下任意組合：</p>
+        <ul>
+          <li><strong>Skills</strong> — 特定任務的知識與流程</li>
+          <li><strong>Commands（斜線指令）</strong> — <code>/plugin:command</code></li>
+          <li><strong>Subagents（子代理）</strong> — 專責某類工作的代理</li>
+          <li><strong>Hooks</strong> — 生命週期事件（SessionStart、PostToolUse…）自動觸發的行為</li>
+          <li><strong>MCP servers</strong> — 連外部工具/資料（連接器）</li>
+          <li>其他：LSP、output styles、<code>bin/</code>（加進 PATH 的執行檔）等</li>
+        </ul>
+      </section>
+
+      <section class="doc" id="s3">
+        <span class="snum">03</span>
+        <h2>Plugin 與 Marketplace 的檔案結構</h2>
+        <h3>Plugin 本體</h3>
+<pre><code>my-plugin/
+├── .claude-plugin/
+│   └── plugin.json         <span class="cmt">← 唯一放這裡的檔案（manifest）</span>
+├── commands/xxx.md         <span class="cmt">← 斜線指令</span>
+├── skills/xxx/SKILL.md     <span class="cmt">← 技能（放進來就自動掃描，不需登記）</span>
+├── agents/xxx.md           <span class="cmt">← 子代理</span>
+├── hooks/hooks.json
+└── .mcp.json               <span class="cmt">← MCP 連接器設定</span></code></pre>
+        <p><strong>規則：</strong>只有 <code>plugin.json</code> 放進 <code>.claude-plugin/</code>；其他資料夾一律放 plugin 根目錄。</p>
+<pre><code>{ "name":"my-plugin", "description":"...", "version":"1.0.0",
+  "author":{ "name":"You" } }</code></pre>
+        <h3>Marketplace（外層）</h3>
+<pre><code>my-marketplace/                   <span class="cmt">← git repo 的「根」</span>
+├── .claude-plugin/
+│   └── marketplace.json          <span class="cmt">← 列出有哪些 plugin（須在根層）</span>
+└── plugins/
+    └── my-plugin/                <span class="cmt">← plugin 本體</span></code></pre>
+<pre><code>{
+  "name":"my-marketplace",
+  "owner":{ "name":"You" },
+  "plugins":[
+    { "name":"my-plugin", "source":"./plugins/my-plugin", "version":"1.0.0" }
+  ]
+}</code></pre>
+        <div class="call warn"><span class="k">注意</span><p><code>marketplace.json</code> 必須在 repo <strong>根層</strong>，否則「Add from a repository」找不到。</p></div>
+      </section>
+
+      <section class="doc" id="s4">
+        <span class="snum">04</span>
+        <h2>安裝方式與介面差異</h2>
+        <p>三種方式，<strong>不一定要走 marketplace</strong>：</p>
+        <div class="scroll"><table>
+          <thead><tr><th>方式</th><th>做法</th><th>自動更新</th><th>適合</th></tr></thead>
+          <tbody>
+            <tr><td>A. Marketplace（repo）</td><td>加市集 → install</td><td class="yes">✔ 有</td><td>團隊分享、長期維護</td></tr>
+            <tr><td>B. Upload（本機上傳）</td><td>直接拖 plugin 資料夾／zip</td><td class="no">✘ 無</td><td>一次性、臨時試</td></tr>
+            <tr><td>C. 本機載入（CLI）</td><td><code>claude --plugin-dir ./my-plugin</code></td><td>—</td><td>開發測試</td></tr>
+          </tbody>
+        </table></div>
+        <h3>CLI 對比 桌面／網頁</h3>
+        <div class="scroll"><table>
+          <thead><tr><th></th><th>Claude Code CLI</th><th>桌面 App / claude.ai 網頁</th></tr></thead>
+          <tbody>
+            <tr><td>管理入口</td><td><code>/plugin</code> 指令</td><td>Customize → Plugins 圖形介面</td></tr>
+            <tr><td>加自訂 marketplace</td><td class="yes">✔</td><td class="yes">✔ Add → Add marketplace → Add from a repository</td></tr>
+            <tr><td>Upload 本機 plugin</td><td class="yes">✔</td><td class="yes">✔ Add → Upload plugin</td></tr>
+            <tr><td>跑 CLI 型 MCP（<code>npx …</code>）</td><td class="yes">✔</td><td class="no">✘ 無通用 shell</td></tr>
+          </tbody>
+        </table></div>
+<pre><code><span class="cmt"># CLI 指令速記</span>
+/plugin marketplace add &lt;owner/repo | git URL | 本機路徑&gt;
+/plugin install &lt;plugin&gt;@&lt;marketplace&gt;
+/plugin update  &lt;plugin&gt;@&lt;marketplace&gt;
+claude plugin validate .        <span class="cmt"># 發佈前驗證結構</span></code></pre>
+        <div class="call warn"><span class="k">安全</span><p>Upload／自訂 repo 的 plugin <strong>不經 Anthropic 審核</strong>，可帶 hooks/MCP/執行檔，等於會在安裝者機器上跑東西——只在信任來源時使用。</p></div>
+      </section>
+
+      <section class="doc" id="s5">
+        <span class="snum">05</span>
+        <h2>更新機制</h2>
+        <p><strong>marketplace 與 upload 最核心的差別＝有沒有一條「連回來源」的線。</strong></p>
+        <ul>
+          <li><strong>Marketplace（repo）</strong>：記住 plugin 來自哪個 git repo → 你 push 新版，同事按「更新」就同步。一次維護、全員受惠，且有版本比對。</li>
+          <li><strong>Upload</strong>：只是把當下檔案複製進去，裝完就斷線 → 要更新只能重新上傳、逐一重裝。</li>
+        </ul>
+        <div class="call note"><span class="k">結論</span><p>團隊長期使用，一定選 marketplace。</p></div>
+      </section>
+
+      <section class="doc" id="s6">
+        <span class="snum">06</span>
+        <h2>關鍵心智模型</h2>
+        <div class="model">
+          <p>技能是裝一次就到處能用的工具箱；資料夾是各個工作台，決定在這張台子上拿哪些工具、用什麼身分、記得哪些事。</p>
+          <p class="sub">— plugin 的技能全域可觸發，資料夾負責隔離狀態。</p>
+        </div>
+        <ul>
+          <li><strong>技能是「全域」的</strong>：plugin 一旦安裝，所有資料夾都能觸發該技能（靠 <code>description</code> 觸發語），<strong>不綁特定資料夾</strong>。你無法把某技能「鎖」在某資料夾。</li>
+          <li><strong>資料夾負責「隔離」</strong>：每個資料夾的 <code>CLAUDE.md</code>（指令/身分）與 <code>MEMORY.md</code>（記憶）彼此獨立，不互相污染。</li>
+        </ul>
+        <p>這對團隊是好事：你本來就希望大家在哪都能叫出技能，而資料夾負責把各專案的狀態收好。</p>
+      </section>
+
+      <section class="doc" id="s7">
+        <span class="snum">07</span>
+        <h2>團隊 OS 概念：CLAUDE.md / MEMORY.md</h2>
+        <p>把 plugin 當「引擎」，把使用者資料夾裡的兩個檔當「存檔」：</p>
+        <div class="scroll"><table>
+          <thead><tr><th>檔案</th><th>角色</th></tr></thead>
+          <tbody>
+            <tr><td><code>CLAUDE.md</code></td><td>該資料夾的<strong>常駐指令</strong>（每次進來自動讀）</td></tr>
+            <tr><td><code>MEMORY.md</code></td><td>該資料夾的<strong>持久記憶</strong>（跨 session 筆記）</td></tr>
+          </tbody>
+        </table></div>
+        <p>核心設計原則（成熟、安全導向）：</p>
+        <ul>
+          <li><strong>狀態外置</strong>：記憶放使用者資料夾，不放 plugin 裡 → plugin 可更新替換，資料留在使用者手上。</li>
+          <li><strong>記憶只由使用者觸發</strong>：Claude 絕不自動寫入 <code>MEMORY.md</code>，只有使用者說「記一下 / 別忘了」才寫。</li>
+          <li><strong>刪除前先確認、衝突提示不覆蓋</strong>。</li>
+          <li><strong>記憶要短、可行動、具體</strong>：它是每次開場要讀的東西，不是日記，越精簡越可靠。</li>
+          <li><strong>身分覆寫</strong>：某資料夾可讓 Claude 換名字/人設（財務夾當分析師、寫作夾當編輯）。</li>
+          <li><strong>記憶隔離</strong>：子資料夾預設不繼承上層記憶，要帶哪些條目由使用者勾選。</li>
+        </ul>
+      </section>
+
+      <section class="doc" id="s8">
+        <span class="snum">08</span>
+        <h2>建資料夾：一鍵批次 vs 隨需建立</h2>
+        <p>兩種方式搭配，同事<strong>都不需手動一格一格建</strong>：</p>
+        <div class="scroll"><table>
+          <thead><tr><th></th><th>誰觸發</th><th>何時用</th><th>建什麼</th></tr></thead>
+          <tbody>
+            <tr><td>一鍵批次（指令 <code>begin-*</code>）</td><td>手動跑一次</td><td>開新工作區</td><td>固定的標準資料夾骨架</td></tr>
+            <tr><td>隨需建立（<code>subfolders</code> 技能）</td><td>說「建一個 XX 資料夾」</td><td>臨時新專案/活動</td><td>單一新夾，帶標準 CLAUDE.md/MEMORY.md</td></tr>
+          </tbody>
+        </table></div>
+        <p>實務：<strong>幾乎人人會用到</strong>的放進批次指令；<strong>因案而異</strong>的留給隨需建立。</p>
+      </section>
+
+      <section class="doc" id="s9">
+        <span class="snum">09</span>
+        <h2>Onboarding 設計：團隊層 vs 個人層</h2>
+        <p>若要在開機時做偏好問答，<strong>區分兩層</strong>，別混在一起：</p>
+        <div class="scroll"><table>
+          <thead><tr><th>層級</th><th>例子</th><th>該問每個人嗎</th><th>存哪</th></tr></thead>
+          <tbody>
+            <tr><td>團隊/品牌層（要一致）</td><td>品牌 tone、禁用字、合規</td><td class="no">✘ 由管理者設一次</td><td>根 <code>CLAUDE.md</code></td></tr>
+            <tr><td>個人層（因人而異）</td><td>名字、負責通路、回覆風格</td><td class="yes">✔ 可問</td><td>各自帳號偏好，或工作區 <code>CLAUDE.md</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="call note"><span class="k">原則</span><p>去劇場化、選項式、3～4 題內、答案直接寫進 <code>CLAUDE.md</code>（不要求貼設定頁）、可全跳過。</p></div>
+      </section>
+
+      <section class="doc" id="s10">
+        <span class="snum">10</span>
+        <h2>接真實數據：連接器 / MCP / CLI</h2>
+        <p>技能只「教 Claude 怎麼做」，<strong>自己抓不到真實數據</strong>。要接數據靠<strong>連接器 / MCP</strong>。把「連接」拆成兩步：</p>
+        <div class="scroll"><table>
+          <thead><tr><th>步驟</th><th>在做什麼</th><th>能打包嗎</th></tr></thead>
+          <tbody>
+            <tr><td>① 佈線 / 註冊</td><td>告訴 Claude「有這連接器、在哪、怎麼啟動」</td><td class="yes">✔ 可用 <code>.mcp.json</code> 自動</td></tr>
+            <tr><td>② 授權 / 登入</td><td>用<strong>自己的帳號</strong>登入服務</td><td class="no">✘ 一定各自手動一次</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>憑證（API key / token）一律用<strong>環境變數</strong>帶入，<strong>絕不寫死打包</strong>。</li>
+          <li><strong>CLI（gh / Vercel / Firecrawl…）</strong>：plugin <strong>不會安裝</strong> system binary。要給 Claude 這些能力，<strong>優先用它們的 MCP server</strong>（Firecrawl/Vercel/GitHub 都有），而非包 CLI。</li>
+          <li><strong>介面限制</strong>：<code>.mcp.json</code> 是 Claude Code 機制；桌面/網頁無 shell，跑不了 <code>npx</code> 型 MCP，改用內建 Connectors。</li>
+        </ul>
+      </section>
+
+      <section class="doc" id="s11">
+        <span class="snum">11</span>
+        <h2>擴充：加技能(B) vs 加 plugin(C)</h2>
+        <div class="model">
+          <p>同一群人、同一領域、要一起裝 → B（同 plugin 加技能）。<br>不同群人／領域、要各自裝與更新 → C（同市集加第二個 plugin）。</p>
+        </div>
+        <div class="scroll"><table>
+          <thead><tr><th></th><th>B：同 plugin 加技能</th><th>C：市集加第二個 plugin</th></tr></thead>
+          <tbody>
+            <tr><td>動到的檔</td><td>只加 <code>skills/新技能/SKILL.md</code></td><td>加 <code>plugins/新plugin/</code> + 改 <code>marketplace.json</code></td></tr>
+            <tr><td>改 marketplace.json</td><td class="no">✘ 不用</td><td class="yes">✔ 多列一筆</td></tr>
+            <tr><td>安裝</td><td>跟著原 plugin 一起</td><td>同市集但<strong>分開選裝</strong></td></tr>
+            <tr><td>版本</td><td>併入原 plugin</td><td>有自己的 version</td></tr>
+          </tbody>
+        </table></div>
+        <div class="call note"><span class="k">提醒</span><p>plugin 的 skills 是<strong>扁平</strong>的，沒有資料夾分組——「新 section」＝多加一個 <code>SKILL.md</code>。</p></div>
+      </section>
+
+      <section class="doc" id="s12">
+        <span class="snum">12</span>
+        <h2>維護、版本與最佳實務</h2>
+        <p>加技能流程（B）：</p>
+<pre><code>mkdir -p plugins/&lt;plugin&gt;/skills/&lt;新技能&gt;
+<span class="cmt"># 寫 SKILL.md（最上方 description 就是觸發器）</span>
+claude plugin validate ./plugins/&lt;plugin&gt;
+<span class="cmt"># plugin.json version +1</span>
+git add . &amp;&amp; git commit -m "feat(skill): &lt;名&gt;" &amp;&amp; git push
+<span class="cmt"># 同事按「更新」即同步</span></code></pre>
+        <ul>
+          <li><strong>版本號</strong>：修 bug → patch；加技能 → minor；破壞相容 → major。</li>
+          <li><strong>觸發語別打架</strong>：技能一多，<code>description</code> 觸發語要具體、不重疊，避免一句話命中多個技能。</li>
+          <li><strong>產出格式固定</strong>：各技能延續「固定輸出區塊 + 規範段」，全團隊產出才一致。</li>
+          <li><strong>先驗證再 push</strong>：養成 <code>claude plugin validate</code> 習慣。</li>
+          <li><strong>技能不需登記進 manifest</strong>：放進 <code>skills/</code> 自動掃描。</li>
+        </ul>
+      </section>
+
+      <section class="doc" id="s13">
+        <span class="snum">13</span>
+        <h2>安全性</h2>
+        <ul>
+          <li>純 <code>.md</code> 流程（技能/指令）風險低、行為透明；不含 hooks/執行檔就不會跑外部程式。</li>
+          <li>一旦接 MCP（HubSpot、廣告帳號…），Claude 即可讀寫真實系統 → 發佈前確認權限範圍與合規。</li>
+          <li>自訂 repo / Upload 的 plugin 不經審核 → 只裝信任來源的。</li>
+          <li>憑證永遠走環境變數，不進 git。</li>
+        </ul>
+      </section>
+
+      <section class="doc" id="s14">
+        <span class="snum">14</span>
+        <h2>決策速查表</h2>
+        <div class="scroll"><table>
+          <thead><tr><th>情境</th><th>怎麼做</th></tr></thead>
+          <tbody>
+            <tr><td>只是自己用、單一專案</td><td>用單獨 skill 放 <code>.claude/skills/</code>，不必做 plugin</td></tr>
+            <tr><td>要分享給團隊、能自動更新</td><td>做成 <strong>marketplace repo</strong>，同事「Add from a repository」</td></tr>
+            <tr><td>臨時給一個人試</td><td><strong>Upload plugin</strong>（zip）</td></tr>
+            <tr><td>加一個行銷技能</td><td><strong>B</strong>：加 <code>skills/xxx/SKILL.md</code>，不碰 marketplace.json</td></tr>
+            <tr><td>另開一個部門工具</td><td><strong>C</strong>：加 <code>plugins/xxx/</code> + marketplace.json 一筆</td></tr>
+            <tr><td>要接廣告/CRM/爬蟲數據</td><td>打包 <strong>MCP</strong>（<code>.mcp.json</code>）佈線；憑證走 env；同事各自授權</td></tr>
+            <tr><td>桌面/網頁要接數據</td><td>走 <strong>Connectors</strong> 設定頁，各自登入（<code>.mcp.json</code> 不適用）</td></tr>
+            <tr><td>跨 session 記住進度</td><td>用 <strong>CLAUDE.md + MEMORY.md</strong>（狀態外置、記憶隔離）</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <footer>本文件隨 repo 版本控管，可自由增修 · marketing-os/docs</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var secs = Array.prototype.slice.call(document.querySelectorAll('section.doc'));
+    if(!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var a = map[e.target.id];
+          if(a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin:'-10% 0px -75% 0px', threshold:0 });
+    secs.forEach(function(s){ io.observe(s); });
+  })();
+</script>
