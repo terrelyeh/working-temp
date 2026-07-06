@@ -1,0 +1,6 @@
+{
+  "name": "sales-os",
+  "description": "業務部門作業系統（範例）：提供潛在客戶跟進等業務技能。與 marketing-os 同市集，可各自安裝與更新。",
+  "version": "1.0.0",
+  "author": { "name": "Terrel Yeh" }
+}

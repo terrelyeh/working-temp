@@ -6,7 +6,14 @@
     {
       "name": "marketing-os",
       "source": "./plugins/marketing-os",
-      "description": "行銷部門作業系統：一鍵鋪好標準資料夾，並提供活動企劃、社群貼文、廣告文案、競品分析、週報等技能。",
+      "description": "行銷部門作業系統：一鍵鋪好標準資料夾，並提供活動企劃、社群貼文、廣告文案、競品分析、週報、EDM 等技能。",
+      "version": "1.1.0",
+      "author": { "name": "Terrel Yeh" }
+    },
+    {
+      "name": "sales-os",
+      "source": "./plugins/sales-os",
+      "description": "業務部門作業系統（範例）：潛在客戶跟進等業務技能。與 marketing-os 同市集，可各自安裝與更新。",
       "version": "1.0.0",
       "author": { "name": "Terrel Yeh" }
     }

@@ -17,6 +17,7 @@
 | `ad-copy` | 「寫 Meta 廣告文案，A/B」 |
 | `competitor-scan` | 「分析一下這幾家競品」 |
 | `weekly-report` | 「做這週的行銷週報」 |
+| `edm` | 「寫一封 EDM / 電子報」 |
 | `subfolders` | 「建一個雙11活動的資料夾」（臨時新增單一資料夾，帶標準結構） |
 
 ## 建資料夾：兩種方式
