@@ -1,0 +1,14 @@
+{
+  "name": "marketing-os-marketplace",
+  "owner": { "name": "Terrel Yeh", "email": "terrel.yeh@gmail.com" },
+  "description": "行銷部門專用的 Claude 外掛市集",
+  "plugins": [
+    {
+      "name": "marketing-os",
+      "source": "./plugins/marketing-os",
+      "description": "行銷部門作業系統：一鍵鋪好標準資料夾，並提供活動企劃、社群貼文、廣告文案、競品分析、週報等技能。",
+      "version": "1.0.0",
+      "author": { "name": "Terrel Yeh" }
+    }
+  ]
+}
