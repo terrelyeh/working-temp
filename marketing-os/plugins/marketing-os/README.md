@@ -45,6 +45,15 @@
 
 > 注意：連接器通常需要**每位同仁各自用自己的帳號授權一次**，這步無法由外掛代勞。技能已寫明「沒有真實數據來源時不編造數字」，所以未連接時它會請你提供數字或改用既有記錄。
 
+### 已打包：Firecrawl（強化 competitor-scan）
+本外掛內建一份 `.mcp.json`，已**佈線**好 Firecrawl MCP，讓 `competitor-scan` 能實際爬取競品官網／落地頁取得即時內容。
+
+- **佈線（自動）**：在 **Claude Code** 安裝本外掛後，Firecrawl MCP 即註冊完成，同仁不需手動設定伺服器。
+- **授權（各自手動，必做一次）**：每位同仁需設定自己的 `FIRECRAWL_API_KEY` 環境變數（到 firecrawl.dev 申請）。未設定時 `competitor-scan` 會自動退回「依既有知識推估」並提示去設定。
+- **介面限制**：`.mcp.json` 屬 Claude Code 機制。**桌面/網頁（Cowork）沒有通用 shell、跑不了 `npx` 型 MCP**，那邊請改用內建連接器或忽略此段。
+
+> 想再加 **Vercel / GitHub** 等？它們也有各自的 MCP server，作法相同：在 `.mcp.json` 的 `mcpServers` 多加一筆、憑證用環境變數帶入（**切勿把 token 寫死打包**）。gh / Vercel 偏開發工具，行銷情境通常用不到。
+
 ## 安全性
 - 技能全為本地 `.md` 流程，不含 hooks / 可執行檔。
 - 一旦連接 HubSpot、廣告帳號等，Claude 即可讀寫真實系統，請確認權限範圍與部門合規後再全員推行。
