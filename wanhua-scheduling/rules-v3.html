@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2C3345">
-<title>萬華世界 · 排班規則 v4.3</title>
+<title>萬華世界 · 排班規則 v4.4</title>
 <style>
   :root {
     --primary: #2C3345;
@@ -326,12 +326,12 @@
       <div class="navbar-logo">萬</div>
       <div class="navbar-title">
         萬華世界下午酒場
-        <small>排班規則 · v4.3</small>
+        <small>排班規則 · v4.4</small>
       </div>
     </a>
     <div class="navbar-meta">
-      <span class="navbar-pill primary">v4.3</span>
-      <span class="navbar-pill">2026-06-21</span>
+      <span class="navbar-pill primary">v4.4</span>
+      <span class="navbar-pill">2026-07-28</span>
     </div>
   </div>
 </nav>
@@ -363,9 +363,9 @@
   </aside>
   <main>
 
-    <h1>排班規則 v4.3</h1>
+    <h1>排班規則 v4.4</h1>
     <p class="page-lead">整合 Winnie 4/28 全套回覆 + 從 4-5 月實際班表反推校準後的權威規則 · 供內部團隊審閱</p>
-    <p class="page-lead" style="font-size: 13px; color: var(--muted-foreground);">v3 (2026-04-24) → v4.0 全面校準 → v4.1 微調 → v4.2 (2026-04-29) 修正長班日 N75 為 4 人 → v4.3 (2026-06-21) 正職固定休改回數星期幾。詳見頁尾 changelog。</p>
+    <p class="page-lead" style="font-size: 13px; color: var(--muted-foreground);">v3 (2026-04-24) → v4.0 全面校準 → v4.1 微調 → v4.2 (2026-04-29) 修正長班日 N75 為 4 人 → v4.3 (2026-06-21) 正職固定休改回數星期幾 → v4.4 (2026-07-28) 明確化各條規則的實際強度 + 工時分配優先序。詳見頁尾 changelog。</p>
 
     <details class="mobile-toc">
       <summary>📖 章節目錄</summary>
@@ -563,9 +563,9 @@
         </tbody>
       </table>
 
-      <h3>6.2 6 月起試行（待確認後切換為標準配置）</h3>
+      <h3>6.2 長班日 4+2+3（需要的月份由主管手動調）</h3>
       <p>
-        Winnie 4/28：「有同事回饋週五六晚上的客流比早班少」→ 6 月試行<strong>長班日改為 4+2+3</strong>（午班 +1、晚班 −1）：
+        Winnie 4/28：「有同事回饋週五六晚上的客流比早班少」→ <strong>長班日改為 4+2+3</strong>（午班 +1、晚班 −1）：
       </p>
       <table>
         <thead><tr><th>週幾</th><th>早班 M8</th><th>午班 A8</th><th>晚班 N75</th><th>diff</th></tr></thead>
@@ -575,7 +575,9 @@
         </tbody>
       </table>
       <div class="pending">
-        試行 1–2 個月後評估是否切為新的標準配置。其餘週幾不變。
+        <strong>§6.1 的 4+1+4 仍是系統預設。</strong>要套用 4+2+3 的月份，
+        由主管在「設定行事曆 → 本月基準人力」手動覆寫該月的週五 / 週六人數
+        ——逐月決定，不寫死。其餘週幾不變。
       </div>
 
       <h3>6.3 國假人力配置</h3>
@@ -600,25 +602,69 @@
     <section class="section" id="sec7">
       <h2><span class="sec-num">07</span>必須遵守規則 <span class="tag tag-must">必須遵守</span></h2>
       <p class="section-lead">
-        這 8 條是硬規則，排班演算法<strong>必須</strong>全部滿足才能輸出班表。違反任何一條都視為非法排班，
-        solver 會回報「無可行解、建議放寬哪一條」。其中 H1（兩班 11h 間隔）依據勞基法，
-        其餘是店內規範。
+        這 8 條是排班的基本規範。<strong>但它們的強度不一樣</strong>——有些是物理上不可能違反，
+        有些是「盡全力遵守、真的做不到時會標示出來讓主管決定」。
+        v4.4 把實際強度誠實標出來，取代舊版「違反任何一條就排不出班表」的說法（那與系統實作不符）。
+      </p>
+      <p class="section-lead">
+        整體原則：<strong>自動排班依這些規則 + 大家交的需求表產出；真的滿足不了、補不上的，
+        由店長在班表上手動調整或新增。</strong>手動調整時系統只會擋「物理上不可能」的事，
+        其餘一律跳出提醒讓店長確認後決定。
       </p>
       <ol>
-        <li><strong>H1 · 兩班間休息 ≥ 11 小時</strong>（勞基法）<br>晚班 00:30 下班 → 下次最早 11:30 才能上班（連午班都不行）</li>
-        <li><strong>H2 · 連續工作天數</strong>
+        <li>
+          <strong>H1 · 兩班間休息 ≥ 11 小時</strong>（勞基法 §34 輪班間隔）
+          <span class="tag tag-should">盡量達成</span><br>
+          晚班 00:30 下班 → 下次最早 11:30 才能上班（連午班都不行）。<br>
+          <strong>2026-07 起放寬</strong>：這條原本是絕對禁止，但實測會直接造成班表開天窗
+          （某人被擋住 → 那個班次沒人排、他自己也達不到月工時下限）。
+          現在改為<strong>只有真的沒有其他人可以排時才會發生</strong>，
+          而且每一次都會列在排班結果頁最上方（人名 + 日期），由主管確認要不要手動改掉。
+          不會為了「把某人工時補到下限」而破例。
+        </li>
+        <li>
+          <strong>H2 · 連續工作天數</strong>
+          <span class="tag tag-nice">目前未啟用</span>
           <ul>
             <li>任何混排 ≤ 6 天（週一公休自然限制）</li>
             <li>純 8h 班 ≤ 5 天</li>
           </ul>
+          目前自動排班<strong>沒有檢查這條</strong>（跨週一的計算容易誤判，暫時關閉）。
+          月排班完成後由主管目視確認。
         </li>
-        <li><strong>H3 · 同日只排一個班</strong>（禁止 split shift）</li>
-        <li><strong>H4 · 關鍵時段正職下限</strong>（見 §06）</li>
-        <li><strong>H5 · 週一全體不排班</strong></li>
-        <li><strong>H6 · 主管不取代可排正職</strong>（只要還有正職可排，主管不佔用該班）</li>
-        <li><strong>H7 · PT 月工時 56–100h</strong></li>
-        <li><strong>H8 · 外援達 32h 有喝酒金</strong>（達成門檻，非上限）</li>
+        <li>
+          <strong>H3 · 同日只排一個班</strong>（禁止 split shift）
+          <span class="tag tag-must">必須遵守</span><br>
+          自動排班一律遵守。手動調整時：<strong>時段真的重疊的兩個班會被擋下</strong>
+          （一個人不能同時在兩個地方）；時段不重疊的（例：早班 9–17 接支援班 17–19）
+          會提醒但允許，由店長判斷。
+        </li>
+        <li>
+          <strong>H4 · 關鍵時段正職下限</strong>（見 §06）
+          <span class="tag tag-should">盡量達成</span><br>
+          權重極高、幾乎等同硬規則，但當天真的沒有正職可排時不會讓班表排不出來，
+          會在結果頁標「正職缺 N」。
+        </li>
+        <li><strong>H5 · 週一全體不排班</strong><span class="tag tag-must">必須遵守</span><br>
+          例外開店（拍攝包場等）由主管在「單日特殊調整」明確標註。</li>
+        <li><strong>H6 · 主管不取代可排正職</strong><span class="tag tag-must">必須遵守</span><br>
+          只要還有正職可排，自動排班不會把主管排進去。<strong>但主管在行事曆「主管手動指派」
+          直接指定自己上班不受此限</strong>（例：8/12 午班 → Fish 佈展）——那是明確的人為決定，
+          不是演算法挑人。</li>
+        <li><strong>H7 · PT 月工時 56–100h</strong><span class="tag tag-should">盡量達成</span><br>
+          56h 是合約下限、權重高。但<strong>如果該 PT 在意願表上給的天數本身就不夠</strong>
+          （例：只給 6 天 = 最多 48h），排班救不了，需要另外溝通。</li>
+        <li><strong>H8 · 外援達 32h 有喝酒金</strong>（達成門檻，非上限）
+          <span class="tag tag-nice">行有餘力</span><br>
+          這是福利門檻不是合約義務 → <strong>優先序最低</strong>：正職與 PT 都排滿之後，
+          剩下的班才會盡量讓外援補到 32h。詳見 §08 的工時分配優先序。</li>
       </ol>
+      <p class="section-lead" style="margin-top:16px;">
+        <strong>另外一條沒寫進編號、但影響很大的規則：</strong>
+        PT / 外援<strong>沒交意願表 = 自動排班整月不會排他</strong>。
+        因為系統不知道他哪幾天能上，而「不知道」不等於「他沒空」——
+        所以這只是自動排班的預設，店長私下問過之後，仍然可以手動把他加進班表。
+      </p>
     </section>
 
     <!-- ========== 8 ========== -->
@@ -629,6 +675,28 @@
         S1 正職達標與 S7 正職同日休假限制權重最高（接近硬規則），
         晚班/長班日公平性、給班順序、個別偏好（如佳佳住遠偏早午班）權重較低但仍要盡量滿足。
       </p>
+      <div class="info">
+        <strong>工時分配的優先序：正職 → PT → 外援</strong>
+        <p>
+          當一個班次有多個人可以排時，系統照這個順序決定給誰
+          （2026-07 團隊定案）：
+        </p>
+        <ol>
+          <li><strong>先讓正職達到當月「排班目標工時」</strong>——少於目標是要避免的，
+            因為依 §12 不管少多少下個月都要補回。</li>
+          <li><strong>再讓 PT 達到合約下限 56h。</strong></li>
+          <li><strong>最後才盡量讓外援補到 32h</strong>（喝酒金門檻，非義務）。</li>
+        </ol>
+        <p>
+          正職<strong>超過</strong>目標是可接受的（依 §12 發加班費），而且當全月班次總量
+          大於正職目標總和時，多出來的時數本來就會由正職與 PT 吸收——這是預期行為，不是排錯。
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>⚠️ 這個順序在 2026-07 之前是反過來的</strong>（實際上是 PT → 外援 → 正職），
+          正職達標的權重被設得比外援還低。班表看起來「排滿了、沒缺人」所以一直沒被發現，
+          2026-07 修正。
+        </p>
+      </div>
       <table>
         <thead><tr><th>編號</th><th>目標</th><th>優先度</th></tr></thead>
         <tbody>
@@ -847,16 +915,23 @@
     <section class="section" id="sec15">
       <h2><span class="sec-num">15</span>換班流程</h2>
       <p class="section-lead">
-        班表公告後，員工想換班需經過正式流程：發起人 → 接手人同意 → Winnie 核准 → 系統更新。
-        這確保換班紀錄可追溯。通知對象則分兩類：店內臨時改動（如包場）通知全員；
-        員工個人私下調班只通知受影響者，避免訊息雜訊。
+        班表公告後想換班，<strong>目前一律經主管</strong>：自己先跟對方喬好，
+        再跟主管確認，由主管直接在班表上改。系統沒有員工自助換班的申請流程。
       </p>
       <ol>
-        <li>員工 A 發起換班、指名員工 B</li>
-        <li>員工 B 同意</li>
-        <li>Winnie 核准</li>
-        <li>系統更新班表並留異動紀錄</li>
+        <li>員工 A 私下找到願意接手的員工 B（可到「全店班表 →📋 當天給班」看那天誰有給班）</li>
+        <li>兩人談定後，向主管確認</li>
+        <li>主管在「排班管理」直接改班表 —— <strong>改完即時生效</strong>，員工重新整理就看得到，不需要重新發布</li>
       </ol>
+      <div class="pending">
+        <strong>⚠️ 換完班千萬別按「重新排班」</strong>：重新排班是<strong>砍掉重建</strong>，
+        會把當月所有手動調整（換班、當日工時調整、尾段 / 中段任務）全部清掉。
+        月中要調整請一律用「編輯」，不要重排。
+      </div>
+      <p>
+        未來規劃：員工自助換班（A 發起 → B 同意 → 主管核准 → 系統留紀錄）會跟 LINE 通知
+        一起做——通知是讓這個功能真正有用的那塊拼圖，否則換班成功也沒人知道。
+      </p>
       <h4>通知規則</h4>
       <ul>
         <li><strong>店內臨時改動</strong>（包場、活動）→ 通知全員</li>
@@ -950,6 +1025,17 @@
     <div class="changelog">
       <h3>Changelog</h3>
       <ul>
+        <li><strong>v4.4（2026-07-28）</strong> 規則強度誠實化 + 工時分配優先序
+          <ul>
+            <li><strong>§08 新增「正職 → PT → 外援」的工時分配優先序。</strong>此前系統實際上是反過來的（PT → 外援 → 正職），正職達標的權重被設得比外援還低；因為班表看起來「排滿了、沒缺人」所以一直沒被發現</li>
+            <li><strong>§07 標出每條規則的實際強度</strong>，取代舊版「違反任何一條就排不出班表」的說法——那與系統實作不符（H4 正職下限、H7 PT 56h、H8 外援 32h 一直都是「盡量達成」而非禁止）</li>
+            <li><strong>H1（兩班間隔 11 小時）放寬為「盡量達成」</strong>：原本的絕對禁止會直接造成班表開天窗。現在只有真的沒有其他人可排時才會發生，且每次都列在排班結果頁最上方由主管確認</li>
+            <li><strong>H2（連續工作天數）標示為目前未啟用</strong>——跨週一計算容易誤判，暫時關閉，由主管目視確認</li>
+            <li>§07 補上「PT / 外援沒交意願表 = 自動排班整月不排」這條，並說明那只是自動排班的預設，店長問過後仍可手動加</li>
+            <li>§07 H6 補充：主管在「主管手動指派」直接指定自己上班不受此限（那是人為決定，不是演算法挑人）</li>
+            <li>§15 換班流程改為記錄目前實際作法（一律經主管改表）</li>
+          </ul>
+        </li>
         <li><strong>v4.3（2026-06-21）</strong> 正職固定休計算修正
           <ul>
             <li>§04 固定休改回「<strong>數當月固定休星期幾</strong>」模型，取代中途的「週休 N 日 × 當月週數」近似 —— 後者在跨月的半週會多算一天（例：思坦 7 月算成 15，正確為 14）</li>
@@ -1001,7 +1087,7 @@
       <span class="sep">|</span>
       <a href="../winnie-checklist.html">📋 Winnie 確認清單</a>
     </div>
-    <span style="font-size: 12px; color: rgba(107,114,128,0.7);">最後更新：2026-06-21 (v4.3)</span>
+    <span style="font-size: 12px; color: rgba(107,114,128,0.7);">最後更新：2026-07-28 (v4.4)</span>
   </div>
 </footer>
 
